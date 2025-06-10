@@ -1,0 +1,28 @@
+main: ${PACKAGE}.${NAME}
+name: ${NAME}
+version: "${VERSION}"
+api-version: "1.21.1"
+author: Davisiiiik
+description: Simple plugin for event and minigame management
+commands:
+  evm:
+    description: Base command for EXAMPLE
+    usage: "For a list of commands, type /ex help"
+    aliases: [em, event]
+permissions:
+  eventmng.*:
+    description: Grants all permissions
+    default: false
+    children:
+      eventmng.player.*:
+        description: Grants all player permissions
+        default: true
+        children:
+          eventmng.player.tp:
+            description: Teleport to a set event.
+      eventmng.admin.*:
+        description: Grants all admin permissions
+        default: op
+        children:
+          eventmng.admin.setevent:
+            description: Sets current event.
