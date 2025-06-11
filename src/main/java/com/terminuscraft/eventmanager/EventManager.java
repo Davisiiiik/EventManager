@@ -1,9 +1,10 @@
 package com.terminuscraft.eventmanager;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.util.List;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 
 
 /**
@@ -12,37 +13,38 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author Copyright (c) Davisiiiik. All Rights Reserved.
  */
 public class EventManager extends JavaPlugin {
-  
-  String ver = "0.0.1";
+    
+    String ver = "0.0.1";
 
-  private static String currentEvent = "";
-  /*private static Map<String, Float> coordinates = new HashMap<String, Float>()
-  {{
-     put("x", 0.0F);
-     put("y", 0.0F);
-     put("z", 0.0F);
-  }};*/
+    private static String currentEvent = "";
+    
+    private ASPAdapter ASPHandler;
 
-  @Override
-  public void onEnable() {
-    getLogger().info("TerminusCraft Event Manager v" + ver + " successfully loaded!");
-    getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
 
-    getCommand("evm").setExecutor(new CommandManager());
+    @Override
+    public void onEnable() {
+        this.ASPHandler = new ASPAdapter(this);
 
-    //saveDefaultConfig();
-  }
+        getLogger().info("TerminusCraft Event Manager v" + ver + " successfully loaded!");
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(this.ASPHandler), this);
 
-  @Override
-  public void onDisable() {
-      getLogger().info("TerminusCraft Event Manager successfully unloaded!");
-  }
+        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
+            commands.registrar().register(CommandManager.createCommand().build());
+        });
 
-  public static void setCurrentEvent(String newEvent) {
-    currentEvent = newEvent;
-  }
+        //saveDefaultConfig();
+    }
 
-  public static String getCurrentEvent() {
-    return currentEvent;
-  }
+    @Override
+    public void onDisable() {
+            getLogger().info("TerminusCraft Event Manager successfully unloaded!");
+    }
+
+    public static void setCurrentEvent(String newEvent) {
+        currentEvent = newEvent;
+    }
+
+    public static String getCurrentEvent() {
+        return currentEvent;
+    }
 }

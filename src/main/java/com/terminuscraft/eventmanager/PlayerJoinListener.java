@@ -1,19 +1,29 @@
 package com.terminuscraft.eventmanager;
 
+import java.io.IOException;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import com.infernalsuite.asp.api.AdvancedSlimePaperAPI;
-
 public class PlayerJoinListener implements Listener {
+    
+    private final ASPAdapter ASPHandler;
+
+    public PlayerJoinListener(ASPAdapter ASPHandler) {
+        this.ASPHandler = ASPHandler;
+    }
     
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         /* If event is set and player doesnt have bypass permission, tp him to the set event */
         System.out.println("Player " + event.getPlayer().getName() + " just joined");
 
-        AdvancedSlimePaperAPI asp = AdvancedSlimePaperAPI.instance();
-        System.out.println("Current ASWM worlds: " + asp.getLoadedWorlds());
+        try {
+            System.out.println("Current ASWM worlds: " + ASPHandler.listWorlds());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }

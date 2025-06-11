@@ -1,18 +1,14 @@
 package com.terminuscraft.eventmanager;
 
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.Command;
-import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.Command;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
@@ -23,62 +19,168 @@ import io.papermc.paper.command.brigadier.Commands;
  *
  * @author Copyright (c) Davisiiiik. All Rights Reserved.
  */
-final class CommandManager implements TabExecutor {
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
-                             @NotNull String label, @NotNull String @NotNull [] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("Only players can use this command!");
+final class CommandManager {
 
-            return true;
-        }
+    public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
+        return Commands.literal("evm")
+            .then(Commands.literal("help"))
+            .then(Commands.literal("list").executes(CommandManager::listEvents))
+            .then(Commands.literal("tp")
+                .then(Commands.argument("event", StringArgumentType.word())
+                    .executes(CommandManager::teleport))
+            )
+            .then(Commands.literal("admin")
+                .then(Commands.literal("get").executes(CommandManager::getEvent))
+                .then(Commands.literal("end").executes(CommandManager::endEvent))
+                .then(Commands.literal("purge"))
 
-        if (args.length >= 1) {
-            switch (args[0].toLowerCase()) {
-                case "set":
-                    sender.sendMessage("Successfully set the Event to " + args[1]);
-                    EventManager.setCurrentEvent(args[1]);
+                .then(Commands.literal("start")
+                    .then(Commands.argument("event", StringArgumentType.word())
+                        .executes(CommandManager::startEvent))
+                )
 
-                    /* Load world */
-                    /* Refresh CMI holograms */
-                    break;
+                .then(Commands.literal("add")
+                    .then(Commands.argument("event", StringArgumentType.word()))
+                )
 
-                case "reset":
-                    sender.sendMessage("Successfully reset the Event!");
-                    EventManager.setCurrentEvent("");
+                .then(Commands.literal("remove")
+                    .then(Commands.argument("event", StringArgumentType.word()))
+                )
 
-                    /* Unload world */
-                    break;
-
-                case "get":
-                    if (EventManager.getCurrentEvent().isEmpty()) {
-                        sender.sendMessage("There is no Event currently set!");
-                    } else {
-                        sender.sendMessage("Current event is " + EventManager.getCurrentEvent());
-                    }
-                    break;
-            
-                default:
-                    sender.sendMessage("Unknown arguments: " + Arrays.toString(args));
-                    break;
-            }
-        } else {
-            return false;
-        }
-
-        return true;
+                .then(Commands.literal("load")
+                    .then(Commands.argument("event", StringArgumentType.word()))
+                )
+                
+                .then(Commands.literal("unload")
+                    .then(Commands.argument("event", StringArgumentType.word()))
+                )
+            );
     }
 
-    @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender,
-                                                @NotNull Command command,
-                                                @NotNull String label,
-                                                @NotNull String @NotNull [] args) {
+    private static int listEvents(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
 
-        if (args.length == 1) {
-            return Arrays.asList("test");
-        }
+        sender.sendMessage("Current list of Events:\n NOT IMPLEMENTED");
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int teleport(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+        Entity executor = ctx.getSource().getExecutor();
         
-        return new ArrayList<>();    //null = all player names
+        // Check whether the executor is a player, as you can only set a player's flight speed
+        if (!(executor instanceof Player player)) {
+            // If a non-player tried to set their own flight speed
+            sender.sendPlainMessage("Only players can teleport!");
+            return Command.SINGLE_SUCCESS;
+        }
+
+        //player.teleport(new Location("test", 0, 0, 0));
+
+        sender.sendMessage("NOT IMPLEMENTED");
+
+        return Command.SINGLE_SUCCESS;
     }
+
+    private static int getEvent(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+
+        if (EventManager.getCurrentEvent().isEmpty()) {
+            sender.sendMessage("There is no Event currently started!");
+        } else {
+            sender.sendMessage("Current event is " + EventManager.getCurrentEvent());
+        }
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int endEvent(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+
+        sender.sendMessage("Successfully ended the " + EventManager.getCurrentEvent() + " Event!");
+        EventManager.setCurrentEvent("");
+
+        /* Unload world */
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int startEvent(CommandContext<CommandSourceStack> ctx) {
+        String event = ctx.getArgument("event", String.class);
+        CommandSender sender = ctx.getSource().getSender();
+
+        sender.sendMessage("Successfully started the " + event + " Event");
+        EventManager.setCurrentEvent(event);
+
+        /* Load world */
+        /* Refresh CMI holograms */
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        if (args.length >= 1) {
+//            switch (args[0].toLowerCase()) {
+//                case "set":
+//                    sender.sendMessage("Successfully set the Event to " + args[1]);
+//                    EventManager.setCurrentEvent(args[1]);
+//
+//                    /* Load world */
+//                    /* Refresh CMI holograms */
+//                    break;
+//
+//                case "reset":
+//                    sender.sendMessage("Successfully reset the Event!");
+//                    EventManager.setCurrentEvent("");
+//
+//                    /* Unload world */
+//                    break;
+//
+//                case "get":
+//                    if (EventManager.getCurrentEvent().isEmpty()) {
+//                        sender.sendMessage("There is no Event currently set!");
+//                    } else {
+//                        sender.sendMessage("Current event is " + EventManager.getCurrentEvent());
+//                    }
+//                    break;
+//            
+//                default:
+//                    sender.sendMessage("Unknown arguments: " + Arrays.toString(args));
+//                    break;
+//            }
+//        } else {
+//            return false;
+//        }
+//
+//        return true;
+//    }
+//
+//    @Override
+//    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender,
+//                                                @NotNull Command command,
+//                                                @NotNull String label,
+//                                                @NotNull String @NotNull [] args) {
+//
+//        if (args.length == 1) {
+//            return Arrays.asList("test");
+//        }
+//        
+//        return new ArrayList<>();    //null = all player names
+//    }
 }

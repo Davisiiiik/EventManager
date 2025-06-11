@@ -69,8 +69,9 @@ repositories {
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT'
     compileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.3'
-    compileOnly 'com.infernalsuite.asp:api:4.0.0-SNAPSHOT'
+    compileOnly 'com.infernalsuite.asp:api:4.1.0-SNAPSHOT'
     implementation 'io.papermc:paperlib:1.0.8'
+    implementation 'com.infernalsuite.asp:file-loader:4.0.0-SNAPSHOT'
     spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.14.0'
     testCompileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.3'
     testImplementation 'io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT'
