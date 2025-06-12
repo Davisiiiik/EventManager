@@ -3,7 +3,9 @@ package com.terminuscraft.eventmanager;
 import java.util.List;
 import java.io.IOException;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -11,6 +13,8 @@ import org.bukkit.entity.Player;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.infernalsuite.asp.api.world.SlimeWorldInstance;
 import com.mojang.brigadier.Command;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -24,58 +28,79 @@ import io.papermc.paper.command.brigadier.Commands;
  */
 public class CommandManager {
 
-    private static AspAdapter aspHandler;
+    private final AspAdapter aspHandler;
 
-    public static void initialize(AspAdapter handler) {
-        aspHandler = handler;
+    public CommandManager(AspAdapter handler) {
+        this.aspHandler = handler;
     }
 
-    public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
-        LiteralArgumentBuilder<CommandSourceStack> commandTree;
-
-        commandTree = Commands.literal("evm")
+    public LiteralArgumentBuilder<CommandSourceStack> createCommand() {
+        /* /evm ... */
+        return Commands.literal("evm")
+            /* /evm help */
             .then(Commands.literal("help"))
-            .then(Commands.literal("list").executes(CommandManager::listEvents))
+            
+            /* /evm list */
+            .then(Commands.literal("list") .executes(this::listEvents) )
+            
+            /* /evm tp <event> */
             .then(Commands.literal("tp")
                 .then(Commands.argument("event", StringArgumentType.word())
-                    .executes(CommandManager::teleport))
+                    .suggests(tpSuggestion())
+                    .executes(this::teleport))
             )
+            
+            /* /evm admin ... */
             .then(Commands.literal("admin")
-                .then(Commands.literal("get").executes(CommandManager::getEvent))
-                .then(Commands.literal("end").executes(CommandManager::endEvent))
+            
+                /* /evm admin purge */
                 .then(Commands.literal("purge"))
-
+            
+                /* /evm admin get <event> */
+                .then(Commands.literal("get").executes(this::getEvent))
+            
+                /* /evm admin start <event> */
                 .then(Commands.literal("start")
                     .then(Commands.argument("event", StringArgumentType.word())
-                        .executes(CommandManager::startEvent))
+                        .executes(this::startEvent))
                 )
+            
+                /* /evm admin end <event> */
+                .then(Commands.literal("end").executes(this::endEvent))
 
+                /* /evm admin add <event> */
                 .then(Commands.literal("add")
                     .then(Commands.argument("event", StringArgumentType.word()))
                 )
 
+                /* /evm admin remove <event> */
                 .then(Commands.literal("remove")
                     .then(Commands.argument("event", StringArgumentType.word()))
                 )
 
+                /* /evm admin delete <event> */
+                .then(Commands.literal("delete")
+                    .then(Commands.argument("event", StringArgumentType.word()))
+                )
+
+                /* /evm admin load <event> */
                 .then(Commands.literal("load")
                     .then(Commands.argument("event", StringArgumentType.word()))
                 )
-                
+
+                /* /evm admin unload <event> */
                 .then(Commands.literal("unload")
                     .then(Commands.argument("event", StringArgumentType.word()))
                 )
             );
-
-        return commandTree;
     }
 
-    private static int listEvents(CommandContext<CommandSourceStack> ctx) {
+    private int listEvents(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
 
         // Call ASPHandler method
         try {
-            List<String> worldsList = aspHandler.listWorlds();
+            List<String> worldsList = this.aspHandler.listWorlds();
             sender.sendMessage("Current list of events:\n" + worldsList);
         } catch (IOException e) {
             sender.sendMessage("Error: Couldnt retrieve list of events, try contacting Administrator!");
@@ -84,25 +109,55 @@ public class CommandManager {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int teleport(CommandContext<CommandSourceStack> ctx) {
+    private SuggestionProvider<CommandSourceStack> tpSuggestion() {
+        return (context, builder) -> {
+            try {
+                List<String> worldNames = aspHandler.listWorlds();
+                for (String worldName : worldNames) {
+                    builder.suggest(worldName);
+                }
+            } catch (IOException e) {
+                // Optionally log to console
+                Bukkit.getLogger().warning("Failed to get world list for tab completion: " + e.getMessage());
+            }
+            return builder.buildFuture(); // Return whatever suggestions were added (even if empty)
+        };
+    }
+
+    private int teleport(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
         Entity executor = ctx.getSource().getExecutor();
-        
-        // Check whether the executor is a player, as you can only set a player's flight speed
-        if (!(executor instanceof Player)) {
-            // If a non-player tried to set their own flight speed
-            sender.sendPlainMessage("Only players can teleport!");
-            return Command.SINGLE_SUCCESS;
+
+        if (!(executor instanceof Player player)) {
+            sender.sendMessage("Only players can use this command.");
+            return 0;
         }
 
-        //player.teleport(new Location("test", 0, 0, 0));
+        String event = ctx.getArgument("event", String.class);
 
-        sender.sendMessage("NOT IMPLEMENTED");
+        SlimeWorldInstance eventWorldInstance = aspHandler.getWorldInstance(event);
+        if (eventWorldInstance == null) {
+            player.sendMessage("§cWorld '" + event + "' is not loaded. Trying to load it ...");
+            aspHandler.loadWorld(event);
+            eventWorldInstance = aspHandler.getWorldInstance(event);
+
+            if (eventWorldInstance == null) {
+                player.sendMessage(
+                    "§cAttempt to load the world '" + event + "' unsuccessful. Aborting ..."
+                );
+                return 0;
+            }
+        }
+
+        World eventWorld = eventWorldInstance.getBukkitWorld();
+
+        player.teleport(eventWorld.getSpawnLocation());
+        player.sendMessage("§aTeleported to world: §f" + event);
 
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int getEvent(CommandContext<CommandSourceStack> ctx) {
+    private int getEvent(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
 
         if (EventManager.getCurrentEvent().isEmpty()) {
@@ -114,7 +169,7 @@ public class CommandManager {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int endEvent(CommandContext<CommandSourceStack> ctx) {
+    private int endEvent(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
 
         sender.sendMessage("Successfully ended the " + EventManager.getCurrentEvent() + " Event!");
@@ -125,7 +180,7 @@ public class CommandManager {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int startEvent(CommandContext<CommandSourceStack> ctx) {
+    private int startEvent(CommandContext<CommandSourceStack> ctx) {
         String event = ctx.getArgument("event", String.class);
         CommandSender sender = ctx.getSource().getSender();
 

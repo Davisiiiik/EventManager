@@ -42,6 +42,32 @@ public class AspAdapter {
         properties.setValue(SlimeProperties.SAVE_FLUID_TICKS, true);
     }
 
+    public SlimeWorldInstance createWorld(String worldName) {
+        SlimeWorld slimeWorld;
+        SlimeWorldInstance slimeWorldInstance = null;
+
+        try {
+            if (this.slimeLoader.worldExists(worldName)) {
+                logger.log(
+                    Level.WARNING,
+                    "An exception occurred while trying to create the world \"" + worldName
+                    + "\", world with this name already exists!"
+                );
+            } else {
+                slimeWorld = asp.createEmptyWorld(worldName, false, properties, this.slimeLoader);
+                slimeWorldInstance = asp.loadWorld(slimeWorld, true);
+            }
+            
+        } catch (IOException exception) {
+            logger.log(
+                Level.SEVERE,
+                "An exception occurred while trying to create the world: " + worldName, exception
+            );
+        }
+
+        return slimeWorldInstance;
+    }
+
     public SlimeWorldInstance loadWorld(String worldName) {
         SlimeWorld slimeWorld;
         SlimeWorldInstance slimeWorldInstance = null;
@@ -49,14 +75,17 @@ public class AspAdapter {
         try {
             if (this.slimeLoader.worldExists(worldName)) {
                 slimeWorld = asp.readWorld(this.slimeLoader, worldName, false, new SlimePropertyMap());
+                slimeWorldInstance = asp.loadWorld(slimeWorld, true);
             } else {
-                slimeWorld = asp.createEmptyWorld(worldName, false, properties, this.slimeLoader);
+                logger.log(
+                    Level.WARNING,
+                    "An exception occurred while trying to load the world \"" + worldName
+                    + "\", world with this name does NOT exist!"
+                );
             }
 
-            slimeWorldInstance = asp.loadWorld(slimeWorld, true);
-            
         } catch (IOException | CorruptedWorldException | NewerFormatException | UnknownWorldException exception) {
-            logger.log(Level.SEVERE, "An exception occurred while trying to create or load world: " + worldName, exception);
+            logger.log(Level.SEVERE, "An exception occurred while trying to load the world: " + worldName, exception);
         }
 
         return slimeWorldInstance;
@@ -68,5 +97,9 @@ public class AspAdapter {
 
     public List<String> listWorlds() throws IOException {
         return this.slimeLoader.listWorlds();
+    }
+
+    public SlimeWorldInstance getWorldInstance(String worldName) {
+        return this.asp.getLoadedWorld(worldName);
     }
 }

@@ -24,14 +24,14 @@ public class EventManager extends JavaPlugin {
     @Override
     public void onEnable() {
         this.aspHandler = new AspAdapter(this);
-        
-        CommandManager.initialize(this.aspHandler);
+
+        CommandManager commandManager = new CommandManager(this.aspHandler);
 
         getLogger().info("TerminusCraft Event Manager v" + ver + " successfully loaded!");
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this.aspHandler), this);
 
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
-            commands.registrar().register(CommandManager.createCommand().build());
+            commands.registrar().register(commandManager.createCommand().build());
         });
 
         //saveDefaultConfig();
