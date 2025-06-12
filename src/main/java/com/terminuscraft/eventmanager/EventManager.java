@@ -18,15 +18,17 @@ public class EventManager extends JavaPlugin {
 
     private static String currentEvent = "";
     
-    private ASPAdapter ASPHandler;
+    private AspAdapter aspHandler;
 
 
     @Override
     public void onEnable() {
-        this.ASPHandler = new ASPAdapter(this);
+        this.aspHandler = new AspAdapter(this);
+        
+        CommandManager.initialize(this.aspHandler);
 
         getLogger().info("TerminusCraft Event Manager v" + ver + " successfully loaded!");
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(this.ASPHandler), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(this.aspHandler), this);
 
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             commands.registrar().register(CommandManager.createCommand().build());

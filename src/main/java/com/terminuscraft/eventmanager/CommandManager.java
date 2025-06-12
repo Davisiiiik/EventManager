@@ -1,5 +1,8 @@
 package com.terminuscraft.eventmanager;
 
+import java.util.List;
+import java.io.IOException;
+
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -19,10 +22,18 @@ import io.papermc.paper.command.brigadier.Commands;
  *
  * @author Copyright (c) Davisiiiik. All Rights Reserved.
  */
-final class CommandManager {
+public class CommandManager {
+
+    private static AspAdapter aspHandler;
+
+    public static void initialize(AspAdapter handler) {
+        aspHandler = handler;
+    }
 
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
-        return Commands.literal("evm")
+        LiteralArgumentBuilder<CommandSourceStack> commandTree;
+
+        commandTree = Commands.literal("evm")
             .then(Commands.literal("help"))
             .then(Commands.literal("list").executes(CommandManager::listEvents))
             .then(Commands.literal("tp")
@@ -55,12 +66,20 @@ final class CommandManager {
                     .then(Commands.argument("event", StringArgumentType.word()))
                 )
             );
+
+        return commandTree;
     }
 
     private static int listEvents(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
 
-        sender.sendMessage("Current list of Events:\n NOT IMPLEMENTED");
+        // Call ASPHandler method
+        try {
+            List<String> worldsList = aspHandler.listWorlds();
+            sender.sendMessage("Current list of events:\n" + worldsList);
+        } catch (IOException e) {
+            sender.sendMessage("Error: Couldnt retrieve list of events, try contacting Administrator!");
+        }
 
         return Command.SINGLE_SUCCESS;
     }
@@ -70,7 +89,7 @@ final class CommandManager {
         Entity executor = ctx.getSource().getExecutor();
         
         // Check whether the executor is a player, as you can only set a player's flight speed
-        if (!(executor instanceof Player player)) {
+        if (!(executor instanceof Player)) {
             // If a non-player tried to set their own flight speed
             sender.sendPlainMessage("Only players can teleport!");
             return Command.SINGLE_SUCCESS;

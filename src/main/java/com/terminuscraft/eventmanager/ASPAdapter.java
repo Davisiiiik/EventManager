@@ -20,7 +20,7 @@ import com.infernalsuite.asp.api.world.properties.SlimePropertyMap;
 import com.infernalsuite.asp.loaders.file.FileLoader;
 
 
-public class ASPAdapter {
+public class AspAdapter {
 
     private final AdvancedSlimePaperAPI asp = AdvancedSlimePaperAPI.instance();
     private final SlimeLoader slimeLoader;
@@ -28,7 +28,7 @@ public class ASPAdapter {
 
     private final Logger logger;
 
-    public ASPAdapter(EventManager plugin) {
+    public AspAdapter(EventManager plugin) {
         this.logger = plugin.getLogger();
 
         this.slimeLoader = new FileLoader(new File("slime_worlds"));

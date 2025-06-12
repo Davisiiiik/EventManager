@@ -8,10 +8,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerJoinListener implements Listener {
     
-    private final ASPAdapter ASPHandler;
+    private final AspAdapter ASPHandler;
 
-    public PlayerJoinListener(ASPAdapter ASPHandler) {
-        this.ASPHandler = ASPHandler;
+    public PlayerJoinListener(AspAdapter handler) {
+        this.ASPHandler = handler;
     }
     
     @EventHandler
