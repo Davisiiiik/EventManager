@@ -1,12 +1,11 @@
-package com.terminuscraft.eventmanager.Commands;
-
-import org.bukkit.command.CommandSender;
+package com.terminuscraft.eventmanager.commands;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
-import com.terminuscraft.eventmanager.EventManager;
-
+import org.bukkit.command.CommandSender;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
+
+import com.terminuscraft.eventmanager.EventManager;
 
 public class AdminCommands {
 

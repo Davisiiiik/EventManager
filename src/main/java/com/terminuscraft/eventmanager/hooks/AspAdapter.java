@@ -1,11 +1,12 @@
-package com.terminuscraft.eventmanager;
+package com.terminuscraft.eventmanager.hooks;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
-
 import java.util.logging.Logger;
+
+import com.terminuscraft.eventmanager.EventManager;
 
 import com.infernalsuite.asp.api.AdvancedSlimePaperAPI;
 import com.infernalsuite.asp.api.exceptions.CorruptedWorldException;
@@ -73,7 +74,10 @@ public class AspAdapter {
 
         try {
             if (this.slimeLoader.worldExists(worldName)) {
-                slimeWorld = asp.readWorld(this.slimeLoader, worldName, false, new SlimePropertyMap());
+                slimeWorld = asp.readWorld(
+                    this.slimeLoader, worldName, false, new SlimePropertyMap()
+                );
+
                 slimeWorldInstance = asp.loadWorld(slimeWorld, true);
             } else {
                 logger.log(
@@ -83,8 +87,15 @@ public class AspAdapter {
                 );
             }
 
-        } catch (IOException | CorruptedWorldException | NewerFormatException | UnknownWorldException exception) {
-            logger.log(Level.SEVERE, "An exception occurred while trying to load the world: " + worldName, exception);
+        } catch (
+            IOException
+          | CorruptedWorldException
+          | NewerFormatException
+          | UnknownWorldException e) {
+            logger.log(
+                Level.SEVERE,
+                "An exception occurred while trying to load the world: " + worldName, e
+            );
         }
 
         return slimeWorldInstance;

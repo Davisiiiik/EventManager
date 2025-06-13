@@ -3,12 +3,12 @@ package com.terminuscraft.eventmanager;
 import java.util.Map;
 
 import org.bukkit.plugin.java.JavaPlugin;
-
-import com.terminuscraft.eventmanager.Commands.CommandManager;
-import com.terminuscraft.eventmanager.Miscellaneous.Lang;
-import com.terminuscraft.eventmanager.Miscellaneous.PlayerJoinListener;
-
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+
+import com.terminuscraft.eventmanager.commands.CommandManager;
+import com.terminuscraft.eventmanager.hooks.AspAdapter;
+import com.terminuscraft.eventmanager.miscellaneous.Lang;
+import com.terminuscraft.eventmanager.miscellaneous.PlayerJoinListener;
 
 
 /**
@@ -35,7 +35,9 @@ public class EventManager extends JavaPlugin {
         this.aspHandler = new AspAdapter(this);
 
         getLogger().info(Lang.get("start", Map.of("ver", ver)));
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(this.aspHandler), this);
+        getServer().getPluginManager().registerEvents(
+            new PlayerJoinListener(this.aspHandler), this
+        );
 
         /* Initialize the CommandManager */
         CommandManager commandManager = new CommandManager(this.aspHandler);

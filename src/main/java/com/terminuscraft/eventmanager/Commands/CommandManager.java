@@ -1,15 +1,14 @@
-package com.terminuscraft.eventmanager.Commands;
+package com.terminuscraft.eventmanager.commands;
 
 import java.util.List;
 import java.io.IOException;
 
-import org.bukkit.Bukkit;
-
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import com.terminuscraft.eventmanager.AspAdapter;
+import com.terminuscraft.eventmanager.hooks.AspAdapter;
 
+import org.bukkit.Bukkit;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 
@@ -104,7 +103,9 @@ public class CommandManager {
                 }
             } catch (IOException e) {
                 // Optionally log to console
-                Bukkit.getLogger().warning("Failed to get world list for tab completion: " + e.getMessage());
+                Bukkit.getLogger().warning(
+                    "Failed to get world list for tab completion: " + e.getMessage()
+                );
             }
             return builder.buildFuture(); // Return whatever suggestions were added (even if empty)
         };

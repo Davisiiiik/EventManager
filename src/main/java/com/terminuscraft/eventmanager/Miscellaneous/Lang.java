@@ -1,4 +1,4 @@
-package com.terminuscraft.eventmanager.Miscellaneous;
+package com.terminuscraft.eventmanager.miscellaneous;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,26 +26,49 @@ public final class Lang {
     private FileConfiguration dictionary;
 
     public static void init(JavaPlugin javaPlugin) {
+        try {
         instance = new Lang(javaPlugin);
+        } catch (IOException e) {
+            plugin.getLogger().severe("Error: Could not load default language file!");
+        }
     }
 
-    private Lang(JavaPlugin javaPlugin) {
+    private Lang(JavaPlugin javaPlugin) throws IOException {
         plugin = javaPlugin;
+
         this.langFolder = new File(plugin.getDataFolder(), "languages");
         if (!this.langFolder.exists()) {
             this.langFolder.mkdirs();
         }
 
-        // Load default lang file from inside JAR
+        /* Load default lang file from inside JAR */
         InputStream defaultStream = plugin.getResource("languages/en.yml");
-        this.defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream, StandardCharsets.UTF_8));
+        if (defaultStream == null) {
+            throw new IOException("Error: Could not load default language file!");
+        }
 
-        // Load lang file by name specified in plugin config
-        this.load();
+        this.defaultConfig = YamlConfiguration.loadConfiguration(
+            new InputStreamReader(defaultStream, StandardCharsets.UTF_8)
+        );
+
+        /* Load lang file by name specified in plugin config */
+        this.loadDictionary();
+    }
+
+    private void loadDictionary() {
+        /* Set the static attribute langFileName to "language" option from config or to default */
+        langFileName = plugin.getConfig().getString("language", "lang.yml");
+        File langFile = new File(this.langFolder, langFileName);
+        if (!langFile.exists()) {
+            // Extract the default from JAR: /languages/lang.yml
+            plugin.saveResource("languages/" + langFileName, false);
+        }
+
+        this.dictionary = YamlConfiguration.loadConfiguration(langFile);
     }
 
     public static void reload() {
-        instance.load();
+        instance.loadDictionary();
     }
 
     public static String get(String key) {
@@ -57,7 +80,7 @@ public final class Lang {
             return "§c[Lang not initialized]";
         }
 
-        String raw = instance.dictionary.getString(key, "§cMissing lang key: " + key);
+        String raw = instance.dictionary.getString(key);
 
         if (raw == null) {
             raw = instance.defaultConfig.getString(key);
@@ -81,38 +104,26 @@ public final class Lang {
         return ChatColor.translateAlternateColorCodes('&', raw);
     }
 
-    public static List<String> getList(String path) {
+    public static List<String> getList(String key) {
         if (instance == null) {
             return List.of("§c[Lang not initialized]");
         }
 
-        List<String> result = instance.dictionary.getStringList(path);
+        List<String> result = instance.dictionary.getStringList(key);
 
-        if (result.isEmpty() && instance.defaultConfig.contains(path)) {
-            result = instance.defaultConfig.getStringList(path);
-            instance.dictionary.set(path, result);
+        if (result.isEmpty() && instance.defaultConfig.contains(key)) {
+            result = instance.defaultConfig.getStringList(key);
+            instance.dictionary.set(key, result);
             try {
                 instance.dictionary.save(getLangFileName());
             } catch (IOException e) {
-                Bukkit.getLogger().warning("[Lang] Failed to append missing list key: " + path);
+                Bukkit.getLogger().warning("[Lang] Failed to append missing list key: " + key);
             }
         }
 
         return result.stream()
             .map(line -> ChatColor.translateAlternateColorCodes('&', line))
             .toList();
-    }
-
-    private void load() {
-        /* Set the static attribute langFileName to the newly specified file */
-        langFileName = plugin.getConfig().getString("language", "lang.yml");
-        File langFile = new File(this.langFolder, langFileName);
-        if (!langFile.exists()) {
-            // Extract the default from JAR: /languages/lang.yml
-            plugin.saveResource("languages/" + langFileName, false);
-        }
-
-        this.dictionary = YamlConfiguration.loadConfiguration(langFile);
     }
 
     private static File getLangFileName() {

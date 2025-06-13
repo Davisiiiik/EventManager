@@ -1,21 +1,20 @@
-package com.terminuscraft.eventmanager.Commands;
+package com.terminuscraft.eventmanager.commands;
 
 import java.io.IOException;
 import java.util.List;
 
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.context.CommandContext;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-
-import com.infernalsuite.asp.api.world.SlimeWorldInstance;
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.context.CommandContext;
-import com.terminuscraft.eventmanager.AspAdapter;
-import com.terminuscraft.eventmanager.EventManager;
-import com.terminuscraft.eventmanager.Miscellaneous.Lang;
-
 import io.papermc.paper.command.brigadier.CommandSourceStack;
+
+import com.terminuscraft.eventmanager.EventManager;
+import com.terminuscraft.eventmanager.hooks.AspAdapter;
+import com.terminuscraft.eventmanager.miscellaneous.Lang;
+import com.infernalsuite.asp.api.world.SlimeWorldInstance;
 
 public class PlayerCommands {
 
@@ -55,7 +54,9 @@ public class PlayerCommands {
             List<String> worldsList = this.aspHandler.listWorlds();
             sender.sendMessage("Current list of events:\n" + worldsList);
         } catch (IOException e) {
-            sender.sendMessage("Error: Couldnt retrieve list of events, try contacting Administrator!");
+            sender.sendMessage(
+                "Error: Couldnt retrieve list of events, try contacting Administrator!"
+                );
         }
 
         return Command.SINGLE_SUCCESS;

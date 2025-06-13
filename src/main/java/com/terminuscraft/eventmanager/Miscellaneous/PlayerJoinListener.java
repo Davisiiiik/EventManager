@@ -1,4 +1,4 @@
-package com.terminuscraft.eventmanager.Miscellaneous;
+package com.terminuscraft.eventmanager.miscellaneous;
 
 import java.io.IOException;
 
@@ -6,14 +6,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import com.terminuscraft.eventmanager.AspAdapter;
+import com.terminuscraft.eventmanager.hooks.AspAdapter;
 
 public class PlayerJoinListener implements Listener {
     
-    private final AspAdapter ASPHandler;
+    private final AspAdapter aspHandler;
 
     public PlayerJoinListener(AspAdapter handler) {
-        this.ASPHandler = handler;
+        this.aspHandler = handler;
     }
     
     @EventHandler
@@ -22,7 +22,7 @@ public class PlayerJoinListener implements Listener {
         System.out.println("Player " + event.getPlayer().getName() + " just joined");
 
         try {
-            System.out.println("Current ASWM worlds: " + ASPHandler.listWorlds());
+            System.out.println("Current ASWM worlds: " + aspHandler.listWorlds());
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
