@@ -1,12 +1,20 @@
-prefix: "&7[&bEVM&7] "
-start: "TerminusCraft Event Manager v {ver} successfully loaded!"
-end: "TerminusCraft Event Manager successfully unloaded!"
+prefix: "&9[&6EVM&9] "
+console:
+  start: "TerminusCraft Event Manager v {ver} successfully loaded!"
+  end: "TerminusCraft Event Manager successfully unloaded!"
 command:
   list:
-    header: "&aCurrent list of events:"
-  tp:
-    success: "&aTeleported to event &f{event}"
-    not_found: "&cEvent &f{event} &cnot found."
+    header: "&aList of all TerminusCraft events:"
+  current:
+    success: "&aCurrent event is &f{event}&a, type &f/event &ato connect"
+    no_event: "&cThere is currently no active event!"
+  admin:
+    start: "&aSuccessfully started the &f{event}&a Event, don't forget to notify the players!"
+    end: "&aSuccessfully ended the &f{event}&a Event!"
+    tp:
+      success: "&aSuccessfully teleported to the event &f{event}"
+      not_found: "&cEvent &f{event} &cnot found."
+    reload: "&aConfiguration and language file reloaded!"
 error:
   only_players: "&cOnly players can run this command."
 command.help.messages:

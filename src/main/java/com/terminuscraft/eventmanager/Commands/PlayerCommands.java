@@ -2,19 +2,23 @@ package com.terminuscraft.eventmanager.commands;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
+import com.infernalsuite.asp.api.world.SlimeWorldInstance;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
+
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 
-import com.terminuscraft.eventmanager.EventManager;
+import com.terminuscraft.eventmanager.eventhandler.Event;
+import com.terminuscraft.eventmanager.eventhandler.EvmHandler;
 import com.terminuscraft.eventmanager.hooks.AspAdapter;
 import com.terminuscraft.eventmanager.miscellaneous.Lang;
-import com.infernalsuite.asp.api.world.SlimeWorldInstance;
 
 public class PlayerCommands {
 
@@ -22,44 +26,6 @@ public class PlayerCommands {
 
     public PlayerCommands(AspAdapter handler) {
         this.aspHandler = handler;
-    }
-
-    public int help(CommandContext<CommandSourceStack> ctx) {
-        CommandSender sender = ctx.getSource().getSender();
-
-        for (String line : Lang.getList("command.help.messages")) {
-            sender.sendMessage(line);
-        }
-
-        return Command.SINGLE_SUCCESS;
-    }
-
-    public int getEvent(CommandContext<CommandSourceStack> ctx) {
-        CommandSender sender = ctx.getSource().getSender();
-
-        if (EventManager.getCurrentEvent().isEmpty()) {
-            sender.sendMessage("Právě neprobíhá žádný event!");
-        } else {
-            sender.sendMessage("Current event is " + EventManager.getCurrentEvent());
-        }
-
-        return Command.SINGLE_SUCCESS;
-    }
-
-    public int listEvents(CommandContext<CommandSourceStack> ctx) {
-        CommandSender sender = ctx.getSource().getSender();
-
-        // Call ASPHandler method
-        try {
-            List<String> worldsList = this.aspHandler.listWorlds();
-            sender.sendMessage("Current list of events:\n" + worldsList);
-        } catch (IOException e) {
-            sender.sendMessage(
-                "Error: Couldnt retrieve list of events, try contacting Administrator!"
-                );
-        }
-
-        return Command.SINGLE_SUCCESS;
     }
 
     public int teleport(CommandContext<CommandSourceStack> ctx) {
@@ -71,7 +37,9 @@ public class PlayerCommands {
             return 0;
         }
 
-        String event = ctx.getArgument("event", String.class);
+        /* TODO: EventWorldHandler should check if the event with given name exists and abort if
+                 not, for now just create a new instance of event instead of loading from config */
+        String event = EvmHandler.getCurrentEvent().getName();
 
         SlimeWorldInstance eventWorldInstance = aspHandler.getWorldInstance(event);
         if (eventWorldInstance == null) {
@@ -91,6 +59,47 @@ public class PlayerCommands {
 
         player.teleport(eventWorld.getSpawnLocation());
         player.sendMessage("§aTeleported to world: §f" + event);
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    public int help(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+
+        for (String line : Lang.getList("command.help.messages")) {
+            sender.sendMessage(line);
+        }
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    public int getEvent(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+
+        if (EvmHandler.getCurrentEvent() == null) {
+            sender.sendMessage(Lang.get("command.current.no_event"));
+        } else {
+            Event event = EvmHandler.getCurrentEvent();
+            sender.sendMessage(
+                Lang.get("command.current.success", Map.of("event", event.getName()))
+            );
+        }
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    public int listEvents(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+
+        // Call ASPHandler method
+        try {
+            List<String> worldsList = this.aspHandler.listWorlds();
+            sender.sendMessage("Current list of events:\n" + worldsList);
+        } catch (IOException e) {
+            sender.sendMessage(
+                "Error: Couldnt retrieve list of events, try contacting Administrator!"
+                );
+        }
 
         return Command.SINGLE_SUCCESS;
     }

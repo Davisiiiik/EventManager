@@ -5,5 +5,5 @@
 
 language: en.yml
 
-# List of events if the `asp-hook-enabled` option is set to false
+# List managed events
 event-list: []

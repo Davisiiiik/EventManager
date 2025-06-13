@@ -29,12 +29,12 @@ public class CommandManager {
         this.aspHandler = aspHandler;
 
         this.player = new PlayerCommands(aspHandler);
-        this.admin = new AdminCommands();
+        this.admin = new AdminCommands(aspHandler);
     }
 
     public LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         /* /evm ... */
-        return Commands.literal("evm")
+        return Commands.literal("evm").executes(player::teleport)
             /* /evm help */
             .then(Commands.literal("help").executes(player::help))
             
@@ -44,19 +44,19 @@ public class CommandManager {
             /* /evm list */
             .then(Commands.literal("list").executes(player::listEvents))
             
-            /* /evm tp <event> */
-            .then(Commands.literal("tp")
-                .then(Commands.argument("event", StringArgumentType.word())
-                    .suggests(eventListSuggestion())
-                    .executes(player::teleport)
-                )
-            )
-            
             /* /evm admin ... */
             .then(Commands.literal("admin")
             
                 /* /evm admin purge */
                 .then(Commands.literal("purge"))
+            
+                /* /evm admin tp <event> */
+                .then(Commands.literal("tp")
+                    .then(Commands.argument("event", StringArgumentType.word())
+                        .suggests(eventListSuggestion())
+                        .executes(admin::teleport)
+                    )
+                )
             
                 /* /evm admin start <event> */
                 .then(Commands.literal("start")
@@ -91,6 +91,9 @@ public class CommandManager {
                 .then(Commands.literal("unload")
                     .then(Commands.argument("event", StringArgumentType.word()))
                 )
+
+                /* /evm admin reload */
+                .then(Commands.literal("reload").executes(admin::reload))
             );
     }
 

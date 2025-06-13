@@ -1,10 +1,14 @@
 package com.terminuscraft.eventmanager;
 
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.plugin.java.JavaPlugin;
+
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.terminuscraft.eventmanager.commands.CommandManager;
 import com.terminuscraft.eventmanager.hooks.AspAdapter;
 import com.terminuscraft.eventmanager.miscellaneous.Lang;
@@ -19,8 +23,6 @@ import com.terminuscraft.eventmanager.miscellaneous.PlayerJoinListener;
 public class EventManager extends JavaPlugin {
     
     String ver = "0.0.2";
-
-    private static String currentEvent = "";
     private AspAdapter aspHandler;
 
     @Override
@@ -34,7 +36,7 @@ public class EventManager extends JavaPlugin {
         /* Hooking part, woohoo! */
         this.aspHandler = new AspAdapter(this);
 
-        getLogger().info(Lang.get("start", Map.of("ver", ver)));
+        getLogger().info(Lang.get("console.start", Map.of("ver", ver)));
         getServer().getPluginManager().registerEvents(
             new PlayerJoinListener(this.aspHandler), this
         );
@@ -48,14 +50,11 @@ public class EventManager extends JavaPlugin {
 
     @Override
     public void onDisable() {
-            getLogger().info(Lang.get("end"));
+        getLogger().info(Lang.get("console.end"));
     }
 
-    public static void setCurrentEvent(String newEvent) {
-        currentEvent = newEvent;
-    }
-
-    public static String getCurrentEvent() {
-        return currentEvent;
+    public void pluginReload() {
+        this.reloadConfig();
+        Lang.reload();
     }
 }
