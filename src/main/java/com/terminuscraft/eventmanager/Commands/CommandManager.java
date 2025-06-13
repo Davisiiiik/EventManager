@@ -1,10 +1,9 @@
-package com.terminuscraft.eventmanager;
+package com.terminuscraft.eventmanager.Commands;
 
 import java.util.List;
 import java.io.IOException;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -14,6 +13,8 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.terminuscraft.eventmanager.AspAdapter;
+import com.terminuscraft.eventmanager.Miscellaneous.Lang;
 import com.infernalsuite.asp.api.world.SlimeWorldInstance;
 import com.mojang.brigadier.Command;
 
@@ -29,16 +30,21 @@ import io.papermc.paper.command.brigadier.Commands;
 public class CommandManager {
 
     private final AspAdapter aspHandler;
+    private final AdminCommands admin;
 
     public CommandManager(AspAdapter handler) {
         this.aspHandler = handler;
+        this.admin = new AdminCommands();
     }
 
     public LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         /* /evm ... */
         return Commands.literal("evm")
             /* /evm help */
-            .then(Commands.literal("help"))
+            .then(Commands.literal("help").executes(this::help))
+            
+            /* /evm current */
+            .then(Commands.literal("current") .executes(admin::getEvent) )
             
             /* /evm list */
             .then(Commands.literal("list") .executes(this::listEvents) )
@@ -57,16 +63,16 @@ public class CommandManager {
                 .then(Commands.literal("purge"))
             
                 /* /evm admin get <event> */
-                .then(Commands.literal("get").executes(this::getEvent))
+                .then(Commands.literal("get").executes(admin::getEvent))
             
                 /* /evm admin start <event> */
                 .then(Commands.literal("start")
                     .then(Commands.argument("event", StringArgumentType.word())
-                        .executes(this::startEvent))
+                        .executes(admin::startEvent))
                 )
             
                 /* /evm admin end <event> */
-                .then(Commands.literal("end").executes(this::endEvent))
+                .then(Commands.literal("end").executes(admin::endEvent))
 
                 /* /evm admin add <event> */
                 .then(Commands.literal("add")
@@ -93,6 +99,16 @@ public class CommandManager {
                     .then(Commands.argument("event", StringArgumentType.word()))
                 )
             );
+    }
+
+    private int help(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+
+        for (String line : Lang.getList("help.messages")) {
+            sender.sendMessage(line);
+        }
+
+        return Command.SINGLE_SUCCESS;
     }
 
     private int listEvents(CommandContext<CommandSourceStack> ctx) {
@@ -153,42 +169,6 @@ public class CommandManager {
 
         player.teleport(eventWorld.getSpawnLocation());
         player.sendMessage("§aTeleported to world: §f" + event);
-
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private int getEvent(CommandContext<CommandSourceStack> ctx) {
-        CommandSender sender = ctx.getSource().getSender();
-
-        if (EventManager.getCurrentEvent().isEmpty()) {
-            sender.sendMessage("There is no Event currently started!");
-        } else {
-            sender.sendMessage("Current event is " + EventManager.getCurrentEvent());
-        }
-
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private int endEvent(CommandContext<CommandSourceStack> ctx) {
-        CommandSender sender = ctx.getSource().getSender();
-
-        sender.sendMessage("Successfully ended the " + EventManager.getCurrentEvent() + " Event!");
-        EventManager.setCurrentEvent("");
-
-        /* Unload world */
-
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private int startEvent(CommandContext<CommandSourceStack> ctx) {
-        String event = ctx.getArgument("event", String.class);
-        CommandSender sender = ctx.getSource().getSender();
-
-        sender.sendMessage("Successfully started the " + event + " Event");
-        EventManager.setCurrentEvent(event);
-
-        /* Load world */
-        /* Refresh CMI holograms */
 
         return Command.SINGLE_SUCCESS;
     }

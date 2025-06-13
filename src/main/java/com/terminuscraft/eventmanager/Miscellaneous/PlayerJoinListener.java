@@ -1,10 +1,12 @@
-package com.terminuscraft.eventmanager;
+package com.terminuscraft.eventmanager.Miscellaneous;
 
 import java.io.IOException;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+
+import com.terminuscraft.eventmanager.AspAdapter;
 
 public class PlayerJoinListener implements Listener {
     
