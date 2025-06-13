@@ -1,9 +1,13 @@
 package com.terminuscraft.eventmanager;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.terminuscraft.eventmanager.Commands.CommandManager;
+import com.terminuscraft.eventmanager.Miscellaneous.Lang;
+import com.terminuscraft.eventmanager.Miscellaneous.PlayerJoinListener;
+
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 
 
@@ -14,32 +18,35 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
  */
 public class EventManager extends JavaPlugin {
     
-    String ver = "0.0.1";
+    String ver = "0.0.2";
 
     private static String currentEvent = "";
-    
     private AspAdapter aspHandler;
-
 
     @Override
     public void onEnable() {
+        /* Make sure the config file exists */
+        saveDefaultConfig();
+
+        /* Now load the language specified in config by user or default lang.yml file */
+        Lang.init(this);
+
+        /* Hooking part, woohoo! */
         this.aspHandler = new AspAdapter(this);
 
-        CommandManager commandManager = new CommandManager(this.aspHandler);
-
-        getLogger().info("TerminusCraft Event Manager v" + ver + " successfully loaded!");
+        getLogger().info(Lang.get("start", Map.of("ver", ver)));
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this.aspHandler), this);
 
+        /* Initialize the CommandManager */
+        CommandManager commandManager = new CommandManager(this.aspHandler);
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             commands.registrar().register(commandManager.createCommand().build());
         });
-
-        //saveDefaultConfig();
     }
 
     @Override
     public void onDisable() {
-            getLogger().info("TerminusCraft Event Manager successfully unloaded!");
+            getLogger().info(Lang.get("end"));
     }
 
     public static void setCurrentEvent(String newEvent) {

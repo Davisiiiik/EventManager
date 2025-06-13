@@ -104,7 +104,7 @@ public class CommandManager {
     private int help(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
 
-        for (String line : Lang.getList("help.messages")) {
+        for (String line : Lang.getList("command.help.messages")) {
             sender.sendMessage(line);
         }
 

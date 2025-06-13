@@ -1,0 +1,15 @@
+prefix: "&7[&bEVM&7] "
+start: "TerminusCraft Event Manager v {ver} successfully loaded!"
+end: "TerminusCraft Event Manager successfully unloaded!"
+command:
+  list:
+    header: "&aCurrent list of events:"
+  tp:
+    success: "&aTeleported to event &f{event}"
+    not_found: "&cEvent &f{event} &cnot found."
+error:
+  only_players: "&cOnly players can run this command."
+help.messages:
+  - "&e/evm list &7- List all events"
+  - "&e/evm tp <event> &7- Teleport to an event"
+  - "&e/evm admin &7- Admin commands"
