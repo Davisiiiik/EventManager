@@ -10,18 +10,6 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 
 public class AdminCommands {
 
-    public int getEvent(CommandContext<CommandSourceStack> ctx) {
-        CommandSender sender = ctx.getSource().getSender();
-
-        if (EventManager.getCurrentEvent().isEmpty()) {
-            sender.sendMessage("Právě neprobíhá žádný event!");
-        } else {
-            sender.sendMessage("Current event is " + EventManager.getCurrentEvent());
-        }
-
-        return Command.SINGLE_SUCCESS;
-    }
-
     public int endEvent(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
 
