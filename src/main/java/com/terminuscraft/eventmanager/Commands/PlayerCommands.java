@@ -1,6 +1,5 @@
 package com.terminuscraft.eventmanager.commands;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -16,17 +15,17 @@ import org.bukkit.entity.Player;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 
-import com.terminuscraft.eventmanager.eventhandler.Event;
-import com.terminuscraft.eventmanager.eventhandler.EvmHandler;
+import com.terminuscraft.eventmanager.communication.Lang;
+import com.terminuscraft.eventmanager.communication.PaginationUtil;
+import com.terminuscraft.eventmanager.gamehandler.Game;
+import com.terminuscraft.eventmanager.gamehandler.GameHandler;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
-import com.terminuscraft.eventmanager.miscellaneous.Lang;
-import com.terminuscraft.eventmanager.miscellaneous.PaginationUtil;
 
 public class PlayerCommands {
 
-    public final EvmHandler evmHandler;
+    public final GameHandler evmHandler;
 
-    public PlayerCommands(EvmHandler handler) {
+    public PlayerCommands(GameHandler handler) {
         this.evmHandler = handler;
     }
 
@@ -39,7 +38,7 @@ public class PlayerCommands {
             return Constants.FAIL;
         }
 
-        Event event = EvmHandler.getCurrentEvent();
+        Game event = GameHandler.getCurrentEvent();
         if (event == null) {
             player.sendMessage(Lang.get("cmd.current.no_event"));
             return Command.SINGLE_SUCCESS;
@@ -79,10 +78,10 @@ public class PlayerCommands {
     public int getEvent(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
 
-        if (EvmHandler.getCurrentEvent() == null) {
+        if (GameHandler.getCurrentEvent() == null) {
             sender.sendMessage(Lang.get("cmd.current.no_event"));
         } else {
-            Event event = EvmHandler.getCurrentEvent();
+            Game event = GameHandler.getCurrentEvent();
             sender.sendMessage(
                 Lang.get("cmd.current.success", Map.of("event", event.getName()))
             );

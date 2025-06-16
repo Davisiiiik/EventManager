@@ -7,7 +7,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import com.terminuscraft.eventmanager.eventhandler.EvmHandler;
+import com.terminuscraft.eventmanager.gamehandler.GameHandler;
 
 import org.bukkit.Bukkit;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -21,12 +21,12 @@ import io.papermc.paper.command.brigadier.Commands;
  */
 public class CommandManager {
 
-    public final EvmHandler evmHandler;
+    public final GameHandler evmHandler;
 
     private final PlayerCommands player;
     private final AdminCommands admin;
 
-    public CommandManager(EvmHandler evmHandler) {
+    public CommandManager(GameHandler evmHandler) {
         this.evmHandler = evmHandler;
 
         this.player = new PlayerCommands(evmHandler);
@@ -128,7 +128,7 @@ public class CommandManager {
         return (context, builder) -> {
             List<String> worldNames;
             try {
-                worldNames = evmHandler.listWorlds();
+                worldNames = evmHandler.getWorldList();
                 worldNames.removeAll(evmHandler.getEventList());
                 for (String worldName : worldNames) {
                     builder.suggest(worldName);

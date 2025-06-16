@@ -15,18 +15,17 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.kyori.adventure.text.Component;
 
 import com.terminuscraft.eventmanager.EventManager;
-import com.terminuscraft.eventmanager.eventhandler.Event;
-import com.terminuscraft.eventmanager.eventhandler.EvmHandler;
+import com.terminuscraft.eventmanager.communication.Lang;
+import com.terminuscraft.eventmanager.gamehandler.Game;
+import com.terminuscraft.eventmanager.gamehandler.GameHandler;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
-import com.terminuscraft.eventmanager.miscellaneous.Lang;
-
 import com.infernalsuite.asp.api.world.SlimeWorldInstance;
 
 public class AdminCommands {
 
-    public final EvmHandler evmHandler;
+    public final GameHandler evmHandler;
 
-    public AdminCommands(EvmHandler evmHandler) {
+    public AdminCommands(GameHandler evmHandler) {
         this.evmHandler = evmHandler;
     }
 
@@ -78,7 +77,7 @@ public class AdminCommands {
         CommandSender sender = ctx.getSource().getSender();
 
         if (evmHandler.eventExists(eventName)) {
-            EvmHandler.setCurrentEvent(evmHandler.getEvent(eventName));
+            GameHandler.setCurrentEvent(evmHandler.getEvent(eventName));
             sender.sendMessage(Lang.get("cmd.start", Map.of("event", eventName)));
         } else {
             sender.sendMessage(Lang.get("error.event_invalid", Map.of("event", eventName)));
@@ -93,12 +92,12 @@ public class AdminCommands {
     public int endEvent(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
 
-        Event event = EvmHandler.getCurrentEvent();
+        Game event = GameHandler.getCurrentEvent();
         if (event == null) {
             sender.sendMessage(Lang.get("cmd.current.no_event"));
         } else {
             sender.sendMessage(Lang.get("cmd.end", Map.of("event", event.getName())));
-            EvmHandler.setCurrentEvent(null);
+            GameHandler.setCurrentEvent(null);
             
             /* TODO: Unload world */
         }
@@ -116,7 +115,7 @@ public class AdminCommands {
             return Constants.FAIL;
         }
 
-        Event event = evmHandler.getEvent(ctx.getArgument("event", String.class));
+        Game event = evmHandler.getEvent(ctx.getArgument("event", String.class));
         if (event == null) {
             player.sendMessage(Lang.get("cmd.tp.not_found", Map.of("event", eventName)));
             return Constants.FAIL;

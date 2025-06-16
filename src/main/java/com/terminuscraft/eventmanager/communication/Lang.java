@@ -1,4 +1,4 @@
-package com.terminuscraft.eventmanager.miscellaneous;
+package com.terminuscraft.eventmanager.communication;
 
 import java.io.File;
 import java.io.IOException;

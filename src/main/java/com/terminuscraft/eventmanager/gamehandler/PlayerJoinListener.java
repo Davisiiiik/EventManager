@@ -1,4 +1,4 @@
-package com.terminuscraft.eventmanager.miscellaneous;
+package com.terminuscraft.eventmanager.gamehandler;
 
 import java.util.Map;
 
@@ -8,14 +8,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.infernalsuite.asp.api.world.SlimeWorldInstance;
-import com.terminuscraft.eventmanager.eventhandler.Event;
-import com.terminuscraft.eventmanager.eventhandler.EvmHandler;
+import com.terminuscraft.eventmanager.communication.Lang;
+import com.terminuscraft.eventmanager.communication.Log;
 
 public class PlayerJoinListener implements Listener {
     
-    private final EvmHandler evmHandler;
+    private final GameHandler evmHandler;
 
-    public PlayerJoinListener(EvmHandler handler) {
+    public PlayerJoinListener(GameHandler handler) {
         this.evmHandler = handler;
     }
 
@@ -24,7 +24,7 @@ public class PlayerJoinListener implements Listener {
         /* If event is set and player doesnt have bypass permission, tp him to the set event */
         System.out.println("Player " + event.getPlayer().getName() + " just joined");
 
-        Event currentEvent = EvmHandler.getCurrentEvent();
+        Game currentEvent = GameHandler.getCurrentEvent();
         if (currentEvent != null) {
             Player player = event.getPlayer();
             SlimeWorldInstance eventWorldInstance = evmHandler.getWorldInstance(currentEvent);

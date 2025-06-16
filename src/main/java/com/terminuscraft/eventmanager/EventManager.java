@@ -5,9 +5,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 
 import com.terminuscraft.eventmanager.commands.CommandManager;
-import com.terminuscraft.eventmanager.eventhandler.EvmHandler;
-import com.terminuscraft.eventmanager.miscellaneous.Lang;
-import com.terminuscraft.eventmanager.miscellaneous.PlayerJoinListener;
+import com.terminuscraft.eventmanager.communication.Lang;
+import com.terminuscraft.eventmanager.gamehandler.GameHandler;
+import com.terminuscraft.eventmanager.gamehandler.PlayerJoinListener;
 
 
 /**
@@ -16,7 +16,7 @@ import com.terminuscraft.eventmanager.miscellaneous.PlayerJoinListener;
  * @author Copyright (c) Davisiiiik. All Rights Reserved.
  */
 public class EventManager extends JavaPlugin {
-    private EvmHandler evmHandler;
+    private GameHandler evmHandler;
 
     @Override
     public void onEnable() {
@@ -27,7 +27,7 @@ public class EventManager extends JavaPlugin {
         Lang.init(this);
 
         /* Prepare event handling */
-        this.evmHandler = new EvmHandler(this);
+        this.evmHandler = new GameHandler(this);
 
         /* Initialize the CommandManager */
         CommandManager commandManager = new CommandManager(this.evmHandler);

@@ -1,4 +1,4 @@
-package com.terminuscraft.eventmanager.miscellaneous;
+package com.terminuscraft.eventmanager.communication;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -22,10 +22,6 @@ public class PaginationUtil {
 
         int startIndex = (page - 1) * itemsPerPage;
         int endIndex = Math.min(startIndex + itemsPerPage, items.size());
-
-        Map<String, String> pageDict = Map.of(
-            "page", Integer.toString(page), "total", Integer.toString(totalPages)
-            );
 
         // Header
         player.sendMessage(Lang.get("cmd.list.header", false));
@@ -60,7 +56,13 @@ public class PaginationUtil {
             );
         }
         navigation = navigation.append(
-            Component.text(Lang.get("cmd.list.footer", pageDict, false), NamedTextColor.GRAY)
+            Component.text(
+                Lang.get(
+                    "cmd.list.footer",
+                    Map.of("page", Integer.toString(page), "total", Integer.toString(totalPages)),
+                    false
+                ),
+                NamedTextColor.GRAY)
             );
 
         if (page < totalPages) {

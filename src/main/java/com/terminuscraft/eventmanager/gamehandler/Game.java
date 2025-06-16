@@ -1,18 +1,19 @@
-package com.terminuscraft.eventmanager.eventhandler;
+package com.terminuscraft.eventmanager.gamehandler;
 
 import com.terminuscraft.eventmanager.miscellaneous.Environment;
 
-public class Event {
+public class Game {
     private final String eventName;
+
     private boolean pvp;
     private boolean loadOnStartup;
     private Environment environment;
 
-    public Event(String name) {
+    public Game(String name) {
         this(name, false, false, Environment.NORMAL);
     }
 
-    public Event(String name, boolean pvp, boolean loadOnStartup, Environment environment) {
+    public Game(String name, boolean pvp, boolean loadOnStartup, Environment environment) {
         this.eventName = name;
         this.pvp = pvp;
         this.loadOnStartup = loadOnStartup;

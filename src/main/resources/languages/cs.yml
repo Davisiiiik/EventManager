@@ -2,7 +2,7 @@ prefix: "&9[&6EVM&9] "
 system:
   start: "TerminusCraft Event Manager byl úspěšně načten!"
   end: "TerminusCraft Event Manager byl úspěšně ukončen!"
-  auto_tp: "&aByl jsi úspěšně	teleportován na právě probíhající event &f{event}&a."
+  auto_tp: "&aByl jsi úspěšně teleportován na právě probíhající event &f{event}&a."
 cmd:
   start: "&aÚspěšně jsi spustil event &f{event}&a, nezapomeň upozornit hráče!"
   end: "&aÚspěšně jsi ukončil event &f{event}&a!"

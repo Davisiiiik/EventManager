@@ -1,4 +1,4 @@
-package com.terminuscraft.eventmanager.eventhandler;
+package com.terminuscraft.eventmanager.gamehandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,19 +12,20 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.infernalsuite.asp.api.world.SlimeWorldInstance;
 import com.terminuscraft.eventmanager.EventManager;
+import com.terminuscraft.eventmanager.communication.Log;
 import com.terminuscraft.eventmanager.hooks.AspAdapter;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
 import com.terminuscraft.eventmanager.miscellaneous.Environment;
-import com.terminuscraft.eventmanager.miscellaneous.Log;
 
-public class EvmHandler extends AspAdapter {
+public class GameHandler {
 
+    private final AspAdapter aspAdapter = new AspAdapter();
     private final File eventFile;
-    private final Map<String, Event> events = new HashMap<>();
+    private final Map<String, Game> events = new HashMap<>();
     
-    private static Event currentEvent;
+    private static Game currentEvent;
 
-    public EvmHandler(EventManager plugin) {
+    public GameHandler(EventManager plugin) {
         super();
 
         this.eventFile = new File(plugin.getDataFolder(), "events.yml");
@@ -34,6 +35,14 @@ public class EvmHandler extends AspAdapter {
         }
 
         loadEvents();
+    }
+
+    public static void setCurrentEvent(Game newEvent) {
+        currentEvent = newEvent;
+    }
+
+    public static Game getCurrentEvent() {
+        return currentEvent;
     }
 
     private void loadEvents() {
@@ -57,7 +66,7 @@ public class EvmHandler extends AspAdapter {
                 String envStr = evSec.getString("environment", "normal");
 
                 Environment environment = Environment.fromString(envStr);
-                Event event = new Event(name, pvp, loadOnStartup, environment);
+                Game event = new Game(name, pvp, loadOnStartup, environment);
 
                 events.put(name.toLowerCase(), event);
             } catch (Exception e) {
@@ -76,7 +85,7 @@ public class EvmHandler extends AspAdapter {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(eventFile);
         config.set("events", null); // Clear old
 
-        for (Event event : events.values()) {
+        for (Game event : events.values()) {
             String key = event.getName();
             config.set("events." + key + ".pvp", event.isPvpEnabled());
             config.set("events." + key + ".loadOnStartup", event.shouldLoadOnStartup());
@@ -96,14 +105,14 @@ public class EvmHandler extends AspAdapter {
         boolean worldExists;
 
         try {
-            worldExists = this.worldExists(eventName);
+            worldExists = aspAdapter.worldExists(eventName);
         } catch (IOException e) {
             worldExists = false;
         }
 
         if (worldExists && (!events.containsKey(eventName.toLowerCase()))) {
             /* If world already exists and event does not, add event into the event list */
-            Event event = new Event(eventName);
+            Game event = new Game(eventName);
             events.put(eventName.toLowerCase(), event);
         } else {
             Log.logger.warning(
@@ -124,13 +133,13 @@ public class EvmHandler extends AspAdapter {
         }
 
         /* Try creating Slime world instance */
-        SlimeWorldInstance slimeWorldInstance = this.createWorld(eventName);
+        SlimeWorldInstance slimeWorldInstance = aspAdapter.createWorld(eventName);
         if (slimeWorldInstance == null) {
             return Constants.FAIL;
         }
 
         /* If world creation was successful, add newly created event into the event list */
-        Event event = new Event(eventName);
+        Game event = new Game(eventName);
         events.put(eventName.toLowerCase(), event);
 
         saveEvents();
@@ -148,7 +157,7 @@ public class EvmHandler extends AspAdapter {
         return true;
     }
 
-    public Event getEvent(String eventName) {
+    public Game getEvent(String eventName) {
         if (this.eventExists(eventName)) {
             return events.get(eventName.toLowerCase());
         } else {
@@ -164,32 +173,34 @@ public class EvmHandler extends AspAdapter {
         return new ArrayList<String>(events.keySet());
     }
 
+    public List<String> getWorldList() throws IOException {
+        return aspAdapter.listWorlds();
+    }
+
     public boolean eventExists(String eventName) {
         try {
             /* Check if the world itself exists and if the event is also defined */
-            return (worldExists(eventName) && events.containsKey(eventName.toLowerCase()));
+            return (
+                aspAdapter.worldExists(eventName) && events.containsKey(eventName.toLowerCase())
+            );
         } catch (IOException e) {
             return false;
         }
     }
 
-    public SlimeWorldInstance loadWorldInstance(Event eventName) {
-        return this.loadWorldInstance(eventName.getName());
+    public boolean worldExists(String worldName) throws IOException {
+        return aspAdapter.worldExists(worldName);
     }
 
-    public SlimeWorldInstance getWorldInstance(Event eventName) {
-        return this.getWorldInstance(eventName.getName());
+    public SlimeWorldInstance loadWorldInstance(Game eventName) {
+        return aspAdapter.loadWorldInstance(eventName.getName());
+    }
+
+    public SlimeWorldInstance getWorldInstance(Game eventName) {
+        return aspAdapter.getWorldInstance(eventName.getName());
     }
 
     public void reload() {
         loadEvents();
-    }
-
-    public static void setCurrentEvent(Event newEvent) {
-        currentEvent = newEvent;
-    }
-
-    public static Event getCurrentEvent() {
-        return currentEvent;
     }
 }
