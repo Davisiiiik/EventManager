@@ -7,7 +7,7 @@ description: Simple plugin for event and minigame management
 commands:
   evm:
     description: Base command for EXAMPLE
-    usage: "For a list of commands, type /ex help"
+    usage: "For a list of commands, type /evm help"
     aliases: [em, event]
 permissions:
   eventmng.*:

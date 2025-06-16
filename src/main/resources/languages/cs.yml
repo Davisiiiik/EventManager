@@ -1,13 +1,11 @@
 prefix: "&9[&6EVM&9] "
 console:
-  start: "TerminusCraft Event Manager v {ver} successfully loaded!"
-  end: "TerminusCraft Event Manager successfully unloaded!"
-command:
+  start: "TerminusCraft Event Manager byl úspěšně načten!"
+  end: "TerminusCraft Event Manager byl úspěšně ukončen!"
+cmd:
   start: "&aÚspěšně jsi spustil event &f{event}&a, nezapomeň upozornit hráče!"
   end: "&aÚspěšně jsi ukončil event &f{event}&a!"
   reload: "&aKonfigurační soubory byly znovu načteny!"
-  list:
-    header: "&aSeznam všech TerminusCraft eventů:"
   current:
     success: "&aPrávě probíhá event &f{event}&a, napiš &f/event &apro připojení"
     no_event: "&cAktuálně neprobíhá žádný event!"
@@ -20,12 +18,21 @@ command:
   tp:
     success: "&aByl jsi úspěšně teleportován na event &f{event}&a."
     not_found: "&cEvent &f{event} &cnenalezen."
+  list:
+    header: "&6----- Terminus&9Craft &6Eventy ({page}/{total}) -----"
+    invalid_page: "&cNeplatné číslo stránky"
+    item: " &e• {event}"
+    prev: " ◀ "
+    next: " ▶ "
+    page: "Přejít na stránku {page}"
+    footer: " Stránka {page}/{total} "
 error:
   players_only: "&cTento příkaz mohou používat pouze hráči!"
   event_invalid: "&cEvent '{event}' neexistuje, nebo nemá vytvořený svět."
   event_load_try: "&cSvět eventu '{event}' není načtený. Pokusím se ho najít ..."
   event_load_abort: "&cPokus načíst svět eventu '{event}' byl neúspěšný. Ruším akci ..."
 command.help.messages:
+  - "&aList všech dostupných příkazů:"
   - "&e/evm list &7- List all events"
   - "&e/evm tp <event> &7- Teleport to an event"
   - "&e/evm admin &7- Admin commands"

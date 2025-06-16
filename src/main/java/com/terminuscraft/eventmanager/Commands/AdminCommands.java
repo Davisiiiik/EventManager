@@ -43,12 +43,12 @@ public class AdminCommands {
         }
 
         if (!worldExists) {
-            sender.sendMessage(Lang.get("command.add.no_world", Map.of("event", eventName)));
+            sender.sendMessage(Lang.get("cmd.add.no_world", Map.of("event", eventName)));
         } else if (evmHandler.getEventList().contains(eventName)) {
-            sender.sendMessage(Lang.get("command.create.dupe", Map.of("event", eventName)));
+            sender.sendMessage(Lang.get("cmd.create.dupe", Map.of("event", eventName)));
         } else {
             evmHandler.addEvent(eventName);
-            sender.sendMessage(Lang.get("command.add.success", Map.of("event", eventName)));
+            sender.sendMessage(Lang.get("cmd.add.success", Map.of("event", eventName)));
         }
 
         return Command.SINGLE_SUCCESS;
@@ -60,12 +60,12 @@ public class AdminCommands {
 
         if (evmHandler.eventExists(eventName)) {
             sender.sendMessage(
-                Lang.get("command.create.dupe", Map.of("event", eventName))
+                Lang.get("cmd.create.dupe", Map.of("event", eventName))
             );
         } else {
             if (evmHandler.createEvent(eventName) == Constants.SUCCESS) {
                 sender.sendMessage(
-                    Lang.get("command.create.success", Map.of("event", eventName))
+                    Lang.get("cmd.create.success", Map.of("event", eventName))
                 );
             }
         }
@@ -79,7 +79,7 @@ public class AdminCommands {
 
         if (evmHandler.eventExists(eventName)) {
             EvmHandler.setCurrentEvent(evmHandler.getEvent(eventName));
-            sender.sendMessage(Lang.get("command.start", Map.of("event", eventName)));
+            sender.sendMessage(Lang.get("cmd.start", Map.of("event", eventName)));
         } else {
             sender.sendMessage(Lang.get("error.event_invalid", Map.of("event", eventName)));
         }
@@ -95,9 +95,9 @@ public class AdminCommands {
 
         Event event = EvmHandler.getCurrentEvent();
         if (event == null) {
-            sender.sendMessage(Lang.get("command.current.no_event"));
+            sender.sendMessage(Lang.get("cmd.current.no_event"));
         } else {
-            sender.sendMessage(Lang.get("command.end", Map.of("event", event.getName())));
+            sender.sendMessage(Lang.get("cmd.end", Map.of("event", event.getName())));
             EvmHandler.setCurrentEvent(null);
             
             /* TODO: Unload world */
@@ -117,7 +117,7 @@ public class AdminCommands {
 
         String eventName = ctx.getArgument("event", String.class);
         if (!evmHandler.eventExists(eventName)) {
-            player.sendMessage(Lang.get("command.tp.not_found", Map.of("event", eventName)));
+            player.sendMessage(Lang.get("cmd.tp.not_found", Map.of("event", eventName)));
             return Constants.FAIL;
         }
 
@@ -136,7 +136,7 @@ public class AdminCommands {
         World eventWorld = eventWorldInstance.getBukkitWorld();
 
         player.teleport(eventWorld.getSpawnLocation());
-        player.sendMessage(Lang.get("command.tp.success", Map.of("event", eventName)));
+        player.sendMessage(Lang.get("cmd.tp.success", Map.of("event", eventName)));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -147,7 +147,7 @@ public class AdminCommands {
         JavaPlugin.getPlugin(EventManager.class).pluginReload();
         this.evmHandler.reload();
 
-        sender.sendMessage(Component.text(Lang.get("command.reload")));
+        sender.sendMessage(Component.text(Lang.get("cmd.reload")));
 
         return Command.SINGLE_SUCCESS;
     }

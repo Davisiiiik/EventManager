@@ -1,13 +1,11 @@
 prefix: "&9[&6EVM&9] "
 console:
-  start: "TerminusCraft Event Manager v {ver} successfully loaded!"
+  start: "TerminusCraft Event Manager successfully loaded!"
   end: "TerminusCraft Event Manager successfully unloaded!"
-command:
+cmd:
   start: "&aSuccessfully started the &f{event}&a Event, don't forget to notify the players!"
   end: "&aSuccessfully ended the &f{event}&a Event!"
   reload: "&aConfiguration and language file reloaded!"
-  list:
-    header: "&aList of all TerminusCraft events:"
   current:
     success: "&aCurrent event is &f{event}&a, type &f/event &ato connect."
     no_event: "&cThere is currently no active event!"
@@ -20,12 +18,21 @@ command:
   tp:
     success: "&aSuccessfully teleported to the event &f{event}&a."
     not_found: "&cEvent &f{event} &cnot found."
+  list:
+    header: "&6----- Terminus&9Craft &6Eventy ({page}/{total}) -----"
+    invalid_page: "&cInvalid page number"
+    item: " &e• {event}"
+    prev: " ◀ "
+    next: " ▶ "
+    page: "Go to page {page}"
+    footer: " Page {page}/{total} "
 error:
   players_only: "&cOnly players can use this command!"
   event_invalid: "&cEvent '{event}' doesn't exists, or its world is invalid."
   event_load_try: "&cCannot reach world from event '{event}'. Trying to load it ..."
   event_load_abort: "&cAttempt to load the world from event '{event}' unsuccessful. Aborting ..."
 command.help.messages:
+  - "&aList of all available commands:"
   - "&e/evm list &7- List all events"
   - "&e/evm tp <event> &7- Teleport to an event"
   - "&e/evm admin &7- Admin commands"

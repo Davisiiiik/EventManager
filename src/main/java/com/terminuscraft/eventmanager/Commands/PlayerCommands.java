@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.infernalsuite.asp.api.world.SlimeWorldInstance;
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 
 import org.bukkit.World;
@@ -19,6 +20,7 @@ import com.terminuscraft.eventmanager.eventhandler.Event;
 import com.terminuscraft.eventmanager.eventhandler.EvmHandler;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
 import com.terminuscraft.eventmanager.miscellaneous.Lang;
+import com.terminuscraft.eventmanager.miscellaneous.PaginationUtil;
 
 public class PlayerCommands {
 
@@ -39,7 +41,7 @@ public class PlayerCommands {
 
         Event event = EvmHandler.getCurrentEvent();
         if (event == null) {
-            player.sendMessage(Lang.get("command.current.no_event"));
+            player.sendMessage(Lang.get("cmd.current.no_event"));
             return Command.SINGLE_SUCCESS;
         }
 
@@ -60,7 +62,7 @@ public class PlayerCommands {
         World eventWorld = eventWorldInstance.getBukkitWorld();
 
         player.teleport(eventWorld.getSpawnLocation());
-        player.sendMessage(Lang.get("command.tp.success", Map.of("event", eventName)));
+        player.sendMessage(Lang.get("cmd.tp.success", Map.of("event", eventName)));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -68,7 +70,7 @@ public class PlayerCommands {
     public int help(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
 
-        for (String line : Lang.getList("command.help.messages")) {
+        for (String line : Lang.getList("cmd.help.messages")) {
             sender.sendMessage(line);
         }
 
@@ -79,11 +81,11 @@ public class PlayerCommands {
         CommandSender sender = ctx.getSource().getSender();
 
         if (EvmHandler.getCurrentEvent() == null) {
-            sender.sendMessage(Lang.get("command.current.no_event"));
+            sender.sendMessage(Lang.get("cmd.current.no_event"));
         } else {
             Event event = EvmHandler.getCurrentEvent();
             sender.sendMessage(
-                Lang.get("command.current.success", Map.of("event", event.getName()))
+                Lang.get("cmd.current.success", Map.of("event", event.getName()))
             );
         }
 
@@ -92,10 +94,16 @@ public class PlayerCommands {
 
     public int listEvents(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
+        int page = 1;
 
-        // Call evmHandler method
+        try {
+            page = IntegerArgumentType.getInteger(ctx, "page");
+        } catch (IllegalArgumentException ignored) {
+            // default to page 1
+        }
+
         List<String> worldsList = this.evmHandler.getEventList();
-        sender.sendMessage("Current list of events:\n" + worldsList);
+        PaginationUtil.sendPaginatedList(sender, worldsList, page, "evm list");
 
         return Command.SINGLE_SUCCESS;
     }

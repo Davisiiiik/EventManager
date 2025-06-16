@@ -3,6 +3,7 @@ package com.terminuscraft.eventmanager.commands;
 import java.util.List;
 import java.io.IOException;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
@@ -41,8 +42,13 @@ public class CommandManager {
             /* /evm current */
             .then(Commands.literal("current").executes(player::getEvent))
             
-            /* /evm list */
-            .then(Commands.literal("list").executes(player::listEvents))
+            /* /evm list [page] */
+            .then(Commands.literal("list")
+                .executes(player::listEvents)
+                .then(Commands.argument("page", IntegerArgumentType.integer(1))
+                    .executes(player::listEvents)
+                )
+            )
             
             /* /evm admin ... */
             .then(Commands.literal("admin")

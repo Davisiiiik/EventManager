@@ -18,8 +18,6 @@ import com.terminuscraft.eventmanager.miscellaneous.PlayerJoinListener;
  * @author Copyright (c) Davisiiiik. All Rights Reserved.
  */
 public class EventManager extends JavaPlugin {
-    
-    String ver = "0.0.3";
     private EvmHandler evmHandler;
 
     @Override
@@ -39,7 +37,7 @@ public class EventManager extends JavaPlugin {
             commands.registrar().register(commandManager.createCommand().build());
         });
 
-        getLogger().info(Lang.get("console.start", Map.of("ver", ver)));
+        getLogger().info(Lang.get("console.start"));
         getServer().getPluginManager().registerEvents(
             new PlayerJoinListener(this.evmHandler), this
         );

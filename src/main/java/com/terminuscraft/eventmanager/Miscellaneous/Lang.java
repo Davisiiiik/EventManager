@@ -69,17 +69,29 @@ public final class Lang {
         this.dictionary = YamlConfiguration.loadConfiguration(langFile);
     }
 
+    private static File getLangFileName() {
+        return new File(instance.langFolder, langFileName);
+    }
+
     public static void reload() {
         instance.loadDictionary();
     }
 
     public static String get(String key) {
-        return get(key, Map.of());
+        return get(key, Map.of(), true);
+    }
+
+    public static String get(String key, boolean usePrefix) {
+        return get(key, Map.of(), usePrefix);
     }
 
     public static String get(String key, Map<String, String> placeholders) {
+        return get(key, placeholders, true);
+    }
+
+    public static String get(String key, Map<String, String> placeholders, boolean usePrefix) {
         if (instance == null) {
-            return "§c[Lang not initialized]";
+            return "&c[Lang not initialized]";
         }
 
         String raw = instance.dictionary.getString(key);
@@ -92,10 +104,10 @@ public final class Lang {
                 try {
                     instance.dictionary.save(getLangFileName());
                 } catch (IOException e) {
-                    Bukkit.getLogger().warning("[Lang] Failed to append missing key: " + key);
+                    Bukkit.getLogger().warning("&c[Lang] Failed to append missing key: " + key);
                 }
             } else {
-                raw = "§cMissing lang key: " + key;
+                raw = "&cMissing lang key: " + key;
             }
         }
 
@@ -103,12 +115,16 @@ public final class Lang {
             raw = raw.replace("{" + entry.getKey() + "}", entry.getValue());
         }
 
+        if (usePrefix) {
+            raw = instance.dictionary.getString("prefix") + raw;
+        }
+
         return ChatColor.translateAlternateColorCodes('&', raw);
     }
 
     public static List<String> getList(String key) {
         if (instance == null) {
-            return List.of("§c[Lang not initialized]");
+            return List.of("&c[Lang not initialized]");
         }
 
         List<String> result = instance.dictionary.getStringList(key);
@@ -119,17 +135,13 @@ public final class Lang {
             try {
                 instance.dictionary.save(getLangFileName());
             } catch (IOException e) {
-                Bukkit.getLogger().warning("[Lang] Failed to append missing list key: " + key);
+                Bukkit.getLogger().warning("&c[Lang] Failed to append missing list key: " + key);
             }
         }
 
         return result.stream()
             .map(line -> ChatColor.translateAlternateColorCodes('&', line))
             .toList();
-    }
-
-    private static File getLangFileName() {
-        return new File(instance.langFolder, langFileName);
     }
 }
 
