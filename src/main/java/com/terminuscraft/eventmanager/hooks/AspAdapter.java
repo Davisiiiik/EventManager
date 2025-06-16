@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.terminuscraft.eventmanager.EventManager;
-
 import com.infernalsuite.asp.api.AdvancedSlimePaperAPI;
 import com.infernalsuite.asp.api.exceptions.CorruptedWorldException;
 import com.infernalsuite.asp.api.exceptions.NewerFormatException;
@@ -26,10 +24,10 @@ public class AspAdapter {
     private final SlimeLoader slimeLoader;
     private SlimePropertyMap properties = new SlimePropertyMap();
 
-    private final Logger logger;
+    public final Logger logger;
 
-    public AspAdapter(EventManager plugin) {
-        this.logger = plugin.getLogger();
+    public AspAdapter(Logger logger) {
+        this.logger = logger;
 
         this.slimeLoader = new FileLoader(new File("slime_worlds"));
 
@@ -49,9 +47,8 @@ public class AspAdapter {
         try {
             if (this.slimeLoader.worldExists(worldName)) {
                 logger.log(
-                    Level.WARNING,
-                    "An exception occurred while trying to create the world \"" + worldName
-                    + "\", world with this name already exists!"
+                    Level.WARNING, "An exception occurred while trying to create the world \""
+                                 + worldName + "\", world with this name already exists!"
                 );
             } else {
                 slimeWorld = asp.createEmptyWorld(worldName, false, properties, this.slimeLoader);
@@ -107,6 +104,10 @@ public class AspAdapter {
 
     public List<String> listWorlds() throws IOException {
         return this.slimeLoader.listWorlds();
+    }
+
+    public boolean worldExists(String worldName) throws IOException {
+        return this.slimeLoader.worldExists(worldName);
     }
 
     public SlimeWorldInstance getWorldInstance(String worldName) {

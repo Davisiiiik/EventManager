@@ -6,14 +6,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import com.terminuscraft.eventmanager.hooks.AspAdapter;
+import com.terminuscraft.eventmanager.eventhandler.EvmHandler;
 
 public class PlayerJoinListener implements Listener {
     
-    private final AspAdapter aspHandler;
+    private final EvmHandler evmHandler;
 
-    public PlayerJoinListener(AspAdapter handler) {
-        this.aspHandler = handler;
+    public PlayerJoinListener(EvmHandler handler) {
+        this.evmHandler = handler;
     }
     
     @EventHandler
@@ -22,7 +22,7 @@ public class PlayerJoinListener implements Listener {
         System.out.println("Player " + event.getPlayer().getName() + " just joined");
 
         try {
-            System.out.println("Current ASWM worlds: " + aspHandler.listWorlds());
+            System.out.println("Current ASWM worlds: " + evmHandler.listWorlds());
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

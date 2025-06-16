@@ -3,20 +3,28 @@ console:
   start: "TerminusCraft Event Manager v {ver} successfully loaded!"
   end: "TerminusCraft Event Manager successfully unloaded!"
 command:
+  start: "&aSuccessfully started the &f{event}&a Event, don't forget to notify the players!"
+  end: "&aSuccessfully ended the &f{event}&a Event!"
+  reload: "&aConfiguration and language file reloaded!"
   list:
     header: "&aList of all TerminusCraft events:"
   current:
-    success: "&aCurrent event is &f{event}&a, type &f/event &ato connect"
+    success: "&aCurrent event is &f{event}&a, type &f/event &ato connect."
     no_event: "&cThere is currently no active event!"
-  admin:
-    start: "&aSuccessfully started the &f{event}&a Event, don't forget to notify the players!"
-    end: "&aSuccessfully ended the &f{event}&a Event!"
-    tp:
-      success: "&aSuccessfully teleported to the event &f{event}"
-      not_found: "&cEvent &f{event} &cnot found."
-    reload: "&aConfiguration and language file reloaded!"
+  add:
+    success: "&aWorld &f{event} &awas successfully added as a new event."
+    no_world: "&cWorld &f{event} &cnot found. Cannot create new event from it."
+  create:
+    success: "&aNew event named &f{event} &asuccessfully created."
+    dupe: "&cEvent named &f{event} &calready exists, aborting..."
+  tp:
+    success: "&aSuccessfully teleported to the event &f{event}&a."
+    not_found: "&cEvent &f{event} &cnot found."
 error:
-  only_players: "&cOnly players can run this command."
+  players_only: "&cOnly players can use this command!"
+  event_invalid: "&cEvent '{event}' doesn't exists, or its world is invalid."
+  event_load_try: "&cCannot reach world from event '{event}'. Trying to load it ..."
+  event_load_abort: "&cAttempt to load the world from event '{event}' unsuccessful. Aborting ..."
 command.help.messages:
   - "&e/evm list &7- List all events"
   - "&e/evm tp <event> &7- Teleport to an event"

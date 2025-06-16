@@ -37,8 +37,10 @@ public final class Lang {
         plugin = javaPlugin;
 
         this.langFolder = new File(plugin.getDataFolder(), "languages");
-        if (!this.langFolder.exists()) {
-            this.langFolder.mkdirs();
+        
+        /* Try making langFolder dir, if it doesn't exist and raise exception if unsuccessful */
+        if (!(this.langFolder.exists() || this.langFolder.mkdirs())) {
+            throw new IOException("Unable to create path");
         }
 
         /* Load default lang file from inside JAR */
@@ -57,7 +59,7 @@ public final class Lang {
 
     private void loadDictionary() {
         /* Set the static attribute langFileName to "language" option from config or to default */
-        langFileName = plugin.getConfig().getString("language", "lang.yml");
+        langFileName = plugin.getConfig().getString("language", "en.yml");
         File langFile = new File(this.langFolder, langFileName);
         if (!langFile.exists()) {
             // Extract the default from JAR: /languages/lang.yml

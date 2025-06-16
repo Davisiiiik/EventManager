@@ -1,16 +1,13 @@
 package com.terminuscraft.eventmanager;
 
-import java.util.List;
 import java.util.Map;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.terminuscraft.eventmanager.commands.CommandManager;
-import com.terminuscraft.eventmanager.hooks.AspAdapter;
+import com.terminuscraft.eventmanager.eventhandler.EvmHandler;
 import com.terminuscraft.eventmanager.miscellaneous.Lang;
 import com.terminuscraft.eventmanager.miscellaneous.PlayerJoinListener;
 
@@ -22,8 +19,8 @@ import com.terminuscraft.eventmanager.miscellaneous.PlayerJoinListener;
  */
 public class EventManager extends JavaPlugin {
     
-    String ver = "0.0.2";
-    private AspAdapter aspHandler;
+    String ver = "0.0.3";
+    private EvmHandler evmHandler;
 
     @Override
     public void onEnable() {
@@ -33,19 +30,19 @@ public class EventManager extends JavaPlugin {
         /* Now load the language specified in config by user or default lang.yml file */
         Lang.init(this);
 
-        /* Hooking part, woohoo! */
-        this.aspHandler = new AspAdapter(this);
-
-        getLogger().info(Lang.get("console.start", Map.of("ver", ver)));
-        getServer().getPluginManager().registerEvents(
-            new PlayerJoinListener(this.aspHandler), this
-        );
+        /* Prepare event handling */
+        this.evmHandler = new EvmHandler(this);
 
         /* Initialize the CommandManager */
-        CommandManager commandManager = new CommandManager(this.aspHandler);
+        CommandManager commandManager = new CommandManager(this.evmHandler);
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             commands.registrar().register(commandManager.createCommand().build());
         });
+
+        getLogger().info(Lang.get("console.start", Map.of("ver", ver)));
+        getServer().getPluginManager().registerEvents(
+            new PlayerJoinListener(this.evmHandler), this
+        );
     }
 
     @Override
@@ -56,5 +53,6 @@ public class EventManager extends JavaPlugin {
     public void pluginReload() {
         this.reloadConfig();
         Lang.reload();
+        evmHandler.reload();
     }
 }

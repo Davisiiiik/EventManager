@@ -1,5 +1,6 @@
 package com.terminuscraft.eventmanager.commands;
 
+import java.io.IOException;
 import java.util.Map;
 
 import com.mojang.brigadier.Command;
@@ -16,28 +17,58 @@ import net.kyori.adventure.text.Component;
 import com.terminuscraft.eventmanager.EventManager;
 import com.terminuscraft.eventmanager.eventhandler.Event;
 import com.terminuscraft.eventmanager.eventhandler.EvmHandler;
-import com.terminuscraft.eventmanager.hooks.AspAdapter;
+import com.terminuscraft.eventmanager.miscellaneous.Constants;
 import com.terminuscraft.eventmanager.miscellaneous.Lang;
 
 import com.infernalsuite.asp.api.world.SlimeWorldInstance;
 
 public class AdminCommands {
 
-    private final AspAdapter aspHandler;
+    public final EvmHandler evmHandler;
 
-    public AdminCommands(AspAdapter handler) {
-        this.aspHandler = handler;
+    public AdminCommands(EvmHandler evmHandler) {
+        this.evmHandler = evmHandler;
     }
 
-    public int endEvent(CommandContext<CommandSourceStack> ctx) {
+    public int addEvent(CommandContext<CommandSourceStack> ctx) {
+        String eventName = ctx.getArgument("event", String.class);
         CommandSender sender = ctx.getSource().getSender();
 
-        Event event = EvmHandler.getCurrentEvent();
+        boolean worldExists;
 
-        sender.sendMessage(Lang.get("command.admin.start", Map.of("event", event.getName())));
-        EvmHandler.setCurrentEvent(null);
+        try {
+            worldExists = evmHandler.worldExists(eventName);
+        } catch (IOException e) {
+            worldExists = false;
+        }
 
-        /* Unload world */
+        if (!worldExists) {
+            sender.sendMessage(Lang.get("command.add.no_world", Map.of("event", eventName)));
+        } else if (evmHandler.getEventList().contains(eventName)) {
+            sender.sendMessage(Lang.get("command.create.dupe", Map.of("event", eventName)));
+        } else {
+            evmHandler.addEvent(eventName);
+            sender.sendMessage(Lang.get("command.add.success", Map.of("event", eventName)));
+        }
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    public int createEvent(CommandContext<CommandSourceStack> ctx) {
+        String eventName = ctx.getArgument("event", String.class);
+        CommandSender sender = ctx.getSource().getSender();
+
+        if (evmHandler.eventExists(eventName)) {
+            sender.sendMessage(
+                Lang.get("command.create.dupe", Map.of("event", eventName))
+            );
+        } else {
+            if (evmHandler.createEvent(eventName) == Constants.SUCCESS) {
+                sender.sendMessage(
+                    Lang.get("command.create.success", Map.of("event", eventName))
+                );
+            }
+        }
 
         return Command.SINGLE_SUCCESS;
     }
@@ -46,15 +77,31 @@ public class AdminCommands {
         String eventName = ctx.getArgument("event", String.class);
         CommandSender sender = ctx.getSource().getSender();
 
-        /* TODO: EventWorldHandler should check if the event with given name exists and abort if
-                 not, for now just create a new instance of event instead of loading from config */
-        Event event = new Event(eventName);
+        if (evmHandler.eventExists(eventName)) {
+            EvmHandler.setCurrentEvent(evmHandler.getEvent(eventName));
+            sender.sendMessage(Lang.get("command.start", Map.of("event", eventName)));
+        } else {
+            sender.sendMessage(Lang.get("error.event_invalid", Map.of("event", eventName)));
+        }
 
-        sender.sendMessage(Lang.get("command.admin.end", Map.of("event", event.getName())));
-        EvmHandler.setCurrentEvent(event);
+        /* TODO: Load world */
+        /* TODO: Refresh CMI holograms */
 
-        /* Load world */
-        /* Refresh CMI holograms */
+        return Command.SINGLE_SUCCESS;
+    }
+
+    public int endEvent(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+
+        Event event = EvmHandler.getCurrentEvent();
+        if (event == null) {
+            sender.sendMessage(Lang.get("command.current.no_event"));
+        } else {
+            sender.sendMessage(Lang.get("command.end", Map.of("event", event.getName())));
+            EvmHandler.setCurrentEvent(null);
+            
+            /* TODO: Unload world */
+        }
 
         return Command.SINGLE_SUCCESS;
     }
@@ -64,30 +111,32 @@ public class AdminCommands {
         Entity executor = ctx.getSource().getExecutor();
 
         if (!(executor instanceof Player player)) {
-            sender.sendMessage("Only players can use this command.");
-            return 0;
+            sender.sendMessage(Lang.get("error.players_only"));
+            return Constants.FAIL;
         }
 
-        String event = ctx.getArgument("event", String.class);
+        String eventName = ctx.getArgument("event", String.class);
+        if (!evmHandler.eventExists(eventName)) {
+            player.sendMessage(Lang.get("command.tp.not_found", Map.of("event", eventName)));
+            return Constants.FAIL;
+        }
 
-        SlimeWorldInstance eventWorldInstance = aspHandler.getWorldInstance(event);
+        SlimeWorldInstance eventWorldInstance = evmHandler.getWorldInstance(eventName);
         if (eventWorldInstance == null) {
-            player.sendMessage("§cWorld '" + event + "' is not loaded. Trying to load it ...");
-            aspHandler.loadWorld(event);
-            eventWorldInstance = aspHandler.getWorldInstance(event);
+            player.sendMessage(Lang.get("error.event_load_try", Map.of("event", eventName)));
+            evmHandler.loadWorld(eventName);
+            eventWorldInstance = evmHandler.getWorldInstance(eventName);
 
             if (eventWorldInstance == null) {
-                player.sendMessage(
-                    "§cAttempt to load the world '" + event + "' unsuccessful. Aborting ..."
-                );
-                return 0;
+                player.sendMessage(Lang.get("error.event_load_abort", Map.of("event", eventName)));
+                return Constants.FAIL;
             }
         }
 
         World eventWorld = eventWorldInstance.getBukkitWorld();
 
         player.teleport(eventWorld.getSpawnLocation());
-        player.sendMessage("§aTeleported to world: §f" + event);
+        player.sendMessage(Lang.get("command.tp.success", Map.of("event", eventName)));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -96,8 +145,9 @@ public class AdminCommands {
         CommandSender sender = ctx.getSource().getSender();
 
         JavaPlugin.getPlugin(EventManager.class).pluginReload();
+        this.evmHandler.reload();
 
-        sender.sendMessage(Component.text(Lang.get("command.admin.reload")));
+        sender.sendMessage(Component.text(Lang.get("command.reload")));
 
         return Command.SINGLE_SUCCESS;
     }

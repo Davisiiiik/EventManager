@@ -17,15 +17,15 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 
 import com.terminuscraft.eventmanager.eventhandler.Event;
 import com.terminuscraft.eventmanager.eventhandler.EvmHandler;
-import com.terminuscraft.eventmanager.hooks.AspAdapter;
+import com.terminuscraft.eventmanager.miscellaneous.Constants;
 import com.terminuscraft.eventmanager.miscellaneous.Lang;
 
 public class PlayerCommands {
 
-    private final AspAdapter aspHandler;
+    public final EvmHandler evmHandler;
 
-    public PlayerCommands(AspAdapter handler) {
-        this.aspHandler = handler;
+    public PlayerCommands(EvmHandler handler) {
+        this.evmHandler = handler;
     }
 
     public int teleport(CommandContext<CommandSourceStack> ctx) {
@@ -33,32 +33,34 @@ public class PlayerCommands {
         Entity executor = ctx.getSource().getExecutor();
 
         if (!(executor instanceof Player player)) {
-            sender.sendMessage("Only players can use this command.");
-            return 0;
+            sender.sendMessage(Lang.get("error.players_only"));
+            return Constants.FAIL;
         }
 
-        /* TODO: EventWorldHandler should check if the event with given name exists and abort if
-                 not, for now just create a new instance of event instead of loading from config */
-        String event = EvmHandler.getCurrentEvent().getName();
+        Event event = EvmHandler.getCurrentEvent();
+        if (event == null) {
+            player.sendMessage(Lang.get("command.current.no_event"));
+            return Command.SINGLE_SUCCESS;
+        }
 
-        SlimeWorldInstance eventWorldInstance = aspHandler.getWorldInstance(event);
+        String eventName = event.getName();
+
+        SlimeWorldInstance eventWorldInstance = evmHandler.getWorldInstance(eventName);
         if (eventWorldInstance == null) {
-            player.sendMessage("§cWorld '" + event + "' is not loaded. Trying to load it ...");
-            aspHandler.loadWorld(event);
-            eventWorldInstance = aspHandler.getWorldInstance(event);
+            player.sendMessage(Lang.get("error.event_load_try", Map.of("event", eventName)));
+            evmHandler.loadWorld(eventName);
+            eventWorldInstance = evmHandler.getWorldInstance(eventName);
 
             if (eventWorldInstance == null) {
-                player.sendMessage(
-                    "§cAttempt to load the world '" + event + "' unsuccessful. Aborting ..."
-                );
-                return 0;
+                player.sendMessage(Lang.get("error.event_load_abort", Map.of("event", eventName)));
+                return Constants.FAIL;
             }
         }
 
         World eventWorld = eventWorldInstance.getBukkitWorld();
 
         player.teleport(eventWorld.getSpawnLocation());
-        player.sendMessage("§aTeleported to world: §f" + event);
+        player.sendMessage(Lang.get("command.tp.success", Map.of("event", eventName)));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -91,15 +93,9 @@ public class PlayerCommands {
     public int listEvents(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
 
-        // Call ASPHandler method
-        try {
-            List<String> worldsList = this.aspHandler.listWorlds();
-            sender.sendMessage("Current list of events:\n" + worldsList);
-        } catch (IOException e) {
-            sender.sendMessage(
-                "Error: Couldnt retrieve list of events, try contacting Administrator!"
-                );
-        }
+        // Call evmHandler method
+        List<String> worldsList = this.evmHandler.getEventList();
+        sender.sendMessage("Current list of events:\n" + worldsList);
 
         return Command.SINGLE_SUCCESS;
     }
