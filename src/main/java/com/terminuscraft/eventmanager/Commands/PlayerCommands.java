@@ -45,16 +45,15 @@ public class PlayerCommands {
             return Command.SINGLE_SUCCESS;
         }
 
-        String eventName = event.getName();
-
-        SlimeWorldInstance eventWorldInstance = evmHandler.getWorldInstance(eventName);
+        SlimeWorldInstance eventWorldInstance = evmHandler.getWorldInstance(event);
         if (eventWorldInstance == null) {
-            player.sendMessage(Lang.get("error.event_load_try", Map.of("event", eventName)));
-            evmHandler.loadWorld(eventName);
-            eventWorldInstance = evmHandler.getWorldInstance(eventName);
+            player.sendMessage(Lang.get("error.event_load_try", Map.of("event", event.getName())));
+            eventWorldInstance = evmHandler.loadWorldInstance(event);
 
             if (eventWorldInstance == null) {
-                player.sendMessage(Lang.get("error.event_load_abort", Map.of("event", eventName)));
+                player.sendMessage(
+                    Lang.get("error.event_load_abort", Map.of("event", event.getName()))
+                );
                 return Constants.FAIL;
             }
         }
@@ -62,7 +61,7 @@ public class PlayerCommands {
         World eventWorld = eventWorldInstance.getBukkitWorld();
 
         player.teleport(eventWorld.getSpawnLocation());
-        player.sendMessage(Lang.get("cmd.tp.success", Map.of("event", eventName)));
+        player.sendMessage(Lang.get("cmd.tp.success", Map.of("event", event.getName())));
 
         return Command.SINGLE_SUCCESS;
     }

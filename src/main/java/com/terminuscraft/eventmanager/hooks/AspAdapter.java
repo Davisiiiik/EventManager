@@ -16,6 +16,7 @@ import com.infernalsuite.asp.api.world.SlimeWorldInstance;
 import com.infernalsuite.asp.api.world.properties.SlimeProperties;
 import com.infernalsuite.asp.api.world.properties.SlimePropertyMap;
 import com.infernalsuite.asp.loaders.file.FileLoader;
+import com.terminuscraft.eventmanager.miscellaneous.Log;
 
 
 public class AspAdapter {
@@ -24,10 +25,7 @@ public class AspAdapter {
     private final SlimeLoader slimeLoader;
     private SlimePropertyMap properties = new SlimePropertyMap();
 
-    public final Logger logger;
-
-    public AspAdapter(Logger logger) {
-        this.logger = logger;
+    public AspAdapter() {
 
         this.slimeLoader = new FileLoader(new File("slime_worlds"));
 
@@ -46,7 +44,7 @@ public class AspAdapter {
 
         try {
             if (this.slimeLoader.worldExists(worldName)) {
-                logger.log(
+                Log.logger.log(
                     Level.WARNING, "An exception occurred while trying to create the world \""
                                  + worldName + "\", world with this name already exists!"
                 );
@@ -56,7 +54,7 @@ public class AspAdapter {
             }
             
         } catch (IOException exception) {
-            logger.log(
+            Log.logger.log(
                 Level.SEVERE,
                 "An exception occurred while trying to create the world: " + worldName, exception
             );
@@ -65,7 +63,7 @@ public class AspAdapter {
         return slimeWorldInstance;
     }
 
-    public SlimeWorldInstance loadWorld(String worldName) {
+    public SlimeWorldInstance loadWorldInstance(String worldName) {
         SlimeWorld slimeWorld;
         SlimeWorldInstance slimeWorldInstance = null;
 
@@ -77,7 +75,7 @@ public class AspAdapter {
 
                 slimeWorldInstance = asp.loadWorld(slimeWorld, true);
             } else {
-                logger.log(
+                Log.logger.log(
                     Level.WARNING,
                     "An exception occurred while trying to load the world \"" + worldName
                     + "\", world with this name does NOT exist!"
@@ -89,7 +87,7 @@ public class AspAdapter {
           | CorruptedWorldException
           | NewerFormatException
           | UnknownWorldException e) {
-            logger.log(
+            Log.logger.log(
                 Level.SEVERE,
                 "An exception occurred while trying to load the world: " + worldName, e
             );

@@ -1,7 +1,5 @@
 package com.terminuscraft.eventmanager;
 
-import java.util.Map;
-
 import org.bukkit.plugin.java.JavaPlugin;
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -37,7 +35,7 @@ public class EventManager extends JavaPlugin {
             commands.registrar().register(commandManager.createCommand().build());
         });
 
-        getLogger().info(Lang.get("console.start"));
+        getLogger().info(Lang.get("system.start"));
         getServer().getPluginManager().registerEvents(
             new PlayerJoinListener(this.evmHandler), this
         );
@@ -45,7 +43,7 @@ public class EventManager extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        getLogger().info(Lang.get("console.end"));
+        getLogger().info(Lang.get("system.end"));
     }
 
     public void pluginReload() {

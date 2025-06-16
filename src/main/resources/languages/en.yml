@@ -1,7 +1,8 @@
 prefix: "&9[&6EVM&9] "
-console:
+system:
   start: "TerminusCraft Event Manager successfully loaded!"
   end: "TerminusCraft Event Manager successfully unloaded!"
+  auto_tp: "&aYou have been successfully teleported to the currently running event &f{event}&a."
 cmd:
   start: "&aSuccessfully started the &f{event}&a Event, don't forget to notify the players!"
   end: "&aSuccessfully ended the &f{event}&a Event!"
@@ -19,13 +20,13 @@ cmd:
     success: "&aSuccessfully teleported to the event &f{event}&a."
     not_found: "&cEvent &f{event} &cnot found."
   list:
-    header: "&6----- Terminus&9Craft &6Eventy ({page}/{total}) -----"
+    header: "&6----- Terminus&9Craft &6Eventy-----"
     invalid_page: "&cInvalid page number"
     item: " &e• {event}"
     prev: " ◀ "
     next: " ▶ "
     page: "Go to page {page}"
-    footer: " Page {page}/{total} "
+    footer: " Page ({page}/{total}) "
 error:
   players_only: "&cOnly players can use this command!"
   event_invalid: "&cEvent '{event}' doesn't exists, or its world is invalid."

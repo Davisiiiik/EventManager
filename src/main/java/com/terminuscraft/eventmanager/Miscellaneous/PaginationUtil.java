@@ -28,7 +28,7 @@ public class PaginationUtil {
             );
 
         // Header
-        player.sendMessage(Lang.get("cmd.list.header", pageDict, false));
+        player.sendMessage(Lang.get("cmd.list.header", false));
 
         // Items
         for (int i = startIndex; i < endIndex; i++) {

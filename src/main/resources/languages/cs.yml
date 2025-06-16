@@ -1,7 +1,8 @@
 prefix: "&9[&6EVM&9] "
-console:
+system:
   start: "TerminusCraft Event Manager byl úspěšně načten!"
   end: "TerminusCraft Event Manager byl úspěšně ukončen!"
+  auto_tp: "&aByl jsi úspěšně	teleportován na právě probíhající event &f{event}&a."
 cmd:
   start: "&aÚspěšně jsi spustil event &f{event}&a, nezapomeň upozornit hráče!"
   end: "&aÚspěšně jsi ukončil event &f{event}&a!"
@@ -19,13 +20,13 @@ cmd:
     success: "&aByl jsi úspěšně teleportován na event &f{event}&a."
     not_found: "&cEvent &f{event} &cnenalezen."
   list:
-    header: "&6----- Terminus&9Craft &6Eventy ({page}/{total}) -----"
+    header: "&6----- Terminus&9Craft &6Eventy -----"
     invalid_page: "&cNeplatné číslo stránky"
     item: " &e• {event}"
     prev: " ◀ "
     next: " ▶ "
     page: "Přejít na stránku {page}"
-    footer: " Stránka {page}/{total} "
+    footer: " Stránka ({page}/{total}) "
 error:
   players_only: "&cTento příkaz mohou používat pouze hráči!"
   event_invalid: "&cEvent '{event}' neexistuje, nebo nemá vytvořený svět."

@@ -107,6 +107,7 @@ public class AdminCommands {
     }
 
     public int teleport(CommandContext<CommandSourceStack> ctx) {
+        String eventName = ctx.getArgument("event", String.class);
         CommandSender sender = ctx.getSource().getSender();
         Entity executor = ctx.getSource().getExecutor();
 
@@ -115,17 +116,16 @@ public class AdminCommands {
             return Constants.FAIL;
         }
 
-        String eventName = ctx.getArgument("event", String.class);
-        if (!evmHandler.eventExists(eventName)) {
+        Event event = evmHandler.getEvent(ctx.getArgument("event", String.class));
+        if (event == null) {
             player.sendMessage(Lang.get("cmd.tp.not_found", Map.of("event", eventName)));
             return Constants.FAIL;
         }
 
-        SlimeWorldInstance eventWorldInstance = evmHandler.getWorldInstance(eventName);
+        SlimeWorldInstance eventWorldInstance = evmHandler.getWorldInstance(event);
         if (eventWorldInstance == null) {
             player.sendMessage(Lang.get("error.event_load_try", Map.of("event", eventName)));
-            evmHandler.loadWorld(eventName);
-            eventWorldInstance = evmHandler.getWorldInstance(eventName);
+            eventWorldInstance = evmHandler.loadWorldInstance(event);
 
             if (eventWorldInstance == null) {
                 player.sendMessage(Lang.get("error.event_load_abort", Map.of("event", eventName)));

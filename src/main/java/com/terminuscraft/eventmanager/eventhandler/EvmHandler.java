@@ -15,6 +15,7 @@ import com.terminuscraft.eventmanager.EventManager;
 import com.terminuscraft.eventmanager.hooks.AspAdapter;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
 import com.terminuscraft.eventmanager.miscellaneous.Environment;
+import com.terminuscraft.eventmanager.miscellaneous.Log;
 
 public class EvmHandler extends AspAdapter {
 
@@ -24,7 +25,7 @@ public class EvmHandler extends AspAdapter {
     private static Event currentEvent;
 
     public EvmHandler(EventManager plugin) {
-        super(plugin.getLogger());
+        super();
 
         this.eventFile = new File(plugin.getDataFolder(), "events.yml");
         if (!eventFile.exists()) {
@@ -60,7 +61,7 @@ public class EvmHandler extends AspAdapter {
 
                 events.put(name.toLowerCase(), event);
             } catch (Exception e) {
-                logger.warning("Failed to load event '" + key + "': " + e.getMessage());
+                Log.logger.warning("Failed to load event '" + key + "': " + e.getMessage());
             }
         }
     }
@@ -85,7 +86,7 @@ public class EvmHandler extends AspAdapter {
         try {
             config.save(eventFile);
         } catch (IOException e) {
-            logger.warning("Failed to save events.yml");
+            Log.logger.warning("Failed to save events.yml");
         }
     }
 
@@ -105,7 +106,7 @@ public class EvmHandler extends AspAdapter {
             Event event = new Event(eventName);
             events.put(eventName.toLowerCase(), event);
         } else {
-            logger.warning(
+            Log.logger.warning(
                 "Cannot add event " + eventName + ", world with this name doesn't exist."
             );
             return Constants.FAIL;
@@ -148,7 +149,11 @@ public class EvmHandler extends AspAdapter {
     }
 
     public Event getEvent(String eventName) {
-        return events.get(eventName.toLowerCase());
+        if (this.eventExists(eventName)) {
+            return events.get(eventName.toLowerCase());
+        } else {
+            return null;
+        }
     }
 
     /*public Collection<Event> listEvents() {
@@ -166,6 +171,14 @@ public class EvmHandler extends AspAdapter {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public SlimeWorldInstance loadWorldInstance(Event eventName) {
+        return this.loadWorldInstance(eventName.getName());
+    }
+
+    public SlimeWorldInstance getWorldInstance(Event eventName) {
+        return this.getWorldInstance(eventName.getName());
     }
 
     public void reload() {
