@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.infernalsuite.asp.api.world.properties.SlimeProperties;
 import com.infernalsuite.asp.api.world.properties.SlimeProperty;
@@ -21,7 +22,7 @@ public class GameProperties extends SlimeProperties {
      */
     public static final SlimePropertyBoolean LOAD_ON_STARTUP = SlimePropertyBoolean.create("loadOnStartup", false);
 
-    private static List<SlimeProperty<?, ?>> getSlimePropertyList () {
+    public static List<SlimeProperty<?, ?>> getSlimePropertyList() {
         return Arrays.asList(
             SPAWN_X,
             SPAWN_Y,
@@ -42,12 +43,19 @@ public class GameProperties extends SlimeProperties {
         );
     }
 
-    public static SlimePropertyMap getDefaultMap (FileConfiguration config) {
+    public static SlimePropertyMap getDefaultMap(FileConfiguration config) {
+        return loadMap(config, "default-cfg");
+    }
+
+    public static SlimePropertyMap getWorldMap(YamlConfiguration config, String worldName) {
+        return loadMap(config, "events." + worldName);
+    }
+
+    private static SlimePropertyMap loadMap(FileConfiguration config, String path) {
         SlimePropertyMap properties = new SlimePropertyMap();
 
         getSlimePropertyList().forEach((property) -> {
-            String key = "default-cfg." + property.getKey();
-            Log.logger.severe(config.get(key).toString());
+            String key = path + "." + property.getKey();
 
             if (config.get(key) != null) {
                 if (property instanceof SlimePropertyBoolean) {

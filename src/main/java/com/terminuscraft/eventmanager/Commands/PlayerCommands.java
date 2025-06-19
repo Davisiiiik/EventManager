@@ -45,16 +45,16 @@ public class PlayerCommands {
             return Command.SINGLE_SUCCESS;
         }
 
-        if (event.getWorldInstance() == null) {
+        World eventWorld = event.getWorld();
+        if (eventWorld == null) {
             executor.sendMessage(Lang.get("error.event_load_try", Map.of("event", event.getName())));
+            eventWorld = event.getWorld();
 
-            if (gameHandler.loadEventWorld(event) == Constants.FAIL) {
+            if (eventWorld == null) {
                 executor.sendMessage(Lang.get("error.event_load_abort", Map.of("event", event.getName())));
                 return Constants.FAIL;
             }
         }
-
-        World eventWorld = event.getWorld();
 
         executor.teleport(eventWorld.getSpawnLocation());
         executor.sendMessage(Lang.get("cmd.tp.success", Map.of("event", event.getName())));

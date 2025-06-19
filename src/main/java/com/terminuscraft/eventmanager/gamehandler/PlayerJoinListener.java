@@ -2,6 +2,7 @@ package com.terminuscraft.eventmanager.gamehandler;
 
 import java.util.Map;
 
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,11 +27,11 @@ public class PlayerJoinListener implements Listener {
             Player player = event.getPlayer();
 
             /* TODO: Check if player has permission to bypass auto-tp */
+            World eventWorld = currentEvent.getWorld();
+            if (eventWorld == null) {
+                eventWorld = currentEvent.getWorld();
 
-            if (currentEvent.getWorldInstance() == null) {
-                gameHandler.loadEventWorld(currentEvent);
-
-                if (currentEvent.getWorldInstance() == null) {
+                if (eventWorld == null) {
                     Log.logger.severe(
                         "An exception occurred while trying to teleport player on join to the \""
                         + currentEvent.getName() + "\" event. Its world couldn't be loaded!");

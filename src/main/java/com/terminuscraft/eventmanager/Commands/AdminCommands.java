@@ -1,6 +1,5 @@
 package com.terminuscraft.eventmanager.commands;
 
-import java.io.IOException;
 import java.util.Map;
 
 import com.mojang.brigadier.Command;
@@ -16,10 +15,10 @@ import net.kyori.adventure.text.Component;
 
 import com.terminuscraft.eventmanager.EventManager;
 import com.terminuscraft.eventmanager.communication.Lang;
+import com.terminuscraft.eventmanager.communication.Log;
 import com.terminuscraft.eventmanager.gamehandler.Game;
 import com.terminuscraft.eventmanager.gamehandler.GameHandler;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
-import com.infernalsuite.asp.api.world.SlimeWorldInstance;
 
 public class AdminCommands {
 
@@ -62,6 +61,10 @@ public class AdminCommands {
                 sender.sendMessage(
                     Lang.get("cmd.create.success", Map.of("event", eventName))
                 );
+            } else {
+                sender.sendMessage(
+                    Lang.get("cmd.create.fail", Map.of("event", eventName))
+                );
             }
         }
 
@@ -80,12 +83,22 @@ public class AdminCommands {
     public int startEvent(CommandContext<CommandSourceStack> ctx) {
         String eventName = ctx.getArgument("event", String.class);
         CommandSender sender = ctx.getSource().getSender();
-        
-        if (gameHandler.setCurrentEvent(eventName) == Constants.SUCCESS) {
-            sender.sendMessage(Lang.get("cmd.start", Map.of("event", eventName)));
+        Game currEvent = gameHandler.getCurrentEvent();
+
+        if ((currEvent != null) && currEvent.getName().equalsIgnoreCase(eventName)) {
+            sender.sendMessage(Lang.get("cmd.start.dupe", Map.of("event", currEvent.getName())));
+
+        } else if (gameHandler.setCurrentEvent(eventName) == Constants.SUCCESS) {
+            sender.sendMessage(Lang.get("cmd.start.success", Map.of("event", eventName)));
+            
         } else {
             sender.sendMessage(Lang.get("error.event_invalid", Map.of("event", eventName)));
         }
+
+        Log.logger.severe("===== DEBUG START =====");
+        Log.logger.warning(gameHandler.getCurrentEvent().getProperties().toString());
+        Log.logger.severe("====== DEBUG END ======");
+
 
         /* TODO: Load world */
         /* TODO: Refresh CMI holograms */
@@ -125,16 +138,16 @@ public class AdminCommands {
             return Constants.FAIL;
         }
 
-        if (event.getWorldInstance() == null) {
+        World eventWorld = event.getWorld();
+        if (eventWorld == null) {
             player.sendMessage(Lang.get("error.event_load_try", Map.of("event", eventName)));
+            eventWorld = event.getWorld();
 
-            if (gameHandler.loadEventWorld(event) == Constants.FAIL) {
+            if (eventWorld == null) {
                 player.sendMessage(Lang.get("error.event_load_abort", Map.of("event", eventName)));
                 return Constants.FAIL;
             }
         }
-
-        World eventWorld = event.getWorld();
 
         player.teleport(eventWorld.getSpawnLocation());
         player.sendMessage(Lang.get("cmd.tp.success", Map.of("event", eventName)));

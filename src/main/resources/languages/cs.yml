@@ -4,7 +4,9 @@ system:
   end: "TerminusCraft Event Manager byl úspěšně ukončen!"
   auto_tp: "&aByl jsi úspěšně teleportován na právě probíhající event &f{event}&a."
 cmd:
-  start: "&aÚspěšně jsi spustil event &f{event}&a, nezapomeň upozornit hráče!"
+  start:
+    success: "&aÚspěšně jsi spustil event &f{event}&a, nezapomeň upozornit hráče!"
+    dupe: "&cNemůžeš spustit event &f{event}&c, protože právě probíhá!"
   end: "&aÚspěšně jsi ukončil event &f{event}&a!"
   reload: "&aKonfigurační soubory byly znovu načteny!"
   current:
@@ -15,7 +17,8 @@ cmd:
     no_world: "&cSvět &f{event} &cnenalezen. Nebylo z něj možné vytvořit nový event."
   create:
     success: "&aNový event s názvem &f{event} &aúspěšně vytvořen."
-    dupe_event: "&cEvent &f{event} &cjiž existuje, ruším akci..."
+    fail: "&cNepodařilo se mi vytvořit vhodný svět pro nový event &f{event}&c. Ruším akci ..."
+    dupe_event: "&cEvent &f{event} &cjiž existuje. Ruším akci ..."
     dupe_world: "&cSlimeWorld &f{event} &cjiž existuje. Použij příkaz &f/event add&c!"
   tp:
     success: "&aByl jsi úspěšně teleportován na event &f{event}&a."

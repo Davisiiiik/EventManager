@@ -4,7 +4,9 @@ system:
   end: "TerminusCraft Event Manager successfully unloaded!"
   auto_tp: "&aYou have been successfully teleported to the currently running event &f{event}&a."
 cmd:
-  start: "&aSuccessfully started the &f{event}&a Event, don't forget to notify the players!"
+  start:
+    success: "&aSuccessfully started the &f{event}&a Event, don't forget to notify the players!"
+    dupe: "&cCannot start the &f{event}&c Event, because it's already running!"
   end: "&aSuccessfully ended the &f{event}&a Event!"
   reload: "&aConfiguration and language file reloaded!"
   current:
@@ -15,7 +17,8 @@ cmd:
     no_world: "&cWorld &f{event} &cnot found. Cannot create new event from it."
   create:
     success: "&aNew event named &f{event} &asuccessfully created."
-    dupe_event: "&cEvent named &f{event} &calready exists, aborting..."
+    fail: "&cCouldn't create a world for new event &f{event}&c. Aborting ..."
+    dupe_event: "&cEvent named &f{event} &calready exists. Aborting ..."
     dupe_world: "&cSlimeWorld &f{event} &calready exists. Use &f/event add &cinstead!"
   tp:
     success: "&aSuccessfully teleported to the event &f{event}&a."

@@ -4,22 +4,29 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.infernalsuite.asp.api.world.SlimeWorldInstance;
+import com.infernalsuite.asp.api.world.properties.SlimeProperty;
 import com.infernalsuite.asp.api.world.properties.SlimePropertyMap;
+import com.infernalsuite.asp.api.world.properties.type.SlimePropertyBoolean;
+import com.infernalsuite.asp.api.world.properties.type.SlimePropertyFloat;
+import com.infernalsuite.asp.api.world.properties.type.SlimePropertyInt;
+import com.infernalsuite.asp.api.world.properties.type.SlimePropertyString;
 import com.terminuscraft.eventmanager.EventManager;
 import com.terminuscraft.eventmanager.communication.Log;
-import com.terminuscraft.eventmanager.hooks.AspAdapter;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
+
+import net.kyori.adventure.nbt.BinaryTag;
 
 public class GameHandler {
 
     private final File eventFile;
-    private final AspAdapter aspAdapter = new AspAdapter();
     private final SlimePropertyMap defaultProperties;
 
     private final List<Game> events = new ArrayList<>();
@@ -63,16 +70,6 @@ public class GameHandler {
         return currentEvent;
     }
 
-    public int loadEventWorld(Game event) {
-        SlimeWorldInstance worldInstance = aspAdapter.loadWorldInstance(event.getName());
-        if (worldInstance != null) {
-            event.setWorldInstance(worldInstance);
-            return Constants.SUCCESS;
-        }
-
-        return Constants.FAIL;
-    }
-
     private void loadEvents() {
         this.events.clear();
         YamlConfiguration config = YamlConfiguration.loadConfiguration(eventFile);
@@ -81,18 +78,21 @@ public class GameHandler {
             return;
         }
 
-        for (String key : section.getKeys(false)) {
-            /*ConfigurationSection evSec = section.getConfigurationSection(key);
-            if (evSec == null) {
+        for (String worldName : section.getKeys(false)) {
+            if (section.getConfigurationSection(worldName) == null) {
                 continue;
-            }*/ // TEMPORARY
+            }
+
+            SlimePropertyMap propertyMap = GameProperties.getWorldMap(config, worldName);
 
             try {
-                Game event = new Game(key, defaultProperties);
+                Game event = new Game(worldName, propertyMap);
 
-                this.events.add(event);
+                if (event.hasValidWorld()) {
+                    this.events.add(event);
+                }
             } catch (Exception e) {
-                Log.logger.warning("Failed to load event '" + key + "': " + e.getMessage());
+                Log.logger.warning("Failed to load event '" + worldName + "': " + e.getMessage());
             }
         }
     }
@@ -108,15 +108,18 @@ public class GameHandler {
         config.set("events", null); // Clear old
 
         for (Game event : events) {
-            String key = event.getName();
-            config.set("events." + key, "");  /* TODO: REMOVE, ONLY TEMPORARY */
-            /*config.set("events." + key + ".pvp", event.isPvpEnabled());
-            config.set("events." + key + ".loadOnStartup", event.shouldLoadOnStartup());
-            config.set("events." + key + ".environment", event.getEnvironment().toString());
+            SlimePropertyMap properties = event.getProperties();
+            Set<String> propertyKeys = properties.getProperties().keySet();
 
-            for (() : event.properties) {
+            GameProperties.getSlimePropertyList().forEach((property) -> {
+                String key = property.getKey();
 
-            }*/
+                if (propertyKeys.contains(key)) {
+                    String path = "events." + event.getName() + "." + key;
+                    config.set(path, properties.getValue(property));
+                }
+            });
+
         }
 
         try {
@@ -130,8 +133,7 @@ public class GameHandler {
     public int addEvent(String eventName) {
         if (worldExists(eventName) && (!eventExists(eventName))) {
             /* If world already exists and event does not, add event into the event list */
-            SlimeWorldInstance worldInstance = aspAdapter.getWorldInstance(eventName);
-            Game event = new Game(eventName, defaultProperties, worldInstance);
+            Game event = new Game(eventName, defaultProperties);
             events.add(event);
         } else {
             Log.logger.warning(
@@ -142,23 +144,22 @@ public class GameHandler {
 
         saveEvents();
         return Constants.SUCCESS;
+        
     }
 
-
-    // Public API for use in commands
     public int createEvent(String eventName) {
         if (worldExists(eventName) || eventExists(eventName)) {
             return Constants.FAIL;
         }
 
         /* Try creating Slime world instance */
-        SlimeWorldInstance slimeWorldInstance = aspAdapter.createWorld(eventName, defaultProperties);
+        SlimeWorldInstance slimeWorldInstance = Game.aspAdapter.createWorld(eventName, defaultProperties);
         if (slimeWorldInstance == null) {
             return Constants.FAIL;
         }
 
         /* If world creation was successful, add newly created event instance into the event list */
-        Game event = new Game(eventName, defaultProperties, slimeWorldInstance);
+        Game event = new Game(eventName, defaultProperties);
         events.add(event);
 
         saveEvents();
@@ -194,7 +195,7 @@ public class GameHandler {
     }
 
     public List<String> getWorldList() throws IOException {
-        return aspAdapter.listWorlds();
+        return Game.aspAdapter.listWorlds();
     }
 
     public boolean eventIsValid(String eventName) {
@@ -221,7 +222,7 @@ public class GameHandler {
 
     public boolean worldExists(String worldName) {
         try {
-            return aspAdapter.worldExists(worldName);
+            return Game.aspAdapter.worldExists(worldName);
         } catch (Exception e) {
             return false;
         }
