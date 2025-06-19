@@ -15,13 +15,15 @@ cmd:
     no_world: "&cWorld &f{event} &cnot found. Cannot create new event from it."
   create:
     success: "&aNew event named &f{event} &asuccessfully created."
-    dupe: "&cEvent named &f{event} &calready exists, aborting..."
+    dupe_event: "&cEvent named &f{event} &calready exists, aborting..."
+    dupe_world: "&cSlimeWorld &f{event} &calready exists. Use &f/event add &cinstead!"
   tp:
     success: "&aSuccessfully teleported to the event &f{event}&a."
     not_found: "&cEvent &f{event} &cnot found."
   list:
     header: "&6----- Terminus&9Craft &6Eventy-----"
     invalid_page: "&cInvalid page number"
+    empty: "&cThe list of events is empty"
     item: " &e• {event}"
     prev: " ◀ "
     next: " ▶ "

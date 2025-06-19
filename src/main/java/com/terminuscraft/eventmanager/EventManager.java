@@ -16,7 +16,7 @@ import com.terminuscraft.eventmanager.gamehandler.PlayerJoinListener;
  * @author Copyright (c) Davisiiiik. All Rights Reserved.
  */
 public class EventManager extends JavaPlugin {
-    private GameHandler evmHandler;
+    private GameHandler gameHandler;
 
     @Override
     public void onEnable() {
@@ -27,18 +27,18 @@ public class EventManager extends JavaPlugin {
         Lang.init(this);
 
         /* Prepare event handling */
-        this.evmHandler = new GameHandler(this);
+        this.gameHandler = new GameHandler(this);
 
         /* Initialize the CommandManager */
-        CommandManager commandManager = new CommandManager(this.evmHandler);
+        CommandManager commandManager = new CommandManager(this.gameHandler);
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             commands.registrar().register(commandManager.createCommand().build());
         });
 
         getLogger().info(Lang.get("system.start"));
         getServer().getPluginManager().registerEvents(
-            new PlayerJoinListener(this.evmHandler), this
-        );
+            new PlayerJoinListener(this.gameHandler), this
+        );    
     }
 
     @Override
@@ -49,6 +49,7 @@ public class EventManager extends JavaPlugin {
     public void pluginReload() {
         this.reloadConfig();
         Lang.reload();
-        evmHandler.reload();
+        //gameHandler.reload();
+        this.gameHandler = new GameHandler(this);
     }
 }

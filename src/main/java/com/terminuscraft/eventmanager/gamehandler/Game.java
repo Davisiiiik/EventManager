@@ -1,50 +1,44 @@
 package com.terminuscraft.eventmanager.gamehandler;
 
-import com.terminuscraft.eventmanager.miscellaneous.Environment;
+import org.bukkit.World;
+
+import com.infernalsuite.asp.api.world.SlimeWorldInstance;
+import com.infernalsuite.asp.api.world.properties.SlimePropertyMap;
+import com.terminuscraft.eventmanager.hooks.AspAdapter;
 
 public class Game {
     private final String eventName;
 
-    private boolean pvp;
-    private boolean loadOnStartup;
-    private Environment environment;
+    /* CANNOT DO IT LIKE THAT!!! NEED LIVE INSTANCE, have aspLoader as static? */
+    private SlimeWorldInstance worldInstance = null;
+    public SlimePropertyMap properties;     /* Doesnt need, just load on startup */
 
-    public Game(String name) {
-        this(name, false, false, Environment.NORMAL);
+    final static AspAdapter aspAdapter = new AspAdapter();
+
+
+    public Game(String name, SlimePropertyMap properties) {
+        this(name, properties, null);
     }
 
-    public Game(String name, boolean pvp, boolean loadOnStartup, Environment environment) {
+    public Game(String name, SlimePropertyMap properties, SlimeWorldInstance worldInstance) {
         this.eventName = name;
-        this.pvp = pvp;
-        this.loadOnStartup = loadOnStartup;
-        this.environment = environment;
+        this.properties = properties;
+        this.worldInstance = worldInstance;
     }
 
     public String getName() {
         return this.eventName;
     }
 
-    public boolean isPvpEnabled() {
-        return pvp;
+    public void setWorldInstance(SlimeWorldInstance worldInstance) {
+        this.worldInstance = worldInstance;
     }
 
-    public boolean shouldLoadOnStartup() {
-        return loadOnStartup;
+    public SlimeWorldInstance getWorldInstance() {
+        return this.worldInstance;
     }
 
-    public Environment getEnvironment() {
-        return environment;
-    }
-
-    public void setPvp(boolean pvp) {
-        this.pvp = pvp;
-    }
-
-    public void setLoadOnStartup(boolean loadOnStartup) {
-        this.loadOnStartup = loadOnStartup;
-    }
-
-    public void setEnvironment(Environment env) {
-        this.environment = env;
+    public World getWorld() {
+        return this.worldInstance.getBukkitWorld();
     }
 }

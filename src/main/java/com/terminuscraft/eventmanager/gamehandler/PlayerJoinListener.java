@@ -13,26 +13,24 @@ import com.terminuscraft.eventmanager.communication.Log;
 
 public class PlayerJoinListener implements Listener {
     
-    private final GameHandler evmHandler;
+    private final GameHandler gameHandler;
 
     public PlayerJoinListener(GameHandler handler) {
-        this.evmHandler = handler;
+        this.gameHandler = handler;
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        /* If event is set and player doesnt have bypass permission, tp him to the set event */
-        System.out.println("Player " + event.getPlayer().getName() + " just joined");
-
-        Game currentEvent = GameHandler.getCurrentEvent();
+        Game currentEvent = gameHandler.getCurrentEvent();
         if (currentEvent != null) {
             Player player = event.getPlayer();
-            SlimeWorldInstance eventWorldInstance = evmHandler.getWorldInstance(currentEvent);
 
-            if (eventWorldInstance == null) {
-                eventWorldInstance = evmHandler.loadWorldInstance(currentEvent);
+            /* TODO: Check if player has permission to bypass auto-tp */
 
-                if (eventWorldInstance == null) {
+            if (currentEvent.getWorldInstance() == null) {
+                gameHandler.loadEventWorld(currentEvent);
+
+                if (currentEvent.getWorldInstance() == null) {
                     Log.logger.severe(
                         "An exception occurred while trying to teleport player on join to the \""
                         + currentEvent.getName() + "\" event. Its world couldn't be loaded!");
@@ -40,10 +38,12 @@ public class PlayerJoinListener implements Listener {
                 }
             }
 
-            player.teleport(eventWorldInstance.getBukkitWorld().getSpawnLocation());
+            player.teleport(currentEvent.getWorld().getSpawnLocation());
             player.sendMessage(
                 Lang.get("system.auto_tp", Map.of("event", currentEvent.getName()))
             );
+        } else {
+            /* TODO: Teleport to spawn (AdminCommands.leave?) */
         }
 
     }

@@ -15,13 +15,15 @@ cmd:
     no_world: "&cSvět &f{event} &cnenalezen. Nebylo z něj možné vytvořit nový event."
   create:
     success: "&aNový event s názvem &f{event} &aúspěšně vytvořen."
-    dupe: "&cEvent &f{event} &cjiž existuje, ruším akci..."
+    dupe_event: "&cEvent &f{event} &cjiž existuje, ruším akci..."
+    dupe_world: "&cSlimeWorld &f{event} &cjiž existuje. Použij příkaz &f/event add&c!"
   tp:
     success: "&aByl jsi úspěšně teleportován na event &f{event}&a."
     not_found: "&cEvent &f{event} &cnenalezen."
   list:
     header: "&6----- Terminus&9Craft &6Eventy -----"
     invalid_page: "&cNeplatné číslo stránky"
+    empty: "&cSeznam eventů je zatím prázdný"
     item: " &e• {event}"
     prev: " ◀ "
     next: " ▶ "

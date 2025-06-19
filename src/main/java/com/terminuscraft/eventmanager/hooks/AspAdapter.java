@@ -22,22 +22,12 @@ public class AspAdapter {
 
     private final AdvancedSlimePaperAPI asp = AdvancedSlimePaperAPI.instance();
     private final SlimeLoader slimeLoader;
-    private SlimePropertyMap properties = new SlimePropertyMap();
 
     public AspAdapter() {
-
         this.slimeLoader = new FileLoader(new File("slime_worlds"));
-
-        properties.setValue(SlimeProperties.DIFFICULTY, "peaceful");
-        properties.setValue(SlimeProperties.ALLOW_MONSTERS, false);
-        properties.setValue(SlimeProperties.ALLOW_ANIMALS, false);
-        properties.setValue(SlimeProperties.PVP, false);
-        properties.setValue(SlimeProperties.SAVE_POI, true);
-        properties.setValue(SlimeProperties.SAVE_BLOCK_TICKS, true);
-        properties.setValue(SlimeProperties.SAVE_FLUID_TICKS, true);
     }
 
-    public SlimeWorldInstance createWorld(String worldName) {
+    public SlimeWorldInstance createWorld(String worldName, SlimePropertyMap properties) {
         SlimeWorld slimeWorld;
         SlimeWorldInstance slimeWorldInstance = null;
 

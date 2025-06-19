@@ -3,27 +3,27 @@ package com.terminuscraft.eventmanager.gamehandler;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.infernalsuite.asp.api.world.SlimeWorldInstance;
+import com.infernalsuite.asp.api.world.properties.SlimePropertyMap;
 import com.terminuscraft.eventmanager.EventManager;
 import com.terminuscraft.eventmanager.communication.Log;
 import com.terminuscraft.eventmanager.hooks.AspAdapter;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
-import com.terminuscraft.eventmanager.miscellaneous.Environment;
 
 public class GameHandler {
 
-    private final AspAdapter aspAdapter = new AspAdapter();
     private final File eventFile;
-    private final Map<String, Game> events = new HashMap<>();
-    
-    private static Game currentEvent;
+    private final AspAdapter aspAdapter = new AspAdapter();
+    private final SlimePropertyMap defaultProperties;
+
+    private final List<Game> events = new ArrayList<>();
+    private Game currentEvent;
 
     public GameHandler(EventManager plugin) {
         super();
@@ -34,15 +34,43 @@ public class GameHandler {
             plugin.saveResource("events.yml", false);
         }
 
+        /* Read Default Properties from config */
+        defaultProperties = GameProperties.getDefaultMap(plugin.getConfig());
+        plugin.getLogger().warning("============= DEBUG =============");
+        plugin.getLogger().warning(defaultProperties.toString());
+        plugin.getLogger().warning("============= DEBUG =============");
+
         loadEvents();
     }
 
-    public static void setCurrentEvent(Game newEvent) {
-        currentEvent = newEvent;
+    public int setCurrentEvent(String newEventName) {
+        return setCurrentEvent(getEvent(newEventName));
     }
 
-    public static Game getCurrentEvent() {
+    public int setCurrentEvent(Game newEvent) {
+        if (this.eventExists(newEvent.getName().toLowerCase())) {
+            currentEvent = newEvent;
+            return Constants.SUCCESS;
+        }
+        return Constants.FAIL;
+    }
+
+    public void resetCurrentEvent() {
+        currentEvent = null;
+    }
+
+    public Game getCurrentEvent() {
         return currentEvent;
+    }
+
+    public int loadEventWorld(Game event) {
+        SlimeWorldInstance worldInstance = aspAdapter.loadWorldInstance(event.getName());
+        if (worldInstance != null) {
+            event.setWorldInstance(worldInstance);
+            return Constants.SUCCESS;
+        }
+
+        return Constants.FAIL;
     }
 
     private void loadEvents() {
@@ -54,21 +82,15 @@ public class GameHandler {
         }
 
         for (String key : section.getKeys(false)) {
-            ConfigurationSection evSec = section.getConfigurationSection(key);
+            /*ConfigurationSection evSec = section.getConfigurationSection(key);
             if (evSec == null) {
                 continue;
-            }
+            }*/ // TEMPORARY
 
             try {
-                String name = key;
-                boolean pvp = evSec.getBoolean("pvp", true);
-                boolean loadOnStartup = evSec.getBoolean("loadOnStartup", false);
-                String envStr = evSec.getString("environment", "normal");
+                Game event = new Game(key, defaultProperties);
 
-                Environment environment = Environment.fromString(envStr);
-                Game event = new Game(name, pvp, loadOnStartup, environment);
-
-                events.put(name.toLowerCase(), event);
+                this.events.add(event);
             } catch (Exception e) {
                 Log.logger.warning("Failed to load event '" + key + "': " + e.getMessage());
             }
@@ -85,11 +107,16 @@ public class GameHandler {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(eventFile);
         config.set("events", null); // Clear old
 
-        for (Game event : events.values()) {
+        for (Game event : events) {
             String key = event.getName();
-            config.set("events." + key + ".pvp", event.isPvpEnabled());
+            config.set("events." + key, "");  /* TODO: REMOVE, ONLY TEMPORARY */
+            /*config.set("events." + key + ".pvp", event.isPvpEnabled());
             config.set("events." + key + ".loadOnStartup", event.shouldLoadOnStartup());
             config.set("events." + key + ".environment", event.getEnvironment().toString());
+
+            for (() : event.properties) {
+
+            }*/
         }
 
         try {
@@ -100,20 +127,12 @@ public class GameHandler {
     }
 
 
-    // Public API for use in commands
     public int addEvent(String eventName) {
-        boolean worldExists;
-
-        try {
-            worldExists = aspAdapter.worldExists(eventName);
-        } catch (IOException e) {
-            worldExists = false;
-        }
-
-        if (worldExists && (!events.containsKey(eventName.toLowerCase()))) {
+        if (worldExists(eventName) && (!eventExists(eventName))) {
             /* If world already exists and event does not, add event into the event list */
-            Game event = new Game(eventName);
-            events.put(eventName.toLowerCase(), event);
+            SlimeWorldInstance worldInstance = aspAdapter.getWorldInstance(eventName);
+            Game event = new Game(eventName, defaultProperties, worldInstance);
+            events.add(event);
         } else {
             Log.logger.warning(
                 "Cannot add event " + eventName + ", world with this name doesn't exist."
@@ -128,76 +147,84 @@ public class GameHandler {
 
     // Public API for use in commands
     public int createEvent(String eventName) {
-        if (events.containsKey(eventName.toLowerCase())) {
+        if (worldExists(eventName) || eventExists(eventName)) {
             return Constants.FAIL;
         }
 
         /* Try creating Slime world instance */
-        SlimeWorldInstance slimeWorldInstance = aspAdapter.createWorld(eventName);
+        SlimeWorldInstance slimeWorldInstance = aspAdapter.createWorld(eventName, defaultProperties);
         if (slimeWorldInstance == null) {
             return Constants.FAIL;
         }
 
-        /* If world creation was successful, add newly created event into the event list */
-        Game event = new Game(eventName);
-        events.put(eventName.toLowerCase(), event);
+        /* If world creation was successful, add newly created event instance into the event list */
+        Game event = new Game(eventName, defaultProperties, slimeWorldInstance);
+        events.add(event);
 
         saveEvents();
         return Constants.SUCCESS;
     }
 
-    public boolean deleteEvent(String eventName) {
-        if (!events.containsKey(eventName.toLowerCase())) {
+    public boolean deleteEvent(Game event) {
+        if (!eventExists(event)) {
             return false;
         }
 
-        events.remove(eventName.toLowerCase());
+        /* TODO: Delete event's world */
+
+        events.remove(event);
 
         saveEvents();
         return true;
     }
 
     public Game getEvent(String eventName) {
-        if (this.eventExists(eventName)) {
-            return events.get(eventName.toLowerCase());
-        } else {
-            return null;
+        for (Game existingEvent : events) {
+            if (eventName.equalsIgnoreCase(existingEvent.getName())) {
+                return existingEvent;
+            }
         }
+
+        return null;
     }
 
-    /*public Collection<Event> listEvents() {
-        return Collections.unmodifiableCollection(events.values());
-    }*/
-
     public List<String> getEventList() {
-        return new ArrayList<String>(events.keySet());
+        List<String> eventList = events.stream().map(Game::getName).collect(Collectors.toList());
+        return eventList;
     }
 
     public List<String> getWorldList() throws IOException {
         return aspAdapter.listWorlds();
     }
 
+    public boolean eventIsValid(String eventName) {
+        return (eventExists(eventName) && worldExists(eventName));
+    }
+
+    public boolean eventExists(Game event) {
+        if (events.contains(event)) {
+            return true;
+        }
+
+        return eventExists(event.getName());
+    }
+
     public boolean eventExists(String eventName) {
+        for (Game existingEvent : events) {
+            if (eventName.equalsIgnoreCase(existingEvent.getName())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean worldExists(String worldName) {
         try {
-            /* Check if the world itself exists and if the event is also defined */
-            return (
-                aspAdapter.worldExists(eventName) && events.containsKey(eventName.toLowerCase())
-            );
-        } catch (IOException e) {
+            return aspAdapter.worldExists(worldName);
+        } catch (Exception e) {
             return false;
         }
-    }
-
-    public boolean worldExists(String worldName) throws IOException {
-        return aspAdapter.worldExists(worldName);
-    }
-
-    public SlimeWorldInstance loadWorldInstance(Game eventName) {
-        return aspAdapter.loadWorldInstance(eventName.getName());
-    }
-
-    public SlimeWorldInstance getWorldInstance(Game eventName) {
-        return aspAdapter.getWorldInstance(eventName.getName());
     }
 
     public void reload() {

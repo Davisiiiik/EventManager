@@ -16,7 +16,11 @@ public class PaginationUtil {
         int totalPages = (int) Math.ceil((double) items.size() / itemsPerPage);
 
         if (page < 1 || page > totalPages) {
-            player.sendMessage(Lang.get("cmd.list.invalid_page"));
+            if (page == 1) {
+                player.sendMessage(Lang.get("cmd.list.empty"));
+            } else {
+                player.sendMessage(Lang.get("cmd.list.invalid_page"));
+            }
             return;
         }
 

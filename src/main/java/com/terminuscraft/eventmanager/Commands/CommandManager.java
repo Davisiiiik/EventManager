@@ -33,14 +33,21 @@ public class CommandManager {
         this.admin = new AdminCommands(evmHandler);
     }
 
+    /* TODO: Change from evm to event, add evm as cmi alias */
     public LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         /* /evm ... */
-        return Commands.literal("evm").executes(player::teleport)
+        return Commands.literal("evm").executes(player::join)
             /* /evm help */
             .then(Commands.literal("help").executes(player::help))
             
             /* /evm current */
             .then(Commands.literal("current").executes(player::getEvent))
+            
+            /* /evm join */
+            .then(Commands.literal("join").executes(player::join))
+            
+            /* /evm leave */
+            .then(Commands.literal("leave").executes(player::leave))
             
             /* /evm list [page] */
             .then(Commands.literal("list")
@@ -64,14 +71,14 @@ public class CommandManager {
                 )
             
                 /* /evm admin start <event> */
-                .then(Commands.literal("start")
+                .then(Commands.literal("start") /* TODO: Add alias set */
                     .then(Commands.argument("event", StringArgumentType.word())
                         .suggests(eventListSuggestion())
                         .executes(admin::startEvent))
                 )
             
                 /* /evm admin end <event> */
-                .then(Commands.literal("end").executes(admin::endEvent))
+                .then(Commands.literal("end").executes(admin::endEvent)) /* TODO: Add alias stop */
 
                 /* /evm admin add <event> */
                 .then(Commands.literal("add")
@@ -85,6 +92,9 @@ public class CommandManager {
                     .then(Commands.argument("event", StringArgumentType.word())
                         .executes(admin::createEvent))
                 )
+
+                /* /evm admin setspawn */
+                .then(Commands.literal("setspawn").executes(admin::setSpawn))
 
                 /* /evm admin remove <event> */
                 .then(Commands.literal("remove")

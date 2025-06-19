@@ -6,7 +6,20 @@
 language: en.yml
 
 # TODO: Add default configuration for newly created event worlds
-default-config:
+default-cfg:
+    spawnX: 0
+    spawnY: 100
+    spawnZ: 0
+    spawnYaw: 0.0
+    difficulty: PEACEFUL
+    allowMonsters: false
+    allowAnimals: false
+    dragonBattle: false
     pvp: false
+    environment: NORMAL
+    worldtype: DEFAULT
+    defaultBiome: minecraft:plains
     loadOnStartup: false
-    environment: normal
+    saveBlockTicks: true
+    saveFluidTicks: true
+    savePOI: true
