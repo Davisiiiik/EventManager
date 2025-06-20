@@ -5,6 +5,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.event.ClickEvent;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,11 @@ public class PaginationUtil {
             player.sendMessage(
                 Lang.get("cmd.list.item", Map.of("event", items.get(i)), false)
             );
+        }
+
+        /* When CommandSender is not player, we dont need a navigation footer */
+        if (!(player instanceof Player)) {
+            return;
         }
 
         // Navigation arrows

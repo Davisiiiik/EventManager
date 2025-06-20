@@ -18,7 +18,7 @@ import com.terminuscraft.eventmanager.communication.Log;
 public class GameProperties extends SlimeProperties {
 
     /**
-     * Whether Game World should load on server startup
+     * Whether Game World should load on server startup.
      */
     public static final SlimePropertyBoolean LOAD_ON_STARTUP = SlimePropertyBoolean.create("loadOnStartup", false);
 
@@ -56,32 +56,34 @@ public class GameProperties extends SlimeProperties {
 
         getSlimePropertyList().forEach((property) -> {
             String key = path + "." + property.getKey();
+            Log.logger.info(key);
 
             if (config.get(key) != null) {
+                Log.logger.warning(config.get(key).toString());
                 if (property instanceof SlimePropertyBoolean) {
                     properties.setValue(
-                        (SlimePropertyBoolean)property,
+                        (SlimePropertyBoolean) property,
                         config.getBoolean(key)
                     );
                 } else if (property instanceof SlimePropertyInt) {
                     properties.setValue(
-                        (SlimePropertyInt)property,
+                        (SlimePropertyInt) property,
                         config.getInt(key)
                     );
                 } else if (property instanceof SlimePropertyFloat) {
                     properties.setValue(
-                        (SlimePropertyFloat)property,
-                        (float)config.getDouble(key)
+                        (SlimePropertyFloat) property,
+                        (float) config.getDouble(key)
                     );
                 } else {
                     properties.setValue(
-                        (SlimePropertyString)property,
+                        (SlimePropertyString) property,
                         config.getString(key)
                     );
                 }
             } else {
                 Log.logger.warning(
-                    "Couldn't find property '"+ property.getKey()
+                    "Couldn't find property '" + property.getKey()
                   + "' in config, defaulting to: " + property.getDefaultValue()
                 );
             }

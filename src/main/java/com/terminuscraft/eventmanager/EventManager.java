@@ -8,6 +8,7 @@ import com.terminuscraft.eventmanager.commands.CommandManager;
 import com.terminuscraft.eventmanager.communication.Lang;
 import com.terminuscraft.eventmanager.gamehandler.GameHandler;
 import com.terminuscraft.eventmanager.gamehandler.PlayerJoinListener;
+import com.terminuscraft.eventmanager.hooks.CmiAdapter;
 
 
 /**
@@ -35,21 +36,22 @@ public class EventManager extends JavaPlugin {
             commands.registrar().register(commandManager.createCommand().build());
         });
 
-        getLogger().info(Lang.get("system.start"));
+        /* Register EventListeners */
         getServer().getPluginManager().registerEvents(
             new PlayerJoinListener(this.gameHandler), this
         );    
+
+        getLogger().info(Lang.get("system.start", false));
     }
 
     @Override
     public void onDisable() {
-        getLogger().info(Lang.get("system.end"));
+        getLogger().info(Lang.get("system.end", false));
     }
 
     public void pluginReload() {
         this.reloadConfig();
-        Lang.reload();
-        //gameHandler.reload();
-        this.gameHandler = new GameHandler(this);
+        Lang.reloadLanguage();
+        this.gameHandler.reloadEvents();
     }
 }

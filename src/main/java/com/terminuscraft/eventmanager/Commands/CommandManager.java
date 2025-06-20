@@ -71,14 +71,15 @@ public class CommandManager {
                 )
             
                 /* /evm admin start <event> */
-                .then(Commands.literal("start") /* TODO: Add alias set */
+                .then(Commands.literal("start")
                     .then(Commands.argument("event", StringArgumentType.word())
                         .suggests(eventListSuggestion())
                         .executes(admin::startEvent))
-                )
+                )   /* TODO: Add alias set, or use set to change world properties? */
             
-                /* /evm admin end <event> */
-                .then(Commands.literal("end").executes(admin::endEvent)) /* TODO: Add alias stop */
+                /* /evm admin end; /evm admin stop */
+                .then(Commands.literal("end").executes(admin::endEvent))
+                .then(Commands.literal("stop").executes(admin::endEvent))
 
                 /* /evm admin add <event> */
                 .then(Commands.literal("add")
@@ -112,11 +113,16 @@ public class CommandManager {
 //                .then(Commands.literal("load")
 //                    .then(Commands.argument("event", StringArgumentType.word()))
 //                )
-//
-//                /* /evm admin unload <event> */
-//                .then(Commands.literal("unload")
-//                    .then(Commands.argument("event", StringArgumentType.word()))
-//                )
+
+                /* /evm admin unload <event> */
+                .then(Commands.literal("unload")
+                    .then(Commands.argument("event", StringArgumentType.word())
+                        .suggests(eventListSuggestion())
+                        .executes(admin::unloadEvent))
+                )
+
+                /* /evm admin saveEventConfigs */
+                .then(Commands.literal("saveEventConfigs").executes(admin::saveEvents))
 
                 /* /evm admin reload */
                 .then(Commands.literal("reload").executes(admin::reload))

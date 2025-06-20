@@ -160,4 +160,8 @@ public class AspAdapter {
     public boolean worldExists(String worldName) throws IOException {
         return this.slimeLoader.worldExists(worldName);
     }
+
+    public boolean worldIsLoaded(SlimeWorld world) {
+        return asp.worldLoaded(world);
+    }
 }

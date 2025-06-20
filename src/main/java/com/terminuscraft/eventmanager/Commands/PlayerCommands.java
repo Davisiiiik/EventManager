@@ -3,7 +3,7 @@ package com.terminuscraft.eventmanager.commands;
 import java.util.List;
 import java.util.Map;
 
-import com.infernalsuite.asp.api.world.SlimeWorldInstance;
+import com.Zrips.CMI.utils.SpawnUtil;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -21,7 +21,6 @@ import com.terminuscraft.eventmanager.communication.Log;
 import com.terminuscraft.eventmanager.communication.PaginationUtil;
 import com.terminuscraft.eventmanager.gamehandler.Game;
 import com.terminuscraft.eventmanager.gamehandler.GameHandler;
-import com.terminuscraft.eventmanager.miscellaneous.Constants;
 
 public class PlayerCommands {
 
@@ -36,7 +35,7 @@ public class PlayerCommands {
 
         if (!(executor instanceof Player)) {
             executor.sendMessage(Lang.get("error.players_only"));
-            return Constants.FAIL;
+            return 0;
         }
 
         Game event = gameHandler.getCurrentEvent();
@@ -45,19 +44,22 @@ public class PlayerCommands {
             return Command.SINGLE_SUCCESS;
         }
 
+        String eventName = event.getName();
         World eventWorld = event.getWorld();
         if (eventWorld == null) {
-            executor.sendMessage(Lang.get("error.event_load_try", Map.of("event", event.getName())));
+            executor.sendMessage(Lang.get("error.event_load_try", Map.of("event", eventName)));
             eventWorld = event.getWorld();
 
             if (eventWorld == null) {
-                executor.sendMessage(Lang.get("error.event_load_abort", Map.of("event", event.getName())));
-                return Constants.FAIL;
+                executor.sendMessage(
+                    Lang.get("error.event_load_abort", Map.of("event", eventName))
+                );
+                return 0;
             }
         }
 
         executor.teleport(eventWorld.getSpawnLocation());
-        executor.sendMessage(Lang.get("cmd.tp.success", Map.of("event", event.getName())));
+        executor.sendMessage(Lang.get("cmd.tp.success", Map.of("event", eventName)));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -67,9 +69,10 @@ public class PlayerCommands {
 
         if (!(executor instanceof Player)) {
             executor.sendMessage(Lang.get("error.players_only"));
-            return Constants.FAIL;
+            return 0;
         }
-        Log.logger.severe("Executor's world: " + executor.getWorld().toString());
+
+        Log.logger.severe("Executor's world: " + executor.getWorld().toString());   /* DEBUG? */
         Bukkit.dispatchCommand(executor, "spawn");
 
         return Command.SINGLE_SUCCESS;
@@ -77,6 +80,8 @@ public class PlayerCommands {
 
     public int help(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
+
+        Log.logger.severe(SpawnUtil.getSpawnPoint((Player) sender).toString()); /* DEBUG */
 
         for (String line : Lang.getList("cmd.help.messages")) {
             sender.sendMessage(line);
@@ -90,6 +95,7 @@ public class PlayerCommands {
 
         if (gameHandler.getCurrentEvent() == null) {
             sender.sendMessage(Lang.get("cmd.current.no_event"));
+            return 0;
         } else {
             Game event = gameHandler.getCurrentEvent();
             sender.sendMessage(

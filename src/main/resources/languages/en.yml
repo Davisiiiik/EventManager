@@ -1,12 +1,14 @@
-prefix: "&9[&6EVM&9] "
+prefix: "&9[&6Event&9] "
 system:
   start: "TerminusCraft Event Manager successfully loaded!"
   end: "TerminusCraft Event Manager successfully unloaded!"
   auto_tp: "&aYou have been successfully teleported to the currently running event &f{event}&a."
+  unload_tp: "&eYou have been teleported to the spawn area, because the Event &f{event} &ejust ended."
 cmd:
   start:
     success: "&aSuccessfully started the &f{event}&a Event, don't forget to notify the players!"
     dupe: "&cCannot start the &f{event}&c Event, because it's already running!"
+    fail: "&cCouldn't load world linked to the &f{event}&c Event."
   end: "&aSuccessfully ended the &f{event}&a Event!"
   reload: "&aConfiguration and language file reloaded!"
   current:
@@ -23,6 +25,9 @@ cmd:
   tp:
     success: "&aSuccessfully teleported to the event &f{event}&a."
     not_found: "&cEvent &f{event} &cnot found."
+  unload:
+    success: "&aSuccessfully saved and unloaded world from the Event &f{event}&a."
+    fail: "&cUnable to unload world from the Event &f{event}&c. The world is not loaded, or there are players inside."
   list:
     header: "&6----- Terminus&9Craft &6Eventy-----"
     invalid_page: "&cInvalid page number"
@@ -32,6 +37,7 @@ cmd:
     next: " ▶ "
     page: "Go to page {page}"
     footer: " Page ({page}/{total}) "
+  save_events: "&aSuccessfully saved configurations for all events into the &fevents.yml &afile."
 error:
   players_only: "&cOnly players can use this command!"
   event_invalid: "&cEvent '{event}' doesn't exists, or its world is invalid."

@@ -23,3 +23,21 @@ default-cfg:
     saveBlockTicks: true
     saveFluidTicks: true
     savePOI: true
+
+## This is a list of ASWM default values, which will be used when not specified:
+# Default spawnX: 0
+# Default spawnY: 255
+# Default spawnZ: 0
+# Default spawnYaw: 0.0
+# Default difficulty: PEACEFUL
+# Default allowMonsters: true
+# Default allowAnimals: true
+# Default dragonBattle: false
+# Default pvp: true
+# Default environment: NORMAL
+# Default worldtype: DEFAULT
+# Default defaultBiome: minecraft:plains
+# Default loadOnStartup: false
+# Default saveBlockTicks: false
+# Default saveFluidTicks: false
+# Default savePOI: false

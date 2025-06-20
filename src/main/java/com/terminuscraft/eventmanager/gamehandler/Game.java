@@ -1,14 +1,16 @@
 package com.terminuscraft.eventmanager.gamehandler;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import com.infernalsuite.asp.api.world.SlimeWorld;
 import com.infernalsuite.asp.api.world.SlimeWorldInstance;
 import com.infernalsuite.asp.api.world.properties.SlimePropertyMap;
 import com.terminuscraft.eventmanager.hooks.AspAdapter;
+import com.terminuscraft.eventmanager.miscellaneous.Constants;
 
 public class Game {
-    public final static AspAdapter aspAdapter = new AspAdapter();
+    public static final AspAdapter aspAdapter = new AspAdapter();
 
     private final String eventName;
     private final SlimeWorld gameWorld;
@@ -17,9 +19,10 @@ public class Game {
     public Game(String name, SlimePropertyMap properties) {
         this.eventName = name;
         this.gameWorld = aspAdapter.readOrCreateWorld(name, properties);
-        
-        boolean loadOnStartup = properties.getValue(GameProperties.LOAD_ON_STARTUP);
-        /* TODO: Implement load on startup */
+
+        if (properties.getValue(GameProperties.LOAD_ON_STARTUP)) {
+            loadWorld();
+        }
     }
 
     public String getName() {
@@ -45,5 +48,38 @@ public class Game {
 
     public boolean hasValidWorld() {
         return (gameWorld != null);
+    }
+
+    public boolean hasLoadedWorld() {
+        return aspAdapter.worldIsLoaded(gameWorld);
+    }
+
+    public int loadWorld() {
+        if (getWorldInstance() == null) {
+            return Constants.FAIL;
+        }
+
+        return Constants.SUCCESS;
+    }
+
+    public int saveAndUnloadWorld() {
+        if (hasLoadedWorld()) {
+            World eventWorld = getWorld();
+            if (eventWorld == null) {
+                return Constants.FAIL;
+            }
+
+            //aspAdapter.saveWorld(eventWorld);
+            eventWorld.save();
+            if (Bukkit.unloadWorld(eventWorld, false)) {
+                return Constants.SUCCESS;
+            }
+        }
+
+        return Constants.FAIL;
+    }
+
+    public void deleteWorld() {
+        /* TODO */
     }
 }

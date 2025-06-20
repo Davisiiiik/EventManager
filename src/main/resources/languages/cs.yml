@@ -1,12 +1,14 @@
-prefix: "&9[&6EVM&9] "
+prefix: "&9[&6Event&9] "
 system:
   start: "TerminusCraft Event Manager byl úspěšně načten!"
   end: "TerminusCraft Event Manager byl úspěšně ukončen!"
   auto_tp: "&aByl jsi úspěšně teleportován na právě probíhající event &f{event}&a."
+  unload_tp: "&eByl jsi teleportován na spawn, protože event &f{event} &eprávě skončil."
 cmd:
   start:
     success: "&aÚspěšně jsi spustil event &f{event}&a, nezapomeň upozornit hráče!"
     dupe: "&cNemůžeš spustit event &f{event}&c, protože právě probíhá!"
+    fail: "&cNebylo možné načíst svět eventu &f{event}&c."
   end: "&aÚspěšně jsi ukončil event &f{event}&a!"
   reload: "&aKonfigurační soubory byly znovu načteny!"
   current:
@@ -23,6 +25,9 @@ cmd:
   tp:
     success: "&aByl jsi úspěšně teleportován na event &f{event}&a."
     not_found: "&cEvent &f{event} &cnenalezen."
+  unload:
+    success: "&aSvět eventu &f{event} &abyl úspéšně uložen a uvolněn z paměti."
+    fail: "&cSvět eventu &f{event}&c nebylo možné uvolnit z paměti. Tento svět není načtený, nebo se v něm nachází hráči."
   list:
     header: "&6----- Terminus&9Craft &6Eventy -----"
     invalid_page: "&cNeplatné číslo stránky"
@@ -32,6 +37,7 @@ cmd:
     next: " ▶ "
     page: "Přejít na stránku {page}"
     footer: " Stránka ({page}/{total}) "
+  save_events: "&aKonfigurace všech existujících eventů byla úspěšně uložena do souboru &fevents.yml&a."
 error:
   players_only: "&cTento příkaz mohou používat pouze hráči!"
   event_invalid: "&cEvent '{event}' neexistuje, nebo nemá vytvořený svět."

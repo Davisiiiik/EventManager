@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,17 +11,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.infernalsuite.asp.api.world.SlimeWorldInstance;
-import com.infernalsuite.asp.api.world.properties.SlimeProperty;
 import com.infernalsuite.asp.api.world.properties.SlimePropertyMap;
-import com.infernalsuite.asp.api.world.properties.type.SlimePropertyBoolean;
-import com.infernalsuite.asp.api.world.properties.type.SlimePropertyFloat;
-import com.infernalsuite.asp.api.world.properties.type.SlimePropertyInt;
-import com.infernalsuite.asp.api.world.properties.type.SlimePropertyString;
 import com.terminuscraft.eventmanager.EventManager;
 import com.terminuscraft.eventmanager.communication.Log;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
-
-import net.kyori.adventure.nbt.BinaryTag;
 
 public class GameHandler {
 
@@ -33,8 +25,6 @@ public class GameHandler {
     private Game currentEvent;
 
     public GameHandler(EventManager plugin) {
-        super();
-
         this.eventFile = new File(plugin.getDataFolder(), "events.yml");
         if (!eventFile.exists()) {
             // Extract the default from JAR: /"events.yml"
@@ -43,15 +33,8 @@ public class GameHandler {
 
         /* Read Default Properties from config */
         defaultProperties = GameProperties.getDefaultMap(plugin.getConfig());
-        plugin.getLogger().warning("============= DEBUG =============");
-        plugin.getLogger().warning(defaultProperties.toString());
-        plugin.getLogger().warning("============= DEBUG =============");
 
         loadEvents();
-    }
-
-    public int setCurrentEvent(String newEventName) {
-        return setCurrentEvent(getEvent(newEventName));
     }
 
     public int setCurrentEvent(Game newEvent) {
@@ -68,6 +51,14 @@ public class GameHandler {
 
     public Game getCurrentEvent() {
         return currentEvent;
+    }
+
+    public void reloadEvents() {
+        loadEvents();
+    }
+
+    public void saveEventConfigs() {
+        saveEvents();
     }
 
     private void loadEvents() {
@@ -90,16 +81,12 @@ public class GameHandler {
 
                 if (event.hasValidWorld()) {
                     this.events.add(event);
+                    /* TODO: Add a message about successful event load */
                 }
             } catch (Exception e) {
                 Log.logger.warning("Failed to load event '" + worldName + "': " + e.getMessage());
             }
         }
-    }
-
-
-    public void reloadEvents() {
-        loadEvents();
     }
 
 
@@ -153,7 +140,8 @@ public class GameHandler {
         }
 
         /* Try creating Slime world instance */
-        SlimeWorldInstance slimeWorldInstance = Game.aspAdapter.createWorld(eventName, defaultProperties);
+        SlimeWorldInstance slimeWorldInstance = Game.aspAdapter.createWorld(
+                                                    eventName, defaultProperties);
         if (slimeWorldInstance == null) {
             return Constants.FAIL;
         }
@@ -166,17 +154,18 @@ public class GameHandler {
         return Constants.SUCCESS;
     }
 
-    public boolean deleteEvent(Game event) {
+    public int deleteEvent(Game event) {
         if (!eventExists(event)) {
-            return false;
+            return Constants.FAIL;
         }
 
         /* TODO: Delete event's world */
 
+        event.deleteWorld();
         events.remove(event);
 
         saveEvents();
-        return true;
+        return Constants.SUCCESS;
     }
 
     public Game getEvent(String eventName) {
@@ -226,9 +215,5 @@ public class GameHandler {
         } catch (Exception e) {
             return false;
         }
-    }
-
-    public void reload() {
-        loadEvents();
     }
 }
