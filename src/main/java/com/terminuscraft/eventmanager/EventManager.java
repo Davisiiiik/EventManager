@@ -1,5 +1,6 @@
 package com.terminuscraft.eventmanager;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -8,7 +9,7 @@ import com.terminuscraft.eventmanager.commands.CommandManager;
 import com.terminuscraft.eventmanager.communication.Lang;
 import com.terminuscraft.eventmanager.gamehandler.GameHandler;
 import com.terminuscraft.eventmanager.gamehandler.PlayerJoinListener;
-import com.terminuscraft.eventmanager.hooks.CmiAdapter;
+import com.terminuscraft.eventmanager.miscellaneous.Utils;
 
 
 /**
@@ -29,7 +30,7 @@ public class EventManager extends JavaPlugin {
 
         /* Prepare event handling */
         this.gameHandler = new GameHandler(this);
-        CmiAdapter.init();
+        Utils.init();
 
         /* Initialize the CommandManager */
         CommandManager commandManager = new CommandManager(this.gameHandler);

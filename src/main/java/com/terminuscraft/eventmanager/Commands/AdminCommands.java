@@ -5,7 +5,6 @@ import java.util.Map;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -19,8 +18,8 @@ import com.terminuscraft.eventmanager.EventManager;
 import com.terminuscraft.eventmanager.communication.Lang;
 import com.terminuscraft.eventmanager.gamehandler.Game;
 import com.terminuscraft.eventmanager.gamehandler.GameHandler;
-import com.terminuscraft.eventmanager.hooks.CmiAdapter;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
+import com.terminuscraft.eventmanager.miscellaneous.Utils;
 
 public class AdminCommands {
 
@@ -123,8 +122,13 @@ public class AdminCommands {
 
         gameHandler.resetCurrentEvent();
         sender.sendMessage(Lang.get("cmd.end", Map.of("event", event.getName())));
-        
-        /* TODO: Unload world ? */
+
+        if (unloadEventWorld(event) != Constants.SUCCESS) {
+            sender.sendMessage(Lang.get("cmd.unload.fail", Map.of("event", event.getName())));
+            return 0;
+        }
+
+        sender.sendMessage(Lang.get("cmd.unload.success", Map.of("event", event.getName())));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -172,32 +176,12 @@ public class AdminCommands {
             return 0;
         }
 
-        for (Player player : event.getWorld().getPlayers()) {
-            //player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
-            CmiAdapter.sendToSpawn(player);
-            player.sendMessage(Lang.get("system.unload_tp", Map.of("event", eventName)));
-        }
-
-        if (event.saveAndUnloadWorld() != Constants.SUCCESS) {
+        if (unloadEventWorld(event) != Constants.SUCCESS) {
             sender.sendMessage(Lang.get("cmd.unload.fail", Map.of("event", eventName)));
             return 0;
         }
 
         sender.sendMessage(Lang.get("cmd.unload.success", Map.of("event", eventName)));
-
-        /*for (Player player : event.getWorld().getPlayers()) {
-            Bukkit.dispatchCommand(player, "spawn");
-            player.sendMessage(Lang.get("system.unload_tp", Map.of("event", eventName)));
-        }
-
-        // Delay unload logic by 2 ticks (approx. 100ms)
-        Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(EventManager.class), () -> {
-            if (event.saveAndUnloadWorld() != Constants.SUCCESS) {
-                sender.sendMessage(Lang.get("cmd.unload.fail", Map.of("event", eventName)));
-            } else {
-                sender.sendMessage(Lang.get("cmd.unload.success", Map.of("event", eventName)));
-            }
-        }, 2L);*/
 
         return Command.SINGLE_SUCCESS;
     }
@@ -220,5 +204,16 @@ public class AdminCommands {
         sender.sendMessage(Component.text(Lang.get("cmd.reload")));
 
         return Command.SINGLE_SUCCESS;
+    }
+
+    private int unloadEventWorld(Game event) {
+        /* Send all players to spawn */
+        for (Player player : event.getWorld().getPlayers()) {
+            Utils.instance.sendToSpawn(player);
+            player.sendMessage(Lang.get("system.unload_tp", Map.of("event", event.getName())));
+        }
+
+        /* Try to save and unload world and return action status */
+        return event.saveAndUnloadWorld();
     }
 }
