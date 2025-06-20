@@ -4,6 +4,10 @@ version: "${VERSION}"
 api-version: "1.21.1"
 author: Davisiiiik
 description: Simple plugin for event and minigame management
+softdepend:
+  - CMI
+depend:
+  - ASPaperPlugin
 commands:
   evm:
     description: Base command for EXAMPLE

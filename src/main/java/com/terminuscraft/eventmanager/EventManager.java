@@ -29,6 +29,7 @@ public class EventManager extends JavaPlugin {
 
         /* Prepare event handling */
         this.gameHandler = new GameHandler(this);
+        CmiAdapter.init();
 
         /* Initialize the CommandManager */
         CommandManager commandManager = new CommandManager(this.gameHandler);

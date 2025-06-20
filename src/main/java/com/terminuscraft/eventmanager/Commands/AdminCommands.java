@@ -19,6 +19,7 @@ import com.terminuscraft.eventmanager.EventManager;
 import com.terminuscraft.eventmanager.communication.Lang;
 import com.terminuscraft.eventmanager.gamehandler.Game;
 import com.terminuscraft.eventmanager.gamehandler.GameHandler;
+import com.terminuscraft.eventmanager.hooks.CmiAdapter;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
 
 public class AdminCommands {
@@ -167,12 +168,13 @@ public class AdminCommands {
 
         Game event = gameHandler.getEvent(eventName);
         if (event == null) {
-            sender.sendMessage(Lang.get("cmd.event_invalid"));
+            sender.sendMessage(Lang.get("error.event_invalid"));
             return 0;
         }
 
         for (Player player : event.getWorld().getPlayers()) {
-            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
+            //player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
+            CmiAdapter.sendToSpawn(player);
             player.sendMessage(Lang.get("system.unload_tp", Map.of("event", eventName)));
         }
 
