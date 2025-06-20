@@ -4,15 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import com.infernalsuite.asp.api.world.SlimeWorldInstance;
 import com.infernalsuite.asp.api.world.properties.SlimePropertyMap;
 import com.terminuscraft.eventmanager.EventManager;
+import com.terminuscraft.eventmanager.communication.Lang;
 import com.terminuscraft.eventmanager.communication.Log;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
 
@@ -81,10 +83,15 @@ public class GameHandler {
 
                 if (event.hasValidWorld()) {
                     this.events.add(event);
-                    /* TODO: Add a message about successful event load */
+                    Log.logger.info(
+                        Lang.get("consile.event_load.success", Map.of("event", worldName))
+                    );
                 }
             } catch (Exception e) {
-                Log.logger.warning("Failed to load event '" + worldName + "': " + e.getMessage());
+                Log.logger.warning(Lang.get("console.event_load.fail",
+                                            Map.of("{event}", worldName,
+                                                   "{reason}", e.getMessage()
+                    )));
             }
         }
     }
@@ -139,16 +146,58 @@ public class GameHandler {
             return Constants.FAIL;
         }
 
-        /* Try creating Slime world instance */
-        SlimeWorldInstance slimeWorldInstance = Game.aspAdapter.createWorld(
-                                                    eventName, defaultProperties);
-        if (slimeWorldInstance == null) {
+        /* Create a new event instance and add it into the existing event list */
+        Game event = new Game(eventName, defaultProperties);
+        events.add(event);
+
+        saveEvents();
+        return Constants.SUCCESS;
+    }
+
+    public int setEventSpawn(Game event, Location pos) {
+        SlimePropertyMap map = new SlimePropertyMap();
+
+        map.setValue(GameProperties.SPAWN_X, (int) pos.getX());
+        map.setValue(GameProperties.SPAWN_Y, (int) pos.getY());
+        map.setValue(GameProperties.SPAWN_Z, (int) pos.getZ());
+        map.setValue(GameProperties.SPAWN_YAW, pos.getYaw());
+
+        /* Change currently loaded world Spawn Location */
+        if (!event.getWorld().setSpawnLocation(pos)) {
             return Constants.FAIL;
         }
 
-        /* If world creation was successful, add newly created event instance into the event list */
-        Game event = new Game(eventName, defaultProperties);
-        events.add(event);
+        /* Change persistent world Spawn Location */
+        event.addProperties(map);
+
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(eventFile);
+        Set<String> propertyKeys = map.getProperties().keySet();
+        
+        GameProperties.getSlimePropertyList().forEach((property) -> {
+            String key = property.getKey();
+
+            if (propertyKeys.contains(key)) {
+                String path = "events." + event.getName() + "." + key;
+                config.set(path, map.getValue(property));
+            }
+        });
+
+        try {
+            config.save(eventFile);
+        } catch (IOException e) {
+            Log.logger.warning("Failed to save events.yml");
+            return Constants.FAIL;
+        }
+
+        return Constants.SUCCESS;
+    }
+
+    public int removeEvent(Game event) {
+        if (!eventExists(event)) {
+            return Constants.FAIL;
+        }
+
+        events.remove(event);
 
         saveEvents();
         return Constants.SUCCESS;
@@ -158,8 +207,6 @@ public class GameHandler {
         if (!eventExists(event)) {
             return Constants.FAIL;
         }
-
-        /* TODO: Delete event's world */
 
         event.deleteWorld();
         events.remove(event);

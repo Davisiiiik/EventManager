@@ -59,6 +59,7 @@ public class CommandManager {
             
             /* /evm admin ... */
             .then(Commands.literal("admin")
+                .requires(sender -> sender.getSender().hasPermission("eventmanager.admin"))
             
                 /* /evm admin purge */
 //                .then(Commands.literal("purge"))
@@ -100,13 +101,15 @@ public class CommandManager {
                 /* /evm admin remove <event> */
                 .then(Commands.literal("remove")
                     .then(Commands.argument("event", StringArgumentType.word())
-                        .suggests(eventListSuggestion()))
+                        .suggests(eventListSuggestion())
+                        .executes(admin::removeEvent))
                 )
 
                 /* /evm admin delete <event> */
                 .then(Commands.literal("delete")
                     .then(Commands.argument("event", StringArgumentType.word())
-                        .suggests(eventListSuggestion()))
+                        .suggests(eventListSuggestion())
+                        .executes(admin::deleteEvent))
                 )
 
 //                /* /evm admin load <event> */

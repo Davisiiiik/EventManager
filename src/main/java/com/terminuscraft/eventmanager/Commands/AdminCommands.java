@@ -2,9 +2,11 @@ package com.terminuscraft.eventmanager.commands;
 
 import java.util.Map;
 
+import com.infernalsuite.asp.api.world.properties.SlimePropertyMap;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -18,6 +20,7 @@ import com.terminuscraft.eventmanager.EventManager;
 import com.terminuscraft.eventmanager.communication.Lang;
 import com.terminuscraft.eventmanager.gamehandler.Game;
 import com.terminuscraft.eventmanager.gamehandler.GameHandler;
+import com.terminuscraft.eventmanager.gamehandler.GameProperties;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
 import com.terminuscraft.eventmanager.miscellaneous.Utils;
 
@@ -74,11 +77,30 @@ public class AdminCommands {
         return Command.SINGLE_SUCCESS;
     }
 
+    /* TODO: Unify better with saveEvents */
     public int setSpawn(CommandContext<CommandSourceStack> ctx) {
-        String eventName = ctx.getArgument("event", String.class);
         CommandSender sender = ctx.getSource().getSender();
 
-        /* TODO: !!! */
+        if (!(ctx.getSource().getExecutor() instanceof Player player)) {
+            sender.sendMessage(Lang.get("error.players_only"));
+            return 0;
+        }
+
+        World world = player.getWorld();
+
+        Game event = gameHandler.getEvent(world.getName());
+        if (event == null) {
+            player.sendMessage(
+                Lang.get("cmd.set_spawn.not_event", Map.of("world", world.getName()))
+            );
+            return 0;
+        }
+
+        Location pos = player.getLocation();
+
+        gameHandler.setEventSpawn(event, pos);
+
+        player.sendMessage(Lang.get("cmd.set_spawn.success", Map.of("event", event.getName())));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -182,6 +204,36 @@ public class AdminCommands {
         }
 
         sender.sendMessage(Lang.get("cmd.unload.success", Map.of("event", eventName)));
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    public int removeEvent(CommandContext<CommandSourceStack> ctx) {
+        String eventName = ctx.getArgument("event", String.class);
+        CommandSender sender = ctx.getSource().getSender();
+
+        Game event = gameHandler.getEvent(eventName);
+        if ((event == null) || (gameHandler.removeEvent(event) != Constants.SUCCESS)) {
+            sender.sendMessage(Lang.get("cmd.remove.fail", Map.of("event", eventName)));
+            return 0;
+        }
+
+        sender.sendMessage(Lang.get("cmd.remove.success", Map.of("event", eventName)));
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    public int deleteEvent(CommandContext<CommandSourceStack> ctx) {
+        String eventName = ctx.getArgument("event", String.class);
+        CommandSender sender = ctx.getSource().getSender();
+
+        Game event = gameHandler.getEvent(eventName);
+        if ((event == null) || (gameHandler.deleteEvent(event) != Constants.SUCCESS)) {
+            sender.sendMessage(Lang.get("cmd.delete.fail", Map.of("event", eventName)));
+            return 0;
+        }
+
+        sender.sendMessage(Lang.get("cmd.delete.success", Map.of("event", eventName)));
 
         return Command.SINGLE_SUCCESS;
     }

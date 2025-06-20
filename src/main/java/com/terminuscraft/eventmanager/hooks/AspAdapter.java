@@ -26,32 +26,6 @@ public class AspAdapter {
         this.slimeLoader = new FileLoader(new File("slime_worlds"));
     }
 
-    /* TODO: REMOVE, OBSOLETE?? */
-    public SlimeWorldInstance createWorld(String worldName, SlimePropertyMap properties) {
-        SlimeWorld slimeWorld;
-        SlimeWorldInstance slimeWorldInstance = null;
-
-        try {
-            if (this.slimeLoader.worldExists(worldName)) {
-                Log.logger.log(
-                    Level.WARNING, "An exception occurred while trying to create the world \""
-                                 + worldName + "\", world with this name already exists!"
-                );
-            } else {
-                slimeWorld = asp.createEmptyWorld(worldName, false, properties, this.slimeLoader);
-                slimeWorldInstance = asp.loadWorld(slimeWorld, true);
-            }
-            
-        } catch (IOException exception) {
-            Log.logger.log(
-                Level.SEVERE,
-                "An exception occurred while trying to create the world: " + worldName, exception
-            );
-        }
-
-        return slimeWorldInstance;
-    }
-
     public SlimeWorld readOrCreateWorld(String worldName, SlimePropertyMap properties) {
         SlimeWorld slimeWorld = null;
 
@@ -90,45 +64,6 @@ public class AspAdapter {
         return slimeWorldInstance;
     }
 
-    /* TODO: REMOVE, OBSOLETE */
-    /*public SlimeWorldInstance loadWorldInstance(String worldName) {
-        SlimeWorld slimeWorld;
-        SlimeWorldInstance slimeWorldInstance = null;
-
-        try {
-            if (this.slimeLoader.worldExists(worldName)) {
-                slimeWorld = asp.readWorld(
-                    this.slimeLoader, worldName, false, new SlimePropertyMap()
-                );
-
-                if (this.asp.worldLoaded(slimeWorld)) {
-                    slimeWorldInstance = this.asp.getLoadedWorld(worldName);
-                } else {
-                    slimeWorldInstance = asp.loadWorld(slimeWorld, true);
-                }
-
-            } else {
-                Log.logger.log(
-                    Level.WARNING,
-                    "An exception occurred while trying to load the world \"" + worldName
-                    + "\", world with this name does NOT exist!"
-                );
-            }
-
-        } catch (
-            IOException
-          | CorruptedWorldException
-          | NewerFormatException
-          | UnknownWorldException e) {
-            Log.logger.log(
-                Level.SEVERE,
-                "An exception occurred while trying to load the world: " + worldName, e
-            );
-        }
-
-        return slimeWorldInstance;
-    }*/
-
     public SlimePropertyMap getWorldProperties(String worldName) {
         try {
             SlimeWorld slimeWorld = asp.readWorld(
@@ -163,5 +98,9 @@ public class AspAdapter {
 
     public boolean worldIsLoaded(SlimeWorld world) {
         return asp.worldLoaded(world);
+    }
+
+    public void deleteWorld(String worldName) throws UnknownWorldException, IOException {
+        this.slimeLoader.deleteWorld(worldName);
     }
 }

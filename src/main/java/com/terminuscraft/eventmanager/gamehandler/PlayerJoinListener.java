@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.terminuscraft.eventmanager.communication.Lang;
 import com.terminuscraft.eventmanager.communication.Log;
+import com.terminuscraft.eventmanager.miscellaneous.Utils;
 
 public class PlayerJoinListener implements Listener {
     
@@ -22,8 +23,9 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     private void onPlayerJoin(PlayerJoinEvent event) {
         Game currentEvent = gameHandler.getCurrentEvent();
+        Player player = event.getPlayer();
+
         if (currentEvent != null) {
-            Player player = event.getPlayer();
 
             /* TODO: Check if player has permission to bypass auto-tp */
             World eventWorld = currentEvent.getWorld();
@@ -43,7 +45,7 @@ public class PlayerJoinListener implements Listener {
                 Lang.get("system.auto_tp", Map.of("event", currentEvent.getName()))
             );
         } else {
-            /* TODO: Teleport to spawn (PlayerCommands.leave?) */
+            Utils.instance.sendToSpawn(player);
         }
 
     }

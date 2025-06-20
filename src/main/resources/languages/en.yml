@@ -1,7 +1,11 @@
 prefix: "&9[&6Event&9] "
-system:
+console:
   start: "TerminusCraft Event Manager successfully loaded!"
   end: "TerminusCraft Event Manager successfully unloaded!"
+  event_load:
+    success: "Successfully loaded event '{event}'"
+    fail: "Error: Failed to load event '{event}': '{reason}'"
+system:
   auto_tp: "&aYou have been successfully teleported to the currently running event &f{event}&a."
   unload_tp: "&eYou have been teleported to the spawn area, because the Event &f{event} &ejust ended."
 cmd:
@@ -25,6 +29,9 @@ cmd:
   tp:
     success: "&aSuccessfully teleported to the event &f{event}&a."
     not_found: "&cEvent &f{event} &cnot found."
+  set_spawn:
+    success: "&aSpawn point in the world of the event &f{event} &asuccessfully set."
+    not_event: "&cWorld &f{world} &cis not linked to any event. You can set spawn only for Event worlds."
   unload:
     success: "&aSuccessfully saved and unloaded world from the Event &f{event}&a."
     fail: "&cUnable to unload world from the Event &f{event}&c. The world is not loaded, or there are players inside."
@@ -38,11 +45,17 @@ cmd:
     page: "Go to page {page}"
     footer: " Page ({page}/{total}) "
   save_events: "&aSuccessfully saved configurations for all events into the &fevents.yml &afile."
+  remove:
+    success: "&aSuccessfully removed Event &f{event} &afrom the Event List. Event world remained."
+    fail: "&cUnable to remove event &f{event}&c, because it doesn't exist."
+  delete:
+    success: "&aSuccessfully deleted Event &f{event} &aand its world from the Event List."
+    fail: "&cUnable to delete event &f{event}&c, because it doesn't exist."
 error:
   players_only: "&cOnly players can use this command!"
-  event_invalid: "&cEvent '{event}' doesn't exists, or its world is invalid."
-  event_load_try: "&cCannot reach world from event '{event}'. Trying to load it ..."
-  event_load_abort: "&cAttempt to load the world from event '{event}' unsuccessful. Aborting ..."
+  event_invalid: "&cEvent &f{event} &cdoesn't exists, or its world is invalid."
+  event_load_try: "&cCannot reach world from event &f{event}&c. Trying to load it ..."
+  event_load_abort: "&cAttempt to load the world from event &f{event} &cunsuccessful. Aborting ..."
 command.help.messages:
   - "&aList of all available commands:"
   - "&e/evm list &7- List all events"

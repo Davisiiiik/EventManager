@@ -1,7 +1,11 @@
 prefix: "&9[&6Event&9] "
-system:
+console:
   start: "TerminusCraft Event Manager byl úspěšně načten!"
   end: "TerminusCraft Event Manager byl úspěšně ukončen!"
+  event_load:
+    success: "Event '{event}' úspěšně načten do paměti"
+    fail: "Error: Nebylo možné načíst event '{event}': '{reason}'"
+system:
   auto_tp: "&aByl jsi úspěšně teleportován na právě probíhající event &f{event}&a."
   unload_tp: "&eByl jsi teleportován na spawn, protože event &f{event} &eprávě skončil."
 cmd:
@@ -19,12 +23,15 @@ cmd:
     no_world: "&cSvět &f{event} &cnenalezen. Nebylo z něj možné vytvořit nový event."
   create:
     success: "&aNový event s názvem &f{event} &aúspěšně vytvořen."
-    fail: "&cNepodařilo se mi vytvořit vhodný svět pro nový event &f{event}&c. Ruším akci ..."
+    fail: "&cNebylo možné vytvořit vhodný svět pro nový event &f{event}&c. Ruším akci ..."
     dupe_event: "&cEvent &f{event} &cjiž existuje. Ruším akci ..."
     dupe_world: "&cSlimeWorld &f{event} &cjiž existuje. Použij příkaz &f/event add&c!"
   tp:
     success: "&aByl jsi úspěšně teleportován na event &f{event}&a."
     not_found: "&cEvent &f{event} &cnenalezen."
+  set_spawn:
+    success: "&aSpawn point ve světě eventu &f{event} &abyl úspéšně nastaven."
+    not_event: "&cSvět &f{world} &cnení spojen s žádným existujícím eventem. Spawm můžeš nastavit pouze pro event světy."
   unload:
     success: "&aSvět eventu &f{event} &abyl úspéšně uložen a uvolněn z paměti."
     fail: "&cSvět eventu &f{event}&c nebylo možné uvolnit z paměti. Tento svět není načtený, nebo se v něm nachází hráči."
@@ -38,11 +45,17 @@ cmd:
     page: "Přejít na stránku {page}"
     footer: " Stránka ({page}/{total}) "
   save_events: "&aKonfigurace všech existujících eventů byla úspěšně uložena do souboru &fevents.yml&a."
+  remove:
+    success: "&aEvent &f{event} &abyl úspěšně odstraněn. Svět tohoto eventu byl zachován."
+    fail: "&cNebylo možné odstranit event &f{event}&c, protože neexistuje."
+  delete:
+    success: "&aEvent &f{event} &aa jemu náležící svět byly úspěšně smazány."
+    fail: "&cNebylo možné smazat event &f{event}&c, protože neexistuje."
 error:
   players_only: "&cTento příkaz mohou používat pouze hráči!"
-  event_invalid: "&cEvent '{event}' neexistuje, nebo nemá vytvořený svět."
-  event_load_try: "&cSvět eventu '{event}' není načtený. Pokusím se ho najít ..."
-  event_load_abort: "&cPokus načíst svět eventu '{event}' byl neúspěšný. Ruším akci ..."
+  event_invalid: "&cEvent &f{event} &cneexistuje, nebo nemá vytvořený svět."
+  event_load_try: "&cSvět eventu &f{event} &cnení načtený. Pokusím se ho najít ..."
+  event_load_abort: "&cPokus načíst svět eventu &f{event} &cbyl neúspěšný. Ruším akci ..."
 command.help.messages:
   - "&aList všech dostupných příkazů:"
   - "&e/evm list &7- List all events"

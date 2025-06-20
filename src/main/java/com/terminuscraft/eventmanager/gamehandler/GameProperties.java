@@ -56,7 +56,6 @@ public class GameProperties extends SlimeProperties {
 
         getSlimePropertyList().forEach((property) -> {
             String key = path + "." + property.getKey();
-            Log.logger.info(key);
 
             if (config.get(key) != null) {
                 Log.logger.warning(config.get(key).toString());

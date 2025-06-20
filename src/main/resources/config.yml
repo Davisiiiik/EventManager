@@ -1,11 +1,7 @@
-# TODO: config file with list of all set events, /event add, /event changes that
-# There will be specified "event-sources" setting in config file with possible options "slime" or "config" (Or just asp-hook-enabled: true/false)
-# "slime" option will hook to ASP and try to get the list of slime worlds
-# "config" option will take values from "events" setting
-
+# Set language of the plugin, currently supported languages: en, cs
 language: en.yml
 
-# TODO: Add default configuration for newly created event worlds
+# Default properties for newly created events
 default-cfg:
     spawnX: 0
     spawnY: 100

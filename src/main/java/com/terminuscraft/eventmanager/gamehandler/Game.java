@@ -1,8 +1,11 @@
 package com.terminuscraft.eventmanager.gamehandler;
 
+import java.io.IOException;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
+import com.infernalsuite.asp.api.exceptions.UnknownWorldException;
 import com.infernalsuite.asp.api.world.SlimeWorld;
 import com.infernalsuite.asp.api.world.SlimeWorldInstance;
 import com.infernalsuite.asp.api.world.properties.SlimePropertyMap;
@@ -13,7 +16,7 @@ public class Game {
     public static final AspAdapter aspAdapter = new AspAdapter();
 
     private final String eventName;
-    private final SlimeWorld gameWorld;
+    private SlimeWorld gameWorld;
 
 
     public Game(String name, SlimePropertyMap properties) {
@@ -31,6 +34,13 @@ public class Game {
 
     public SlimePropertyMap getProperties() {
         return gameWorld.getPropertyMap();
+    }
+
+    public void addProperties(SlimePropertyMap newMap) {
+        SlimePropertyMap oldMap = getProperties();
+        oldMap.merge(newMap);
+
+        this.gameWorld = aspAdapter.readOrCreateWorld(eventName, oldMap);
     }
 
     public SlimeWorldInstance getWorldInstance() {
@@ -80,6 +90,10 @@ public class Game {
     }
 
     public void deleteWorld() {
-        /* TODO */
+        try {
+            aspAdapter.deleteWorld(eventName);
+        } catch (IOException | UnknownWorldException e) {
+            /* Either the world is already deleted or this shouldnt happen */
+        }
     }
 }
