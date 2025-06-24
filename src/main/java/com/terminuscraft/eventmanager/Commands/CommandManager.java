@@ -36,36 +36,46 @@ public class CommandManager {
     /* TODO: Change from evm to event, add evm as cmi alias */
     public LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         /* /evm ... */
-        return Commands.literal("evm").executes(player::join)
+        return Commands.literal("event")
+                .requires(sender -> sender.getSender().hasPermission("eventmng.player.join"))
+                .executes(player::join)
+
             /* /evm help */
-            .then(Commands.literal("help").executes(player::help))
+            .then(Commands.literal("help")
+                .requires(sender -> sender.getSender().hasPermission("eventmng.player.help"))
+                .executes(player::help))
             
             /* /evm current */
-            .then(Commands.literal("current").executes(player::getEvent))
+            .then(Commands.literal("current")
+                .requires(sender -> sender.getSender().hasPermission("eventmng.player.current"))
+                .executes(player::getEvent))
             
             /* /evm join */
-            .then(Commands.literal("join").executes(player::join))
+            .then(Commands.literal("join")
+                .requires(sender -> sender.getSender().hasPermission("eventmng.player.join"))
+                .executes(player::join))
             
             /* /evm leave */
-            .then(Commands.literal("leave").executes(player::leave))
+            .then(Commands.literal("leave")
+                .requires(sender -> sender.getSender().hasPermission("eventmng.player.leave"))
+                .executes(player::leave))
             
             /* /evm list [page] */
             .then(Commands.literal("list")
+                .requires(sender -> sender.getSender().hasPermission("eventmng.player.list"))
                 .executes(player::listEvents)
                 .then(Commands.argument("page", IntegerArgumentType.integer(1))
                     .executes(player::listEvents)
                 )
             )
-            
+
             /* /evm admin ... */
             .then(Commands.literal("admin")
-                .requires(sender -> sender.getSender().hasPermission("eventmanager.admin"))
-            
-                /* /evm admin purge */
-//                .then(Commands.literal("purge"))
-            
+            /* TODO: Solve, /event admin is visible to regular players */
+
                 /* /evm admin tp <event> */
                 .then(Commands.literal("tp")
+                    .requires(sender -> sender.getSender().hasPermission("eventmng.admin.tp"))
                     .then(Commands.argument("event", StringArgumentType.word())
                         .suggests(eventListSuggestion())
                         .executes(admin::teleport))
@@ -73,17 +83,23 @@ public class CommandManager {
             
                 /* /evm admin start <event> */
                 .then(Commands.literal("start")
+                    .requires(sender -> sender.getSender().hasPermission("eventmng.admin.start"))
                     .then(Commands.argument("event", StringArgumentType.word())
                         .suggests(eventListSuggestion())
                         .executes(admin::startEvent))
                 )   /* TODO: Add alias set, or use set to change world properties? */
             
                 /* /evm admin end; /evm admin stop */
-                .then(Commands.literal("end").executes(admin::endEvent))
-                .then(Commands.literal("stop").executes(admin::endEvent))
+                .then(Commands.literal("end")
+                    .requires(sender -> sender.getSender().hasPermission("eventmng.admin.stop"))
+                    .executes(admin::endEvent))
+                .then(Commands.literal("stop")
+                    .requires(sender -> sender.getSender().hasPermission("eventmng.admin.stop"))
+                    .executes(admin::endEvent))
 
                 /* /evm admin add <event> */
                 .then(Commands.literal("add")
+                    .requires(sender -> sender.getSender().hasPermission("eventmng.admin.add"))
                     .then(Commands.argument("event", StringArgumentType.word())
                         .suggests(orphanWorldsSuggestion())
                         .executes(admin::addEvent))
@@ -91,15 +107,19 @@ public class CommandManager {
 
                 /* /evm admin create <event> */
                 .then(Commands.literal("create")
+                    .requires(sender -> sender.getSender().hasPermission("eventmng.admin.create"))
                     .then(Commands.argument("event", StringArgumentType.word())
                         .executes(admin::createEvent))
                 )
 
                 /* /evm admin setspawn */
-                .then(Commands.literal("setspawn").executes(admin::setSpawn))
+                .then(Commands.literal("setspawn")
+                    .requires(sender -> sender.getSender().hasPermission("eventmng.admin.setspawn"))
+                    .executes(admin::setSpawn))
 
                 /* /evm admin remove <event> */
                 .then(Commands.literal("remove")
+                    .requires(sender -> sender.getSender().hasPermission("eventmng.admin.remove"))
                     .then(Commands.argument("event", StringArgumentType.word())
                         .suggests(eventListSuggestion())
                         .executes(admin::removeEvent))
@@ -107,6 +127,7 @@ public class CommandManager {
 
                 /* /evm admin delete <event> */
                 .then(Commands.literal("delete")
+                    .requires(sender -> sender.getSender().hasPermission("eventmng.admin.delete"))
                     .then(Commands.argument("event", StringArgumentType.word())
                         .suggests(eventListSuggestion())
                         .executes(admin::deleteEvent))
@@ -119,16 +140,21 @@ public class CommandManager {
 
                 /* /evm admin unload <event> */
                 .then(Commands.literal("unload")
+                    .requires(sender -> sender.getSender().hasPermission("eventmng.admin.unload"))
                     .then(Commands.argument("event", StringArgumentType.word())
                         .suggests(eventListSuggestion())
                         .executes(admin::unloadEvent))
                 )
 
                 /* /evm admin saveEventConfigs */
-                .then(Commands.literal("saveEventConfigs").executes(admin::saveEvents))
+                .then(Commands.literal("saveEventConfigs")
+                    .requires(sender -> sender.getSender().hasPermission("eventmng.admin.savecfgs"))
+                    .executes(admin::saveEvents))
 
                 /* /evm admin reload */
-                .then(Commands.literal("reload").executes(admin::reload))
+                .then(Commands.literal("reload")
+                    .requires(sender -> sender.getSender().hasPermission("eventmng.admin.stop"))
+                    .executes(admin::reload))
             );
     }
 
