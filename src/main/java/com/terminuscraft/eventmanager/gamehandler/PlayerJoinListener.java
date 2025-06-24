@@ -25,7 +25,7 @@ public class PlayerJoinListener implements Listener {
         Game currentEvent = gameHandler.getCurrentEvent();
         Player player = event.getPlayer();
 
-        if (player.hasPermission("eventmng.admin.bypass")) {
+        if (player.hasPermission("event.admin.bypass")) {
             return;
         }
 

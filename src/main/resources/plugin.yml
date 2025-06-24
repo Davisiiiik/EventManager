@@ -18,104 +18,104 @@ commands:
     aliases: [em]
 
 permissions:
-  eventmng.*:
+  event.*:
     description: Grants all Event Manager plugin permissions
     default: false
     children:
-      eventmng.player.*: true
-      eventmng.admin.*: true
+      event.player.*: true
+      event.admin.*: true
 
-  eventmng.player.*:
+  event.player.*:
     description: Grants all permissions for player usage
     default: true
     children:
-      eventmng.player.help: true
-      eventmng.player.current: true
-      eventmng.player.join: true
-      eventmng.player.leave: true
-      eventmng.player.list: true
+      event.player.help: true
+      event.player.current: true
+      event.player.join: true
+      event.player.leave: true
+      event.player.list: true
 
-  eventmng.admin.*:
+  event.admin.*:
     description: Grants all permissions for admin Event management
     default: op
     children:
-      eventmng.admin.tp: true
-      eventmng.admin.start: true
-      eventmng.admin.stop: true
-      eventmng.admin.add: true
-      eventmng.admin.create: true
-      eventmng.admin.setspawn: true
-      eventmng.admin.remove: true
-      eventmng.admin.delete: true
-      eventmng.admin.unload: true
-      eventmng.admin.savecfgs: true
-      eventmng.admin.reload: true
-      eventmng.admin.bypass: true
+      event.admin.tp: true
+      event.admin.start: true
+      event.admin.stop: true
+      event.admin.add: true
+      event.admin.create: true
+      event.admin.setspawn: true
+      event.admin.remove: true
+      event.admin.delete: true
+      event.admin.unload: true
+      event.admin.saveconfigs: true
+      event.admin.reload: true
+      event.admin.bypass: true
 
-  eventmng.player.help:
+  event.player.help:
     description: Show a list of available Event Manager commands.
     default: false
 
-  eventmng.player.current:
+  event.player.current:
     description: Show information about the currently running Event.
     default: false
 
-  eventmng.player.join:
+  event.player.join:
     description: Join the currently running Event.
     default: false
 
-  eventmng.player.leave:
+  event.player.leave:
     description: Leave the currently running Event.
     default: false
 
-  eventmng.player.list:
+  event.player.list:
     description: Show a list of all existing Events.
     default: false
 
-  eventmng.admin.tp:
+  event.admin.tp:
     description: Teleport to any Event location.
     default: false
 
-  eventmng.admin.start:
+  event.admin.start:
     description: Start an Event.
     default: false
 
-  eventmng.admin.stop:
+  event.admin.stop:
     description: Stop the currently running Event.
     default: false
 
-  eventmng.admin.add:
+  event.admin.add:
     description: Add an Event with already existing World to the Event Manager system.
     default: false
 
-  eventmng.admin.create:
+  event.admin.create:
     description: Create a new Event with a blank world.
     default: false
 
-  eventmng.admin.setspawn:
+  event.admin.setspawn:
     description: Set the spawn point for an Event.
     default: false
 
-  eventmng.admin.remove:
+  event.admin.remove:
     description: Remove an Event from the system, but preserve its world.
     default: false
 
-  eventmng.admin.delete:
+  event.admin.delete:
     description: Delete an Event and its world permanently.
     default: false
 
-  eventmng.admin.unload:
+  event.admin.unload:
     description: Unload an Event world from active memory.
     default: false
 
-  eventmng.admin.savecfgs:
+  event.admin.saveconfigs:
     description: Save all Event world configurations to events.yml file.
     default: false
 
-  eventmng.admin.reload:
+  event.admin.reload:
     description: Reload Event Manager configurations.
     default: false
 
-  eventmng.admin.bypass:
+  event.admin.bypass:
     description: Bypasses the automatic teleportation on server join.
     default: false
