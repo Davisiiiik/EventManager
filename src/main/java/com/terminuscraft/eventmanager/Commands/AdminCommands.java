@@ -2,7 +2,6 @@ package com.terminuscraft.eventmanager.commands;
 
 import java.util.Map;
 
-import com.infernalsuite.asp.api.world.properties.SlimePropertyMap;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 
@@ -20,7 +19,6 @@ import com.terminuscraft.eventmanager.EventManager;
 import com.terminuscraft.eventmanager.communication.Lang;
 import com.terminuscraft.eventmanager.gamehandler.Game;
 import com.terminuscraft.eventmanager.gamehandler.GameHandler;
-import com.terminuscraft.eventmanager.gamehandler.GameProperties;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
 import com.terminuscraft.eventmanager.miscellaneous.Utils;
 
@@ -129,6 +127,7 @@ public class AdminCommands {
         sender.sendMessage(Lang.get("cmd.start.success", Map.of("event", eventName)));
 
         /* TODO: Refresh CMI holograms */
+        /* TODO: Add notification across bungeecord, add to config file option to enable this */
 
         return Command.SINGLE_SUCCESS;
     }

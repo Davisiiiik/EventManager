@@ -20,7 +20,9 @@ public class GameProperties extends SlimeProperties {
     /**
      * Whether Game World should load on server startup.
      */
-    public static final SlimePropertyBoolean LOAD_ON_STARTUP = SlimePropertyBoolean.create("loadOnStartup", false);
+    public static final SlimePropertyBoolean LOAD_ON_STARTUP = SlimePropertyBoolean.create(
+        "loadOnStartup", false
+    );
 
     public static List<SlimeProperty<?, ?>> getSlimePropertyList() {
         return Arrays.asList(
@@ -58,7 +60,6 @@ public class GameProperties extends SlimeProperties {
             String key = path + "." + property.getKey();
 
             if (config.get(key) != null) {
-                Log.logger.warning(config.get(key).toString());
                 if (property instanceof SlimePropertyBoolean) {
                     properties.setValue(
                         (SlimePropertyBoolean) property,

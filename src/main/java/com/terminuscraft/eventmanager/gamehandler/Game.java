@@ -40,6 +40,7 @@ public class Game {
         SlimePropertyMap oldMap = getProperties();
         oldMap.merge(newMap);
 
+        /* TODO: FIX!!! THIS WILL REWRITE CHANGES TO THE WORLD */
         this.gameWorld = aspAdapter.readOrCreateWorld(eventName, oldMap);
     }
 
