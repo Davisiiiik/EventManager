@@ -1,10 +1,10 @@
 package com.terminuscraft.eventmanager.hooks;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.terminuscraft.eventmanager.miscellaneous.Utils;
 
-import net.Zrips.CMILib.Container.CMILocation;
 import com.Zrips.CMI.utils.SpawnUtil;
 
 public class CmiAdapter extends Utils {
@@ -15,7 +15,7 @@ public class CmiAdapter extends Utils {
 
     @Override
     public void sendToSpawn(Player player) {
-        CMILocation spawn = SpawnUtil.getSpawnPoint(player);
+        Location spawn = SpawnUtil.getSpawnPoint(player).getBukkitLoc();
         player.teleport(spawn);
     }
 }

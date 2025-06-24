@@ -3,12 +3,10 @@ package com.terminuscraft.eventmanager.commands;
 import java.util.List;
 import java.util.Map;
 
-import com.Zrips.CMI.utils.SpawnUtil;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -17,10 +15,10 @@ import org.bukkit.entity.Player;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 
 import com.terminuscraft.eventmanager.communication.Lang;
-import com.terminuscraft.eventmanager.communication.Log;
 import com.terminuscraft.eventmanager.communication.PaginationUtil;
 import com.terminuscraft.eventmanager.gamehandler.Game;
 import com.terminuscraft.eventmanager.gamehandler.GameHandler;
+import com.terminuscraft.eventmanager.miscellaneous.Utils;
 
 public class PlayerCommands {
 
@@ -67,21 +65,18 @@ public class PlayerCommands {
     public int leave(CommandContext<CommandSourceStack> ctx) {
         Entity executor = ctx.getSource().getExecutor();
 
-        if (!(executor instanceof Player)) {
+        if (!(executor instanceof Player player)) {
             executor.sendMessage(Lang.get("error.players_only"));
             return 0;
         }
 
-        Log.logger.severe("Executor's world: " + executor.getWorld().toString());   /* DEBUG? */
-        Bukkit.dispatchCommand(executor, "spawn");
+        Utils.instance.sendToSpawn(player);
 
         return Command.SINGLE_SUCCESS;
     }
 
     public int help(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
-
-        Log.logger.severe(SpawnUtil.getSpawnPoint((Player) sender).toString()); /* DEBUG */
 
         for (String line : Lang.getList("cmd.help.messages")) {
             sender.sendMessage(line);
@@ -116,8 +111,12 @@ public class PlayerCommands {
             // default to page 1
         }
 
+        /* ctx.getInput() returns the command string which player typed, i.e. "event list" */
+        String[] parts = ctx.getInput().split("\\s+", 3);
+        String command = parts[0] + " " + parts[1];
+
         List<String> worldsList = this.gameHandler.getEventList();
-        PaginationUtil.sendPaginatedList(sender, worldsList, page, "evm list");
+        PaginationUtil.sendPaginatedList(sender, worldsList, page, command);
 
         return Command.SINGLE_SUCCESS;
     }
