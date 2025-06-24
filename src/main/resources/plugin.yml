@@ -50,6 +50,7 @@ permissions:
       eventmng.admin.unload: true
       eventmng.admin.savecfgs: true
       eventmng.admin.reload: true
+      eventmng.admin.bypass: true
 
   eventmng.player.help:
     description: Show a list of available Event Manager commands.
@@ -113,4 +114,8 @@ permissions:
 
   eventmng.admin.reload:
     description: Reload Event Manager configurations.
+    default: false
+
+  eventmng.admin.bypass:
+    description: Bypasses the automatic teleportation on server join.
     default: false

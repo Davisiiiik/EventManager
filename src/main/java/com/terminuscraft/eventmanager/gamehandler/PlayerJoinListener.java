@@ -25,9 +25,11 @@ public class PlayerJoinListener implements Listener {
         Game currentEvent = gameHandler.getCurrentEvent();
         Player player = event.getPlayer();
 
-        if (currentEvent != null) {
+        if (player.hasPermission("eventmng.admin.bypass")) {
+            return;
+        }
 
-            /* TODO: Check if player has permission to bypass auto-tp */
+        if (currentEvent != null) {
             World eventWorld = currentEvent.getWorld();
             if (eventWorld == null) {
                 eventWorld = currentEvent.getWorld();
