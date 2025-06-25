@@ -20,7 +20,7 @@ public class Game {
 
     public Game(String name, SlimePropertyMap propertyMap) {
         this.eventName = name;
-        this.propertyMap = propertyMap;
+        this.propertyMap = propertyMap.clone();
 
         if (propertyMap.getValue(GameProperties.LOAD_ON_STARTUP)) {
             loadWorld();
@@ -32,7 +32,7 @@ public class Game {
     }
 
     public SlimePropertyMap getPropertyMap() {
-        return propertyMap;
+        return propertyMap.clone();
     }
 
     public void addProperties(SlimePropertyMap newMap) {
