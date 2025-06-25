@@ -7,7 +7,8 @@ assignees: Davisiiiik
 body:
   - type: markdown
     attributes:
-      value: ## Plugin Manager Issues Tracker
+      value: |
+        ## Plugin Manager Issues Tracker
 
   - id: minecraft
     type: textarea
