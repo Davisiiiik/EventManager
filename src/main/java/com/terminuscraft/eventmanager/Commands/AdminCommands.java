@@ -19,6 +19,7 @@ import com.terminuscraft.eventmanager.communication.Lang;
 import com.terminuscraft.eventmanager.gamehandler.Game;
 import com.terminuscraft.eventmanager.gamehandler.GameHandler;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
+import com.terminuscraft.eventmanager.miscellaneous.Utils;
 
 public class AdminCommands {
 
@@ -121,7 +122,8 @@ public class AdminCommands {
 
         sender.sendMessage(Lang.get("cmd.start.success", Map.of("event", eventName)));
 
-        /* TODO: Refresh CMI holograms */
+        Utils.getInstance().refreshHolograms();
+
         /* TODO: Add notification across bungeecord, add to config file option to enable this */
 
         return Command.SINGLE_SUCCESS;
@@ -165,15 +167,11 @@ public class AdminCommands {
             return 0;
         }
 
+        Utils.getInstance().refreshHolograms();
         World eventWorld = event.getWorld();
         if (eventWorld == null) {
-            player.sendMessage(Lang.get("error.event_load_try", Map.of("event", eventName)));
-            eventWorld = event.getWorld();
-
-            if (eventWorld == null) {
-                player.sendMessage(Lang.get("error.event_load_abort", Map.of("event", eventName)));
-                return 0;
-            }
+            player.sendMessage(Lang.get("error.event_load_abort", Map.of("event", eventName)));
+            return 0;
         }
 
         player.teleport(eventWorld.getSpawnLocation());

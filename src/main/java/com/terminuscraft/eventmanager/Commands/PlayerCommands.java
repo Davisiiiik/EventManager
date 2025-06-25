@@ -46,15 +46,8 @@ public class PlayerCommands {
         String eventName = event.getName();
         World eventWorld = event.getWorld();
         if (eventWorld == null) {
-            executor.sendMessage(Lang.get("error.event_load_try", Map.of("event", eventName)));
-            eventWorld = event.getWorld();
-
-            if (eventWorld == null) {
-                executor.sendMessage(
-                    Lang.get("error.event_load_abort", Map.of("event", eventName))
-                );
-                return 0;
-            }
+            executor.sendMessage(Lang.get("error.event_load_abort", Map.of("event", eventName)));
+            return 0;
         }
 
         executor.teleport(eventWorld.getSpawnLocation());

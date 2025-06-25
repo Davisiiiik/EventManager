@@ -1,6 +1,7 @@
 package com.terminuscraft.eventmanager.miscellaneous;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.terminuscraft.eventmanager.communication.Log;
@@ -25,5 +26,9 @@ public class Utils {
 
     public void sendToSpawn(Player player) {
         player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
+    }
+
+    public void refreshHolograms() {
+        Log.logger.warning("Cannot reload CMI holograms, because CMI hook is not loaded!");
     }
 }
