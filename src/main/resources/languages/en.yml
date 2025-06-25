@@ -42,13 +42,10 @@ cmd:
     success: "&aSuccessfully saved and unloaded world from the Event &f{event}&a."
     fail: "&cUnable to unload world from the Event &f{event}&c. The world is not loaded, or there are players inside."
   list:
-    header: "&6----- Terminus&9Craft &6{header} -----"
-    invalid_page: "&cInvalid page number"
-    empty: "&cThe list is empty"
-    prev: " ◀ "
-    next: " ▶ "
-    page: "Go to page {page}"
-    footer: " Page ({page}/{total}) "
+    player_item: "&e• &f{event}"
+    admin_item: "&e• &7({state}&7) &f{event}"
+    loaded: "&aL"
+    unloaded: "&cU"
   save_events: "&aSuccessfully saved configurations for all events into the &fevents.yml &afile."
   remove:
     success: "&aSuccessfully removed Event &f{event} &afrom the Event List. Event world remained."
@@ -61,6 +58,14 @@ cmd:
 headers:
   events: "Events"
   commands: "Commands"
+paging:
+  header: "&6----- Terminus&9Craft &6{header} -----"
+  invalid_page: "&cInvalid page number"
+  empty: "&cThe list is empty"
+  prev: " ◀ "
+  next: " ▶ "
+  page: "Go to page {page}"
+  footer: " Page ({page}/{total}) "
 help:
   current: "&e{cmd} &7- Show information about the currently running Event."
   join: "&e{cmd} &7- Join the currently running Event."

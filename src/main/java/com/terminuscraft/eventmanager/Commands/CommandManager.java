@@ -164,7 +164,7 @@ public class CommandManager {
 
     public SuggestionProvider<CommandSourceStack> eventListSuggestion() {
         return (context, builder) -> {
-            List<String> eventNames = evmHandler.getEventList();
+            List<String> eventNames = evmHandler.getEventNameList();
             for (String eventName : eventNames) {
                 builder.suggest(eventName);
             }
@@ -178,7 +178,7 @@ public class CommandManager {
             List<String> worldNames;
             try {
                 worldNames = evmHandler.getWorldList();
-                worldNames.removeAll(evmHandler.getEventList());
+                worldNames.removeAll(evmHandler.getEventNameList());
                 for (String worldName : worldNames) {
                     builder.suggest(worldName);
                 }

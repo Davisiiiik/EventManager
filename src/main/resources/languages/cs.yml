@@ -42,13 +42,10 @@ cmd:
     success: "&aSvět eventu &f{event} &abyl úspéšně uložen a uvolněn z aktivní paměti."
     fail: "&cSvět eventu &f{event}&c nebylo možné uvolnit z aktivní paměti. Tento svět není načtený, nebo se v něm nachází hráči."
   list:
-    header: "&6----- Terminus&9Craft &6{header} -----"
-    invalid_page: "&cNeplatné číslo stránky"
-    empty: "&cSeznam je zatím prázdný"
-    prev: " ◀ "
-    next: " ▶ "
-    page: "Přejít na stránku {page}"
-    footer: " Stránka ({page}/{total}) "
+    player_item: "&e• &f{event}"
+    admin_item: "&e• &7({state}&7) &f{event}"
+    loaded: "&aL"
+    unloaded: "&cU"
   save_events: "&aKonfigurace všech existujících eventů byla úspěšně uložena do souboru &fevents.yml&a."
   remove:
     success: "&aEvent &f{event} &abyl úspěšně odstraněn. Svět tohoto eventu byl zachován."
@@ -61,6 +58,14 @@ cmd:
 headers:
   events: "eventy"
   commands: "příkazy"
+paging:
+  header: "&6----- Terminus&9Craft &6{header} -----"
+  invalid_page: "&cNeplatné číslo stránky"
+  empty: "&cSeznam je zatím prázdný"
+  prev: " ◀ "
+  next: " ▶ "
+  page: "Přejít na stránku {page}"
+  footer: " Stránka ({page}/{total}) "
 help:
   current: "&e{cmd} &7- Zobrazení informací ohledně právě probíhajícího eventu."
   join: "&e{cmd} &7- Připojení na právě probíhající event."

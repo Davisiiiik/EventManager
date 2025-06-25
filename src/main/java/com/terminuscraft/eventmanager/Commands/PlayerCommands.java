@@ -108,11 +108,31 @@ public class PlayerCommands {
         String[] parts = ctx.getInput().split("\\s+", 3);
         String command = parts[0] + " " + parts[1];
 
-        /* TODO: Add loaded/unloaded state to event items for event.admin.list permission */
-
         List<String> worldsList = new ArrayList<String>();
-        gameHandler.getEventList().forEach((world) -> {
-            worldsList.add("§e• " + world);
+        gameHandler.getEventList().forEach((event) -> {
+            String worldItem;
+
+            if (sender.hasPermission("event.admin.verbose")) {
+                String state;
+
+                if (event.hasLoadedWorld()) {
+                    state = Lang.get("cmd.list.loaded", false);
+                } else {
+                    state = Lang.get("cmd.list.unloaded", false);
+                }
+
+                worldItem = Lang.get(
+                    "cmd.list.admin_item", Map.of("event", event.getName(), "state", state),
+                    false
+                );
+            } else {
+                worldItem = Lang.get(
+                    "cmd.list.player_item", Map.of("event", event.getName()),
+                    false
+                );
+            }
+
+            worldsList.add(worldItem);
         });
 
         String headerName = Lang.get("headers.events", false);

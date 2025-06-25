@@ -260,7 +260,11 @@ public class GameHandler {
         return null;
     }
 
-    public List<String> getEventList() {
+    public List<Game> getEventList() {
+        return events;
+    }
+
+    public List<String> getEventNameList() {
         List<String> eventList = events.stream().map(Game::getName).collect(Collectors.toList());
         return eventList;
     }

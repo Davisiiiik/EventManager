@@ -20,9 +20,9 @@ public class PaginationUtil {
 
         if (page < 1 || page > totalPages) {
             if (page == 1) {
-                player.sendMessage(Lang.get("cmd.list.empty"));
+                player.sendMessage(Lang.get("paging.empty"));
             } else {
-                player.sendMessage(Lang.get("cmd.list.invalid_page"));
+                player.sendMessage(Lang.get("paging.invalid_page"));
             }
             return;
         }
@@ -32,7 +32,7 @@ public class PaginationUtil {
 
         // Header
         player.sendMessage("");     /* Empty line for better visual separation */
-        player.sendMessage(Lang.get("cmd.list.header", Map.of("header", headerName), false));
+        player.sendMessage(Lang.get("paging.header", Map.of("header", headerName), false));
 
         // Items
         for (int i = startIndex; i < endIndex; i++) {
@@ -49,12 +49,12 @@ public class PaginationUtil {
 
         if (page > 1) {
             navigation = navigation.append(
-                Component.text(Lang.get("cmd.list.prev", false), NamedTextColor.GREEN)
+                Component.text(Lang.get("paging.prev", false), NamedTextColor.GREEN)
                     .clickEvent(ClickEvent.runCommand("/" + cmd + " " + (page - 1)))
                     .hoverEvent(
                         Component.text(
                             Lang.get(
-                                "cmd.list.page",
+                                "paging.page",
                                 Map.of("page", Integer.toString(page - 1)),
                                 false
                             )
@@ -63,13 +63,13 @@ public class PaginationUtil {
                 );
         } else {
             navigation = navigation.append(
-                Component.text(Lang.get("cmd.list.prev", false), NamedTextColor.DARK_GRAY)
+                Component.text(Lang.get("paging.prev", false), NamedTextColor.DARK_GRAY)
             );
         }
         navigation = navigation.append(
             Component.text(
                 Lang.get(
-                    "cmd.list.footer",
+                    "paging.footer",
                     Map.of("page", Integer.toString(page), "total", Integer.toString(totalPages)),
                     false
                 ),
@@ -78,12 +78,12 @@ public class PaginationUtil {
 
         if (page < totalPages) {
             navigation = navigation.append(
-                Component.text(Lang.get("cmd.list.next", false), NamedTextColor.GREEN)
+                Component.text(Lang.get("paging.next", false), NamedTextColor.GREEN)
                     .clickEvent(ClickEvent.runCommand("/" + cmd + " " + (page + 1)))
                     .hoverEvent(
                         Component.text(
                             Lang.get(
-                                "cmd.list.page",
+                                "paging.page",
                                 Map.of("page", Integer.toString(page + 1)),
                                 false
                             )
@@ -92,7 +92,7 @@ public class PaginationUtil {
                 );
         } else {
             navigation = navigation.append(
-                Component.text(Lang.get("cmd.list.next", false), NamedTextColor.DARK_GRAY)
+                Component.text(Lang.get("paging.next", false), NamedTextColor.DARK_GRAY)
             );
         }
 

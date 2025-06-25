@@ -79,6 +79,7 @@ public final class Lang {
         return new File(langFolder, langFileName);
     }
 
+    /* TODO: Make variants pget -> prefix get and rget -> raw get */
     public static String get(String key) {
         return get(key, Map.of(), true);
     }

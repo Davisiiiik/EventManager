@@ -51,6 +51,7 @@ permissions:
       event.admin.saveconfigs: true
       event.admin.reload: true
       event.admin.bypass: true
+      event.admin.verbose: true
 
   event.player.help:
     description: Show a list of available Event Manager commands.
@@ -117,5 +118,9 @@ permissions:
     default: false
 
   event.admin.bypass:
-    description: Bypasses the automatic teleportation on server join.
+    description: Bypass the automatic teleportation on server join.
+    default: false
+
+  event.admin.verbose:
+    description: Show additional information on event list command.
     default: false
