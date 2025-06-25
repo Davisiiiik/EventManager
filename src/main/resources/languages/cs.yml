@@ -9,6 +9,11 @@ console:
 system:
   auto_tp: "&aByl jsi úspěšně teleportován na právě probíhající event &f{event}&a."
   unload_tp: "&eByl jsi teleportován na spawn, protože event &f{event} &eprávě skončil."
+error:
+  players_only: "&cTento příkaz mohou používat pouze hráči!"
+  event_invalid: "&cEvent &f{event} &cneexistuje, nebo nemá vytvořený svět."
+  event_load_try: "&cSvět eventu &f{event} &cnení načtený. Pokusím se ho najít ..."
+  event_load_abort: "&cPokus načíst svět eventu &f{event} &cbyl neúspěšný. Ruším akci ..."
 cmd:
   start:
     success: "&aÚspěšně jsi spustil event &f{event}&a, nezapomeň upozornit hráče!"
@@ -34,13 +39,12 @@ cmd:
     success: "&aSpawn point ve světě eventu &f{event} &abyl úspéšně nastaven."
     not_event: "&cSvět &f{world} &cnení spojen s žádným existujícím eventem. Spawm můžeš nastavit pouze pro event světy."
   unload:
-    success: "&aSvět eventu &f{event} &abyl úspéšně uložen a uvolněn z paměti."
-    fail: "&cSvět eventu &f{event}&c nebylo možné uvolnit z paměti. Tento svět není načtený, nebo se v něm nachází hráči."
+    success: "&aSvět eventu &f{event} &abyl úspéšně uložen a uvolněn z aktivní paměti."
+    fail: "&cSvět eventu &f{event}&c nebylo možné uvolnit z aktivní paměti. Tento svět není načtený, nebo se v něm nachází hráči."
   list:
-    header: "&6----- Terminus&9Craft &6Eventy -----"
+    header: "&6----- Terminus&9Craft &6{header} -----"
     invalid_page: "&cNeplatné číslo stránky"
-    empty: "&cSeznam eventů je zatím prázdný"
-    item: " &e• {event}"
+    empty: "&cSeznam je zatím prázdný"
     prev: " ◀ "
     next: " ▶ "
     page: "Přejít na stránku {page}"
@@ -54,13 +58,23 @@ cmd:
     success: "&aEvent &f{event} &aa jemu náležící svět byly úspěšně smazány."
     event_running: "&cNebylo možné smazat právě probíhající event &f{event}&c. Nejdříve použij &f/event admin stop&c!"
     fail: "&cNebylo možné smazat event &f{event}&c, protože neexistuje."
-error:
-  players_only: "&cTento příkaz mohou používat pouze hráči!"
-  event_invalid: "&cEvent &f{event} &cneexistuje, nebo nemá vytvořený svět."
-  event_load_try: "&cSvět eventu &f{event} &cnení načtený. Pokusím se ho najít ..."
-  event_load_abort: "&cPokus načíst svět eventu &f{event} &cbyl neúspěšný. Ruším akci ..."
-command.help.messages:
-  - "&aList všech dostupných příkazů:"
-  - "&e/evm list &7- List all events"
-  - "&e/evm tp <event> &7- Teleport to an event"
-  - "&e/evm admin &7- Admin commands"
+headers:
+  events: "eventy"
+  commands: "příkazy"
+help:
+  current: "&e{cmd} &7- Zobrazení informací ohledně právě probíhajícího eventu."
+  join: "&e{cmd} &7- Připojení na právě probíhající event."
+  leave: "&e{cmd} &7- Opuštění právě probíhající event."
+  list: "&e{cmd} &7- Zobrazení seznamu všech existujících eventů."
+  help: "&e{cmd} &7- Zobrazení nápovědy v podobě všech Event Manager příkazů."
+  admin.tp: "&e{cmd} &7- Teleportování na jakýkoliv existující event."
+  admin.start: "&e{cmd} &7- Spuštění eventu."
+  admin.stop: "&e{cmd} &7- Ukončení právě probíhající eventu."
+  admin.add: "&e{cmd} &7- Přidání eventu s již existujícím světem do Event Manager systému."
+  admin.create: "&e{cmd} &7- Vytvoření nového eventu s prázdným světem."
+  admin.setspawn: "&e{cmd} &7- Nastavení nové výchozí pozice při teleportaci na event."
+  admin.remove: "&e{cmd} &7- Odstranění eventu ze systému, ale zachování jeho světa."
+  admin.delete: "&e{cmd} &7- Nevratné smazání eventu, i jeho světa."
+  admin.unload: "&e{cmd} &7- Uvolnění světa eventu z aktivní paměti."
+  admin.saveconfigs: "&e{cmd} &7- Uložení konfigurací všech eventů do souboru events.yml."
+  admin.reload: "&e{cmd} &7- Opětovné načtení všech Event Manager nastavení."

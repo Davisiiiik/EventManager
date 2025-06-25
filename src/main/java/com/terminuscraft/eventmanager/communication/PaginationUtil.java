@@ -12,8 +12,10 @@ import java.util.Map;
 
 public class PaginationUtil {
 
-    public static void sendPaginatedList(CommandSender player, List<String> items, int page, String cmd) {
-        int itemsPerPage = 6;
+    public static void sendPaginatedList(
+        CommandSender player, List<String> items, int page, String cmd, String headerName
+    ) {
+        int itemsPerPage = 8;
         int totalPages = (int) Math.ceil((double) items.size() / itemsPerPage);
 
         if (page < 1 || page > totalPages) {
@@ -29,13 +31,12 @@ public class PaginationUtil {
         int endIndex = Math.min(startIndex + itemsPerPage, items.size());
 
         // Header
-        player.sendMessage(Lang.get("cmd.list.header", false));
+        player.sendMessage("");     /* Empty line for better visual separation */
+        player.sendMessage(Lang.get("cmd.list.header", Map.of("header", headerName), false));
 
         // Items
         for (int i = startIndex; i < endIndex; i++) {
-            player.sendMessage(
-                Lang.get("cmd.list.item", Map.of("event", items.get(i)), false)
-            );
+            player.sendMessage(items.get(i));
         }
 
         /* When CommandSender is not player, we dont need a navigation footer */
@@ -72,7 +73,7 @@ public class PaginationUtil {
                     Map.of("page", Integer.toString(page), "total", Integer.toString(totalPages)),
                     false
                 ),
-                NamedTextColor.GRAY)
+                NamedTextColor.GOLD)
             );
 
         if (page < totalPages) {

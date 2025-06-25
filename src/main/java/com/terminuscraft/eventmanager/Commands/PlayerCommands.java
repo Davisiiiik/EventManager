@@ -1,5 +1,6 @@
 package com.terminuscraft.eventmanager.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -7,10 +8,12 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 
@@ -75,16 +78,6 @@ public class PlayerCommands {
         return Command.SINGLE_SUCCESS;
     }
 
-    public int help(CommandContext<CommandSourceStack> ctx) {
-        CommandSender sender = ctx.getSource().getSender();
-
-        for (String line : Lang.getList("cmd.help.messages")) {
-            sender.sendMessage(line);
-        }
-
-        return Command.SINGLE_SUCCESS;
-    }
-
     public int getEvent(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
 
@@ -117,8 +110,40 @@ public class PlayerCommands {
 
         /* TODO: Add loaded/unloaded state to event items for event.admin.list permission */
 
-        List<String> worldsList = this.gameHandler.getEventList();
-        PaginationUtil.sendPaginatedList(sender, worldsList, page, command);
+        List<String> worldsList = new ArrayList<String>();
+        gameHandler.getEventList().forEach((world) -> {
+            worldsList.add("§e• " + world);
+        });
+
+        String headerName = Lang.get("headers.events", false);
+        PaginationUtil.sendPaginatedList(sender, worldsList, page, command, headerName);
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    public int help(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+        int page = 1;
+
+        try {
+            page = IntegerArgumentType.getInteger(ctx, "page");
+        } catch (IllegalArgumentException ignored) {
+            // default to page 1
+        }
+
+        /* ctx.getInput() returns the command string which player typed, i.e. "event list" */
+        String[] parts = ctx.getInput().split("\\s+", 3);
+        String command = parts[0] + " " + parts[1];
+
+        /* TODO: this is highly temporary, before the command handling refactoring */
+        List<String> cmdList = new ArrayList<String>();
+        CommandManager.getCommandDict().forEach((cmd, langMap) -> {
+            String desc = Lang.get("help." + langMap, Map.of("cmd", "/event" + cmd), false);
+            cmdList.add(desc);
+        });
+
+        String headerName = Lang.get("headers.commands", false);
+        PaginationUtil.sendPaginatedList(sender, cmdList, page, command, headerName);
 
         return Command.SINGLE_SUCCESS;
     }

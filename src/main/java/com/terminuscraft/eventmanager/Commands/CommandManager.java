@@ -1,6 +1,7 @@
 package com.terminuscraft.eventmanager.commands;
 
 import java.util.List;
+import java.util.Map;
 import java.io.IOException;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -33,16 +34,17 @@ public class CommandManager {
         this.admin = new AdminCommands(evmHandler);
     }
 
+    /* TODO: Rewrite command structure, so a command is its own class with literal, permission.
+     * argument, function to be executed, description for help command, children commands (with
+     * recursion to generate desired command tree structure) and aliases
+     * (to register the same command under the aliase as its literal with the same setting)
+     */
+
     public LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         /* /evm ... */
         return Commands.literal("event")
                 .requires(sender -> sender.getSender().hasPermission("event.player.join"))
                 .executes(player::join)
-
-            /* /evm help */
-            .then(Commands.literal("help")
-                .requires(sender -> sender.getSender().hasPermission("event.player.help"))
-                .executes(player::help))
             
             /* /evm current */
             .then(Commands.literal("current")
@@ -64,9 +66,17 @@ public class CommandManager {
                 .requires(sender -> sender.getSender().hasPermission("event.player.list"))
                 .executes(player::listEvents)
                 .then(Commands.argument("page", IntegerArgumentType.integer(1))
-                    .executes(player::listEvents)
-                )
+                    .executes(player::listEvents))
             )
+
+            /* /evm help */
+            .then(Commands.literal("help")
+                .requires(sender -> sender.getSender().hasPermission("event.player.help"))
+                .executes(player::help)
+                .then(Commands.argument("page", IntegerArgumentType.integer(1))
+                    .executes(player::help))
+            )
+
 
             /* /evm admin ... */
             .then(Commands.literal("admin")
@@ -112,7 +122,7 @@ public class CommandManager {
                 )
 
                 /* /evm admin setspawn */
-                .then(Commands.literal("setspawn")
+                .then(Commands.literal("setSpawn")
                     .requires(sender -> sender.getSender().hasPermission("event.admin.setspawn"))
                     .executes(admin::setSpawn))
 
@@ -181,5 +191,29 @@ public class CommandManager {
              
             return builder.buildFuture();
         };
+    }
+
+    /* TODO: this is highly temporary, before the command handling refactoring */
+    public static Map<String, String> getCommandDict() {
+        return Map.ofEntries(
+            Map.entry("",                           "join"),
+            Map.entry(" current",                   "current"),
+            Map.entry(" join",                      "join"),
+            Map.entry(" leave",                     "leave"),
+            Map.entry(" list",                      "list"),
+            Map.entry(" help",                      "help"),
+            Map.entry(" admin tp",                  "admin.tp"),
+            Map.entry(" admin start",               "admin.start"),
+            Map.entry(" admin end",                 "admin.stop"),
+            Map.entry(" admin stop",                "admin.stop"),
+            Map.entry(" admin add",                 "admin.add"),
+            Map.entry(" admin create",              "admin.create"),
+            Map.entry(" admin setSpawn",            "admin.setspawn"),
+            Map.entry(" admin remove",              "admin.remove"),
+            Map.entry(" admin delete",              "admin.delete"),
+            Map.entry(" admin unload",              "admin.unload"),
+            Map.entry(" admin saveEventConfigs",    "admin.saveconfigs"),
+            Map.entry(" admin reload",              "admin.reload")
+        );
     }
 }

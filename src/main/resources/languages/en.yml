@@ -9,6 +9,11 @@ console:
 system:
   auto_tp: "&aYou have been successfully teleported to the currently running event &f{event}&a."
   unload_tp: "&eYou have been teleported to the spawn area, because the Event &f{event} &ejust ended."
+error:
+  players_only: "&cOnly players can use this command!"
+  event_invalid: "&cEvent &f{event} &cdoesn't exists, or its world is invalid."
+  event_load_try: "&cCannot reach world from event &f{event}&c. Trying to load it ..."
+  event_load_abort: "&cAttempt to load the world from event &f{event} &cunsuccessful. Aborting ..."
 cmd:
   start:
     success: "&aSuccessfully started the &f{event}&a Event, don't forget to notify the players!"
@@ -37,10 +42,9 @@ cmd:
     success: "&aSuccessfully saved and unloaded world from the Event &f{event}&a."
     fail: "&cUnable to unload world from the Event &f{event}&c. The world is not loaded, or there are players inside."
   list:
-    header: "&6----- Terminus&9Craft &6Eventy-----"
+    header: "&6----- Terminus&9Craft &6{header} -----"
     invalid_page: "&cInvalid page number"
-    empty: "&cThe list of events is empty"
-    item: " &e• {event}"
+    empty: "&cThe list is empty"
     prev: " ◀ "
     next: " ▶ "
     page: "Go to page {page}"
@@ -54,13 +58,23 @@ cmd:
     success: "&aSuccessfully deleted Event &f{event} &aand its world from the Event List."
     event_running: "&cUnable to delete currently running event &f{event}&c. Use &f/event admin stop &cfirst!"
     fail: "&cUnable to delete event &f{event}&c, because it doesn't exist."
-error:
-  players_only: "&cOnly players can use this command!"
-  event_invalid: "&cEvent &f{event} &cdoesn't exists, or its world is invalid."
-  event_load_try: "&cCannot reach world from event &f{event}&c. Trying to load it ..."
-  event_load_abort: "&cAttempt to load the world from event &f{event} &cunsuccessful. Aborting ..."
-command.help.messages:
-  - "&aList of all available commands:"
-  - "&e/evm list &7- List all events"
-  - "&e/evm tp <event> &7- Teleport to an event"
-  - "&e/evm admin &7- Admin commands"
+headers:
+  events: "Events"
+  commands: "Commands"
+help:
+  current: "&e{cmd} &7- Show information about the currently running Event."
+  join: "&e{cmd} &7- Join the currently running Event."
+  leave: "&e{cmd} &7- Leave the currently running Event."
+  list: "&e{cmd} &7- Show a list of all existing Events."
+  help: "&e{cmd} &7- Show a list of available Event Manager commands."
+  admin.tp: "&e{cmd} &7- Teleport to any Event location."
+  admin.start: "&e{cmd} &7- Start an Event."
+  admin.stop: "&e{cmd} &7- Stop the currently running Event."
+  admin.add: "&e{cmd} &7- Add an Event with already existing World to the Event Manager system."
+  admin.create: "&e{cmd} &7- Create a new Event with a blank world."
+  admin.setspawn: "&e{cmd} &7- Set the spawn point for an Event."
+  admin.remove: "&e{cmd} &7- Remove an Event from the system, but preserve its world."
+  admin.delete: "&e{cmd} &7- Delete an Event and its world permanently."
+  admin.unload: "&e{cmd} &7- Unload an Event world from active memory."
+  admin.saveconfigs: "&e{cmd} &7- Save all Event world configurations to events.yml file."
+  admin.reload: "&e{cmd} &7- Reload Event Manager configurations."
