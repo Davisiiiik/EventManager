@@ -202,12 +202,12 @@ public class CommandManager {
     /* TODO:G0: this is highly temporary, before the command handling refactoring */
     public static Map<String, String> getCommandDict() {
         return Map.ofEntries(
-            Map.entry("",                           "join"),
-            Map.entry(" current",                   "current"),
-            Map.entry(" join",                      "join"),
-            Map.entry(" leave",                     "leave"),
-            Map.entry(" list",                      "list"),
-            Map.entry(" help",                      "help"),
+            Map.entry("",                           "player.join"),
+            Map.entry(" current",                   "player.current"),
+            Map.entry(" join",                      "player.join"),
+            Map.entry(" leave",                     "player.leave"),
+            Map.entry(" list",                      "player.list"),
+            Map.entry(" help",                      "player.help"),
             Map.entry(" admin tp",                  "admin.tp"),
             Map.entry(" admin start",               "admin.start"),
             Map.entry(" admin set",                 "admin.start"),

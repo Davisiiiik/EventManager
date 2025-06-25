@@ -147,8 +147,10 @@ public class PlayerCommands {
         /* TODO:G0: this is highly temporary, before the command handling refactoring */
         List<String> cmdList = new ArrayList<String>();
         CommandManager.getCommandDict().forEach((cmd, langMap) -> {
-            String desc = Lang.get("help." + langMap, Map.of("cmd", "/event" + cmd));
-            cmdList.add(desc);
+            if (sender.hasPermission("event." + langMap)) {
+                String desc = Lang.get("help." + langMap, Map.of("cmd", "/event" + cmd));
+                cmdList.add(desc);
+            }
         });
 
         String headerName = Lang.get("headers.commands");

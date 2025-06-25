@@ -17,6 +17,8 @@ public class Game {
 
     private final String eventName;
     private SlimePropertyMap propertyMap;
+    
+    /* TODO: Redesign spawn with my own Location */
 
     public Game(String name, SlimePropertyMap propertyMap) {
         this.eventName = name;
