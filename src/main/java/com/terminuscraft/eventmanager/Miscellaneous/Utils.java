@@ -8,7 +8,7 @@ import com.terminuscraft.eventmanager.hooks.CmiAdapter;
 
 public class Utils {
 
-    public static Utils instance;
+    private static Utils instance;
 
     public static void init() {
         if (Bukkit.getPluginManager().isPluginEnabled("CMI")) {
@@ -17,6 +17,10 @@ public class Utils {
         } else {
             instance = new Utils();
         }
+    }
+
+    public static Utils getInstance() {
+        return instance;
     }
 
     public void sendToSpawn(Player player) {

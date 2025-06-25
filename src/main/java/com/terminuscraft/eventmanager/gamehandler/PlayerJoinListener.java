@@ -47,7 +47,7 @@ public class PlayerJoinListener implements Listener {
                 Lang.get("system.auto_tp", Map.of("event", currentEvent.getName()))
             );
         } else {
-            Utils.instance.sendToSpawn(player);
+            Utils.getInstance().sendToSpawn(player);
         }
 
     }

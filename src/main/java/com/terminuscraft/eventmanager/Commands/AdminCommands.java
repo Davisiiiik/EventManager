@@ -106,19 +106,19 @@ public class AdminCommands {
     public int startEvent(CommandContext<CommandSourceStack> ctx) {
         String eventName = ctx.getArgument("event", String.class);
         CommandSender sender = ctx.getSource().getSender();
-        Game currEvent = gameHandler.getCurrentEvent();
 
+        Game currEvent = gameHandler.getCurrentEvent();
         if ((currEvent != null) && currEvent.getName().equalsIgnoreCase(eventName)) {
             sender.sendMessage(Lang.get("cmd.start.dupe", Map.of("event", currEvent.getName())));
             return 0;
         }
 
-        Game newEvent = gameHandler.getEvent(eventName);
-        if (gameHandler.setCurrentEvent(newEvent) != Constants.SUCCESS) {
+        if (gameHandler.setCurrentEvent(eventName) != Constants.SUCCESS) {
             sender.sendMessage(Lang.get("error.event_invalid", Map.of("event", eventName)));
             return 0;
         }
 
+        Game newEvent = gameHandler.getEvent(eventName);
         if (newEvent.loadWorld() != Constants.SUCCESS) {
             sender.sendMessage(Lang.get("error.start.fail", Map.of("event", eventName)));
             return 0;
@@ -144,7 +144,7 @@ public class AdminCommands {
         gameHandler.resetCurrentEvent();
         sender.sendMessage(Lang.get("cmd.end", Map.of("event", event.getName())));
 
-        if (unloadEventWorld(event) != Constants.SUCCESS) {
+        if (gameHandler.saveAndUnloadEventWorld(event) != Constants.SUCCESS) {
             sender.sendMessage(Lang.get("cmd.unload.fail", Map.of("event", event.getName())));
             return 0;
         }
@@ -193,11 +193,11 @@ public class AdminCommands {
 
         Game event = gameHandler.getEvent(eventName);
         if (event == null) {
-            sender.sendMessage(Lang.get("error.event_invalid"));
+            sender.sendMessage(Lang.get("error.event_invalid", Map.of("event", eventName)));
             return 0;
         }
 
-        if (unloadEventWorld(event) != Constants.SUCCESS) {
+        if (gameHandler.saveAndUnloadEventWorld(event) != Constants.SUCCESS) {
             sender.sendMessage(Lang.get("cmd.unload.fail", Map.of("event", eventName)));
             return 0;
         }
@@ -211,7 +211,14 @@ public class AdminCommands {
         String eventName = ctx.getArgument("event", String.class);
         CommandSender sender = ctx.getSource().getSender();
 
+        /* TODO: Add confirmation check */
+
         Game event = gameHandler.getEvent(eventName);
+        if (event == gameHandler.getCurrentEvent()) {
+            sender.sendMessage(Lang.get("cmd.remove.event_running", Map.of("event", eventName)));
+            return 0;
+        }
+
         if ((event == null) || (gameHandler.removeEvent(event) != Constants.SUCCESS)) {
             sender.sendMessage(Lang.get("cmd.remove.fail", Map.of("event", eventName)));
             return 0;
@@ -225,8 +232,16 @@ public class AdminCommands {
     public int deleteEvent(CommandContext<CommandSourceStack> ctx) {
         String eventName = ctx.getArgument("event", String.class);
         CommandSender sender = ctx.getSource().getSender();
+        
+
+        /* TODO: Add confirmation check */
 
         Game event = gameHandler.getEvent(eventName);
+        if (event == gameHandler.getCurrentEvent()) {
+            sender.sendMessage(Lang.get("cmd.delete.event_running", Map.of("event", eventName)));
+            return 0;
+        }
+
         if ((event == null) || (gameHandler.deleteEvent(event) != Constants.SUCCESS)) {
             sender.sendMessage(Lang.get("cmd.delete.fail", Map.of("event", eventName)));
             return 0;
@@ -255,16 +270,5 @@ public class AdminCommands {
         sender.sendMessage(Component.text(Lang.get("cmd.reload")));
 
         return Command.SINGLE_SUCCESS;
-    }
-
-    private int unloadEventWorld(Game event) {
-        /* Send all players to spawn */
-        for (Player player : event.getWorld().getPlayers()) {
-            Utils.instance.sendToSpawn(player);
-            player.sendMessage(Lang.get("system.unload_tp", Map.of("event", event.getName())));
-        }
-
-        /* Try to save and unload world and return action status */
-        return event.saveAndUnloadWorld();
     }
 }

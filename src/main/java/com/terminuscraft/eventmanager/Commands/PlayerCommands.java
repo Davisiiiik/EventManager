@@ -70,7 +70,7 @@ public class PlayerCommands {
             return 0;
         }
 
-        Utils.instance.sendToSpawn(player);
+        Utils.getInstance().sendToSpawn(player);
 
         return Command.SINGLE_SUCCESS;
     }
@@ -114,6 +114,8 @@ public class PlayerCommands {
         /* ctx.getInput() returns the command string which player typed, i.e. "event list" */
         String[] parts = ctx.getInput().split("\\s+", 3);
         String command = parts[0] + " " + parts[1];
+
+        /* TODO: Add loaded/unloaded state to event items for event.admin.list permission */
 
         List<String> worldsList = this.gameHandler.getEventList();
         PaginationUtil.sendPaginatedList(sender, worldsList, page, command);

@@ -4,6 +4,7 @@ console:
   end: "TerminusCraft Event Manager successfully unloaded!"
   event_load:
     success: "Successfully loaded event '{event}'"
+    no_world: "World '{world}' not found. Cannot load event without a world."
     fail: "Error: Failed to load event '{event}': '{reason}'"
 system:
   auto_tp: "&aYou have been successfully teleported to the currently running event &f{event}&a."
@@ -47,9 +48,11 @@ cmd:
   save_events: "&aSuccessfully saved configurations for all events into the &fevents.yml &afile."
   remove:
     success: "&aSuccessfully removed Event &f{event} &afrom the Event List. Event world remained."
+    event_running: "&cUnable to remove currently running event &f{event}&c. Use &f/event admin stop &cfirst!"
     fail: "&cUnable to remove event &f{event}&c, because it doesn't exist."
   delete:
     success: "&aSuccessfully deleted Event &f{event} &aand its world from the Event List."
+    event_running: "&cUnable to delete currently running event &f{event}&c. Use &f/event admin stop &cfirst!"
     fail: "&cUnable to delete event &f{event}&c, because it doesn't exist."
 error:
   players_only: "&cOnly players can use this command!"

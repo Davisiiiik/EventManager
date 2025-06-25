@@ -16,36 +16,43 @@ public class Game {
     public static final AspAdapter aspAdapter = new AspAdapter();
 
     private final String eventName;
-    private SlimeWorld gameWorld;
+    private SlimePropertyMap propertyMap;
 
-
-    public Game(String name, SlimePropertyMap properties) {
+    public Game(String name, SlimePropertyMap propertyMap) {
         this.eventName = name;
-        this.gameWorld = aspAdapter.readOrCreateWorld(name, properties);
+        this.propertyMap = propertyMap;
 
-        if (properties.getValue(GameProperties.LOAD_ON_STARTUP)) {
+        if (propertyMap.getValue(GameProperties.LOAD_ON_STARTUP)) {
             loadWorld();
         }
     }
 
     public String getName() {
-        return this.eventName;
+        return eventName;
     }
 
-    public SlimePropertyMap getProperties() {
-        return gameWorld.getPropertyMap();
+    public SlimePropertyMap getPropertyMap() {
+        return propertyMap;
     }
 
     public void addProperties(SlimePropertyMap newMap) {
-        SlimePropertyMap oldMap = getProperties();
-        oldMap.merge(newMap);
+        /* TODO: This doesnt currently affect live world, only on world reload,
+         * fix this in the future, or just notify user to reload the world?
+         */
+        propertyMap.merge(newMap);
+    }
 
-        /* TODO: FIX!!! THIS WILL REWRITE CHANGES TO THE WORLD */
-        this.gameWorld = aspAdapter.readOrCreateWorld(eventName, oldMap);
+    public SlimeWorld getSlimeWorld() {
+        return aspAdapter.readOrCreateWorld(eventName, propertyMap);
     }
 
     public SlimeWorldInstance getWorldInstance() {
-        return aspAdapter.loadWorld(this.gameWorld);
+        SlimeWorldInstance worldInstance = aspAdapter.getLoadedWorld(eventName);
+        if (worldInstance == null) {
+            worldInstance = aspAdapter.loadWorld(getSlimeWorld());
+        }
+        
+        return worldInstance;
     }
 
     public World getWorld() {
@@ -57,12 +64,12 @@ public class Game {
         }
     }
 
-    public boolean hasValidWorld() {
-        return (gameWorld != null);
+    public boolean hasExistingWorld() {
+        return aspAdapter.worldExists(eventName);
     }
 
     public boolean hasLoadedWorld() {
-        return aspAdapter.worldIsLoaded(gameWorld);
+        return aspAdapter.worldIsLoaded(getSlimeWorld());
     }
 
     public int loadWorld() {
@@ -73,15 +80,18 @@ public class Game {
         return Constants.SUCCESS;
     }
 
-    public int saveAndUnloadWorld() {
+    public int unloadWorld(boolean saveWorld) {
         if (hasLoadedWorld()) {
             World eventWorld = getWorld();
             if (eventWorld == null) {
                 return Constants.FAIL;
             }
 
-            //aspAdapter.saveWorld(eventWorld);
-            eventWorld.save();
+            if (saveWorld) {
+                //aspAdapter.saveWorld(eventWorld);
+                eventWorld.save();
+            }
+
             if (Bukkit.unloadWorld(eventWorld, false)) {
                 return Constants.SUCCESS;
             }

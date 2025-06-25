@@ -4,6 +4,7 @@ console:
   end: "TerminusCraft Event Manager byl úspěšně ukončen!"
   event_load:
     success: "Event '{event}' úspěšně načten do paměti"
+    no_world: "Svět '{world}' nenalezen. Není možné načíst event beze světa."
     fail: "Error: Nebylo možné načíst event '{event}': '{reason}'"
 system:
   auto_tp: "&aByl jsi úspěšně teleportován na právě probíhající event &f{event}&a."
@@ -47,9 +48,11 @@ cmd:
   save_events: "&aKonfigurace všech existujících eventů byla úspěšně uložena do souboru &fevents.yml&a."
   remove:
     success: "&aEvent &f{event} &abyl úspěšně odstraněn. Svět tohoto eventu byl zachován."
+    event_running: "&cNebylo možné odstranit právě probíhající event &f{event}&c. Nejdříve použij &f/event admin stop&c!"
     fail: "&cNebylo možné odstranit event &f{event}&c, protože neexistuje."
   delete:
     success: "&aEvent &f{event} &aa jemu náležící svět byly úspěšně smazány."
+    event_running: "&cNebylo možné smazat právě probíhající event &f{event}&c. Nejdříve použij &f/event admin stop&c!"
     fail: "&cNebylo možné smazat event &f{event}&c, protože neexistuje."
 error:
   players_only: "&cTento příkaz mohou používat pouze hráči!"

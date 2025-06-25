@@ -92,8 +92,16 @@ public class AspAdapter {
         return this.slimeLoader.listWorlds();
     }
 
-    public boolean worldExists(String worldName) throws IOException {
-        return this.slimeLoader.worldExists(worldName);
+    public boolean worldExists(String worldName) {
+        try {
+            return this.slimeLoader.worldExists(worldName);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public SlimeWorldInstance getLoadedWorld(String worldName) {
+        return asp.getLoadedWorld(worldName);
     }
 
     public boolean worldIsLoaded(SlimeWorld world) {

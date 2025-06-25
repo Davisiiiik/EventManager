@@ -11,12 +11,14 @@ import java.util.stream.Collectors;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import com.infernalsuite.asp.api.world.properties.SlimePropertyMap;
 import com.terminuscraft.eventmanager.EventManager;
 import com.terminuscraft.eventmanager.communication.Lang;
 import com.terminuscraft.eventmanager.communication.Log;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
+import com.terminuscraft.eventmanager.miscellaneous.Utils;
 
 public class GameHandler {
 
@@ -39,9 +41,9 @@ public class GameHandler {
         loadEvents();
     }
 
-    public int setCurrentEvent(Game newEvent) {
-        if (this.eventExists(newEvent.getName().toLowerCase())) {
-            currentEvent = newEvent;
+    public int setCurrentEvent(String eventName) {
+        if (this.eventExists(eventName.toLowerCase())) {
+            currentEvent = getEvent(eventName);
             return Constants.SUCCESS;
         }
         return Constants.FAIL;
@@ -81,28 +83,41 @@ public class GameHandler {
             try {
                 Game event = new Game(worldName, propertyMap);
 
-                if (event.hasValidWorld()) {
+                if (event.hasExistingWorld()) {
                     this.events.add(event);
                     Log.logger.info(
-                        Lang.get("consile.event_load.success", Map.of("event", worldName))
+                        Lang.get("console.event_load.success", Map.of("event", worldName), false)
+                    );
+                } else {
+                    Log.logger.info(
+                        Lang.get("console.event_load.no_world", Map.of("world", worldName), false)
                     );
                 }
             } catch (Exception e) {
-                Log.logger.warning(Lang.get("console.event_load.fail",
-                                            Map.of("{event}", worldName,
-                                                   "{reason}", e.getMessage()
-                    )));
+                Map<String, String> dict = Map.of("{event}", worldName, "{reason}", e.getMessage());
+                Log.logger.warning(Lang.get("console.event_load.fail", dict, false));
             }
         }
     }
 
 
-    private void saveEvents() {
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(eventFile);
-        config.set("events", null); // Clear old
+    private int saveEvent(Game event) {
+        return saveEvents(List.of(event));
+    }
 
-        for (Game event : events) {
-            SlimePropertyMap properties = event.getProperties();
+
+    private int saveEvents() {
+        /* Clear old data and save all current events into the events.yml */
+        YamlConfiguration.loadConfiguration(eventFile).set("events", null);
+        return saveEvents(events);
+    }
+
+
+    private int saveEvents(List<Game> eventList) {
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(eventFile);
+
+        for (Game event : eventList) {
+            SlimePropertyMap properties = event.getPropertyMap();
             Set<String> propertyKeys = properties.getProperties().keySet();
 
             GameProperties.getSlimePropertyList().forEach((property) -> {
@@ -119,8 +134,24 @@ public class GameHandler {
         try {
             config.save(eventFile);
         } catch (IOException e) {
-            Log.logger.warning("Failed to save events.yml");
+            Log.logger.warning("Failed to save events.yml: " + e);
+            return Constants.FAIL;
         }
+
+        return Constants.SUCCESS;
+    }
+
+    private int removeEventFromConfig(Game event) {
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(eventFile);
+        config.set("events." + event.getName(), null);
+
+        try {
+            config.save(eventFile);
+        } catch (IOException e) {
+            Log.logger.warning("Failed to save events.yml: " + e);
+            return Constants.FAIL;
+        }
+        return Constants.SUCCESS;
     }
 
 
@@ -170,26 +201,22 @@ public class GameHandler {
         /* Change persistent world Spawn Location */
         event.addProperties(map);
 
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(eventFile);
-        Set<String> propertyKeys = map.getProperties().keySet();
-        
-        GameProperties.getSlimePropertyList().forEach((property) -> {
-            String key = property.getKey();
+        return saveEvent(event);
+    }
 
-            if (propertyKeys.contains(key)) {
-                String path = "events." + event.getName() + "." + key;
-                config.set(path, map.getValue(property));
-            }
-        });
+    public int saveAndUnloadEventWorld(Game event) {
+        return unloadEventWorld(event, true);
+    }
 
-        try {
-            config.save(eventFile);
-        } catch (IOException e) {
-            Log.logger.warning("Failed to save events.yml");
-            return Constants.FAIL;
+    private int unloadEventWorld(Game event, boolean saveWorld) {
+        /* Send all players to spawn */
+        for (Player player : event.getWorld().getPlayers()) {
+            Utils.getInstance().sendToSpawn(player);
+            player.sendMessage(Lang.get("system.unload_tp", Map.of("event", event.getName())));
         }
 
-        return Constants.SUCCESS;
+        /* Try to save and unload world and return action status */
+        return event.unloadWorld(saveWorld);
     }
 
     public int removeEvent(Game event) {
@@ -197,10 +224,14 @@ public class GameHandler {
             return Constants.FAIL;
         }
 
+        if (event == currentEvent) {
+            resetCurrentEvent();
+        }
+
+        saveAndUnloadEventWorld(event);
         events.remove(event);
 
-        saveEvents();
-        return Constants.SUCCESS;
+        return removeEventFromConfig(event);
     }
 
     public int deleteEvent(Game event) {
@@ -208,11 +239,15 @@ public class GameHandler {
             return Constants.FAIL;
         }
 
+        if (event == currentEvent) {
+            resetCurrentEvent();
+        }
+
+        unloadEventWorld(event, false);
         event.deleteWorld();
         events.remove(event);
 
-        saveEvents();
-        return Constants.SUCCESS;
+        return removeEventFromConfig(event);
     }
 
     public Game getEvent(String eventName) {
@@ -257,10 +292,6 @@ public class GameHandler {
     }
 
     public boolean worldExists(String worldName) {
-        try {
-            return Game.aspAdapter.worldExists(worldName);
-        } catch (Exception e) {
-            return false;
-        }
+        return Game.aspAdapter.worldExists(worldName);
     }
 }
