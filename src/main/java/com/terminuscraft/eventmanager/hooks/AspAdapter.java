@@ -104,6 +104,10 @@ public class AspAdapter {
         return asp.getLoadedWorld(worldName);
     }
 
+    public List<SlimeWorldInstance> getLoadedWorldList() {
+        return asp.getLoadedWorlds();
+    }
+
     public boolean worldIsLoaded(SlimeWorld world) {
         return asp.worldLoaded(world);
     }

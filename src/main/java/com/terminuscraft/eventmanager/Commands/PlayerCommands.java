@@ -107,25 +107,27 @@ public class PlayerCommands {
         String command = parts[0] + " " + parts[1];
 
         List<String> worldsList = new ArrayList<String>();
-        gameHandler.getEventList().forEach((event) -> {
+        List<String> loadedWorldList = gameHandler.getLoadedWorldList();
+        gameHandler.getEventNameList().forEach((eventName) -> {
             String worldItem;
 
             if (sender.hasPermission("event.admin.verbose")) {
                 String state;
 
-                if (event.hasLoadedWorld()) {
+                /* Using gameHandler.worldIsLoaded might be less optimal for this usecase */
+                if (loadedWorldList.contains(eventName)) {
                     state = Lang.get("cmd.list.loaded", false);
                 } else {
                     state = Lang.get("cmd.list.unloaded", false);
                 }
 
                 worldItem = Lang.get(
-                    "cmd.list.admin_item", Map.of("event", event.getName(), "state", state),
+                    "cmd.list.admin_item", Map.of("event", eventName, "state", state),
                     false
                 );
             } else {
                 worldItem = Lang.get(
-                    "cmd.list.player_item", Map.of("event", event.getName()),
+                    "cmd.list.player_item", Map.of("event", eventName),
                     false
                 );
             }

@@ -13,6 +13,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import com.infernalsuite.asp.api.world.SlimeWorldInstance;
 import com.infernalsuite.asp.api.world.properties.SlimePropertyMap;
 import com.terminuscraft.eventmanager.EventManager;
 import com.terminuscraft.eventmanager.communication.Lang;
@@ -276,6 +277,13 @@ public class GameHandler {
         return Game.aspAdapter.listWorlds();
     }
 
+    public List<String> getLoadedWorldList() {
+        return Game.aspAdapter.getLoadedWorldList().stream().map(
+            SlimeWorldInstance::getName).collect(
+                Collectors.toList()
+        );
+    }
+
     public boolean eventIsValid(String eventName) {
         return (eventExists(eventName) && worldExists(eventName));
     }
@@ -300,5 +308,9 @@ public class GameHandler {
 
     public boolean worldExists(String worldName) {
         return Game.aspAdapter.worldExists(worldName);
+    }
+
+    public boolean worldIsLoaded(String worldName) {
+        return getLoadedWorldList().contains(worldName);
     }
 }
