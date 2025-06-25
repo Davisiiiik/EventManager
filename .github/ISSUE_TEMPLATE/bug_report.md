@@ -1,8 +1,10 @@
+---
 name: Bug report
-description: Report a Bug or an Issue in the plugin.
+about: Report a Bug or an Issue in the plugin.
 labels: "\U0001F41B Bug"
 assignees: Davisiiiik
 
+---
 
 body:
   - type: markdown
