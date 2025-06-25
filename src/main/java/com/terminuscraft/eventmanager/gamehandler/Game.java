@@ -36,9 +36,7 @@ public class Game {
     }
 
     public void addProperties(SlimePropertyMap newMap) {
-        /* TODO: This doesnt currently affect live world, only on world reload,
-         * fix this in the future, or just notify user to reload the world?
-         */
+        /* This doesn't affect live world, its must be reloaded to take an effect */
         propertyMap.merge(newMap);
     }
 
@@ -106,5 +104,9 @@ public class Game {
         } catch (IOException | UnknownWorldException e) {
             /* Either the world is already deleted or this shouldnt happen */
         }
+    }
+    
+    public Game copy() {
+        return new Game(this.eventName, this.propertyMap.clone());
     }
 }

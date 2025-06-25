@@ -54,7 +54,10 @@ public class GameHandler {
     }
 
     public Game getCurrentEvent() {
-        return currentEvent;
+        if (currentEvent == null) {
+            return null;
+        }
+        return currentEvent.copy();
     }
 
     public void reloadEvents() {
@@ -261,7 +264,7 @@ public class GameHandler {
     }
 
     public List<Game> getEventList() {
-        return events;
+        return new ArrayList<Game>(events);
     }
 
     public List<String> getEventNameList() {

@@ -90,19 +90,25 @@ public class CommandManager {
                         .executes(admin::teleport))
                 )
             
-                /* /evm admin start <event> */
+                /* /evm admin start <event>; /evm admin set <event> */
                 .then(Commands.literal("start")
                     .requires(sender -> sender.getSender().hasPermission("event.admin.start"))
                     .then(Commands.argument("event", StringArgumentType.word())
                         .suggests(eventListSuggestion())
                         .executes(admin::startEvent))
-                )   /* TODO: Add alias set, or use set to change world properties? */
+                )
+                .then(Commands.literal("set")
+                    .requires(sender -> sender.getSender().hasPermission("event.admin.start"))
+                    .then(Commands.argument("event", StringArgumentType.word())
+                        .suggests(eventListSuggestion())
+                        .executes(admin::startEvent))
+                )
             
-                /* /evm admin end; /evm admin stop */
-                .then(Commands.literal("end")
+                /* /evm admin stop; /evm admin end */
+                .then(Commands.literal("stop")
                     .requires(sender -> sender.getSender().hasPermission("event.admin.stop"))
                     .executes(admin::endEvent))
-                .then(Commands.literal("stop")
+                .then(Commands.literal("end")
                     .requires(sender -> sender.getSender().hasPermission("event.admin.stop"))
                     .executes(admin::endEvent))
 
@@ -204,8 +210,9 @@ public class CommandManager {
             Map.entry(" help",                      "help"),
             Map.entry(" admin tp",                  "admin.tp"),
             Map.entry(" admin start",               "admin.start"),
-            Map.entry(" admin end",                 "admin.stop"),
+            Map.entry(" admin set",                 "admin.start"),
             Map.entry(" admin stop",                "admin.stop"),
+            Map.entry(" admin end",                 "admin.stop"),
             Map.entry(" admin add",                 "admin.add"),
             Map.entry(" admin create",              "admin.create"),
             Map.entry(" admin setSpawn",            "admin.setspawn"),

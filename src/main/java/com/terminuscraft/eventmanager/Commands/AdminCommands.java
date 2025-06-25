@@ -5,7 +5,6 @@ import java.util.Map;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -20,7 +19,6 @@ import com.terminuscraft.eventmanager.communication.Lang;
 import com.terminuscraft.eventmanager.gamehandler.Game;
 import com.terminuscraft.eventmanager.gamehandler.GameHandler;
 import com.terminuscraft.eventmanager.miscellaneous.Constants;
-import com.terminuscraft.eventmanager.miscellaneous.Utils;
 
 public class AdminCommands {
 
@@ -75,7 +73,6 @@ public class AdminCommands {
         return Command.SINGLE_SUCCESS;
     }
 
-    /* TODO: Unify better with saveEvents */
     public int setSpawn(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
 
@@ -94,9 +91,7 @@ public class AdminCommands {
             return 0;
         }
 
-        Location pos = player.getLocation();
-
-        gameHandler.setEventSpawn(event, pos);
+        gameHandler.setEventSpawn(event, player.getLocation());
 
         player.sendMessage(Lang.get("cmd.set_spawn.success", Map.of("event", event.getName())));
 
