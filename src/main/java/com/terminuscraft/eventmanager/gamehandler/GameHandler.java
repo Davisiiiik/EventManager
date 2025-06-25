@@ -90,16 +90,16 @@ public class GameHandler {
                 if (event.hasExistingWorld()) {
                     this.events.add(event);
                     Log.logger.info(
-                        Lang.get("console.event_load.success", Map.of("event", worldName), false)
+                        Lang.get("console.event_load.success", Map.of("event", worldName))
                     );
                 } else {
                     Log.logger.info(
-                        Lang.get("console.event_load.no_world", Map.of("world", worldName), false)
+                        Lang.get("console.event_load.no_world", Map.of("world", worldName))
                     );
                 }
             } catch (Exception e) {
                 Map<String, String> dict = Map.of("{event}", worldName, "{reason}", e.getMessage());
-                Log.logger.warning(Lang.get("console.event_load.fail", dict, false));
+                Log.logger.warning(Lang.get("console.event_load.fail", dict));
             }
         }
     }
@@ -216,7 +216,7 @@ public class GameHandler {
         /* Send all players to spawn */
         for (Player player : event.getWorld().getPlayers()) {
             Utils.getInstance().sendToSpawn(player);
-            player.sendMessage(Lang.get("system.unload_tp", Map.of("event", event.getName())));
+            player.sendMessage(Lang.pget("system.unload_tp", Map.of("event", event.getName())));
         }
 
         /* Try to save and unload world and return action status */

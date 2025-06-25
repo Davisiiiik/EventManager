@@ -42,12 +42,12 @@ public class EventManager extends JavaPlugin {
             new PlayerJoinListener(this.gameHandler), this
         );    
 
-        getLogger().info(Lang.get("console.start", false));
+        getLogger().info(Lang.get("console.start"));
     }
 
     @Override
     public void onDisable() {
-        getLogger().info(Lang.get("console.end", false));
+        getLogger().info(Lang.get("console.end"));
     }
 
     public void pluginReload() {

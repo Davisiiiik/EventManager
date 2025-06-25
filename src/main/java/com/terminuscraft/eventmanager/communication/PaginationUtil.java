@@ -20,9 +20,9 @@ public class PaginationUtil {
 
         if (page < 1 || page > totalPages) {
             if (page == 1) {
-                player.sendMessage(Lang.get("paging.empty"));
+                player.sendMessage(Lang.pget("paging.empty"));
             } else {
-                player.sendMessage(Lang.get("paging.invalid_page"));
+                player.sendMessage(Lang.pget("paging.invalid_page"));
             }
             return;
         }
@@ -32,7 +32,7 @@ public class PaginationUtil {
 
         // Header
         player.sendMessage("");     /* Empty line for better visual separation */
-        player.sendMessage(Lang.get("paging.header", Map.of("header", headerName), false));
+        player.sendMessage(Lang.get("paging.header", Map.of("header", headerName)));
 
         // Items
         for (int i = startIndex; i < endIndex; i++) {
@@ -49,50 +49,44 @@ public class PaginationUtil {
 
         if (page > 1) {
             navigation = navigation.append(
-                Component.text(Lang.get("paging.prev", false), NamedTextColor.GREEN)
+                Component.text(Lang.get("paging.prev"), NamedTextColor.GREEN)
                     .clickEvent(ClickEvent.runCommand("/" + cmd + " " + (page - 1)))
                     .hoverEvent(
                         Component.text(
-                            Lang.get(
-                                "paging.page",
-                                Map.of("page", Integer.toString(page - 1)),
-                                false
-                            )
+                            Lang.get("paging.page", Map.of("page", Integer.toString(page - 1)))
                         )
                     )
                 );
         } else {
             navigation = navigation.append(
-                Component.text(Lang.get("paging.prev", false), NamedTextColor.DARK_GRAY)
+                Component.text(Lang.get("paging.prev"), NamedTextColor.DARK_GRAY)
             );
         }
         navigation = navigation.append(
             Component.text(
                 Lang.get(
                     "paging.footer",
-                    Map.of("page", Integer.toString(page), "total", Integer.toString(totalPages)),
-                    false
+                    Map.of("page", Integer.toString(page), "total", Integer.toString(totalPages))
                 ),
                 NamedTextColor.GOLD)
             );
 
         if (page < totalPages) {
             navigation = navigation.append(
-                Component.text(Lang.get("paging.next", false), NamedTextColor.GREEN)
+                Component.text(Lang.get("paging.next"), NamedTextColor.GREEN)
                     .clickEvent(ClickEvent.runCommand("/" + cmd + " " + (page + 1)))
                     .hoverEvent(
                         Component.text(
                             Lang.get(
                                 "paging.page",
-                                Map.of("page", Integer.toString(page + 1)),
-                                false
+                                Map.of("page", Integer.toString(page + 1))
                             )
                         )
                     )
                 );
         } else {
             navigation = navigation.append(
-                Component.text(Lang.get("paging.next", false), NamedTextColor.DARK_GRAY)
+                Component.text(Lang.get("paging.next"), NamedTextColor.DARK_GRAY)
             );
         }
 

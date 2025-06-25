@@ -33,25 +33,25 @@ public class PlayerCommands {
         Entity executor = ctx.getSource().getExecutor();
 
         if (!(executor instanceof Player)) {
-            executor.sendMessage(Lang.get("error.players_only"));
+            executor.sendMessage(Lang.pget("error.players_only"));
             return 0;
         }
 
         Game event = gameHandler.getCurrentEvent();
         if (event == null) {
-            executor.sendMessage(Lang.get("cmd.current.no_event"));
+            executor.sendMessage(Lang.pget("cmd.current.no_event"));
             return Command.SINGLE_SUCCESS;
         }
 
         String eventName = event.getName();
         World eventWorld = event.getWorld();
         if (eventWorld == null) {
-            executor.sendMessage(Lang.get("error.event_load_abort", Map.of("event", eventName)));
+            executor.sendMessage(Lang.pget("error.event_load_abort", Map.of("event", eventName)));
             return 0;
         }
 
         executor.teleport(eventWorld.getSpawnLocation());
-        executor.sendMessage(Lang.get("cmd.tp.success", Map.of("event", eventName)));
+        executor.sendMessage(Lang.pget("cmd.tp.success", Map.of("event", eventName)));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -60,7 +60,7 @@ public class PlayerCommands {
         Entity executor = ctx.getSource().getExecutor();
 
         if (!(executor instanceof Player player)) {
-            executor.sendMessage(Lang.get("error.players_only"));
+            executor.sendMessage(Lang.pget("error.players_only"));
             return 0;
         }
 
@@ -73,12 +73,12 @@ public class PlayerCommands {
         CommandSender sender = ctx.getSource().getSender();
 
         if (gameHandler.getCurrentEvent() == null) {
-            sender.sendMessage(Lang.get("cmd.current.no_event"));
+            sender.sendMessage(Lang.pget("cmd.current.no_event"));
             return 0;
         } else {
             Game event = gameHandler.getCurrentEvent();
             sender.sendMessage(
-                Lang.get("cmd.current.success", Map.of("event", event.getName()))
+                Lang.pget("cmd.current.success", Map.of("event", event.getName()))
             );
         }
 
@@ -109,26 +109,22 @@ public class PlayerCommands {
 
                 /* Using gameHandler.worldIsLoaded might be less optimal for this usecase */
                 if (loadedWorldList.contains(eventName)) {
-                    state = Lang.get("cmd.list.loaded", false);
+                    state = Lang.get("cmd.list.loaded");
                 } else {
-                    state = Lang.get("cmd.list.unloaded", false);
+                    state = Lang.get("cmd.list.unloaded");
                 }
 
                 worldItem = Lang.get(
-                    "cmd.list.admin_item", Map.of("event", eventName, "state", state),
-                    false
+                    "cmd.list.admin_item", Map.of("event", eventName, "state", state)
                 );
             } else {
-                worldItem = Lang.get(
-                    "cmd.list.player_item", Map.of("event", eventName),
-                    false
-                );
+                worldItem = Lang.get("cmd.list.player_item", Map.of("event", eventName));
             }
 
             worldsList.add(worldItem);
         });
 
-        String headerName = Lang.get("headers.events", false);
+        String headerName = Lang.get("headers.events");
         PaginationUtil.sendPaginatedList(sender, worldsList, page, command, headerName);
 
         return Command.SINGLE_SUCCESS;
@@ -148,14 +144,14 @@ public class PlayerCommands {
         String[] parts = ctx.getInput().split("\\s+", 3);
         String command = parts[0] + " " + parts[1];
 
-        /* TODO: this is highly temporary, before the command handling refactoring */
+        /* TODO:G0: this is highly temporary, before the command handling refactoring */
         List<String> cmdList = new ArrayList<String>();
         CommandManager.getCommandDict().forEach((cmd, langMap) -> {
-            String desc = Lang.get("help." + langMap, Map.of("cmd", "/event" + cmd), false);
+            String desc = Lang.get("help." + langMap, Map.of("cmd", "/event" + cmd));
             cmdList.add(desc);
         });
 
-        String headerName = Lang.get("headers.commands", false);
+        String headerName = Lang.get("headers.commands");
         PaginationUtil.sendPaginatedList(sender, cmdList, page, command, headerName);
 
         return Command.SINGLE_SUCCESS;

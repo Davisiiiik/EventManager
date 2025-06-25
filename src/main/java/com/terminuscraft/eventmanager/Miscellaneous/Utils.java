@@ -1,7 +1,6 @@
 package com.terminuscraft.eventmanager.miscellaneous;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.terminuscraft.eventmanager.communication.Log;

@@ -79,20 +79,23 @@ public final class Lang {
         return new File(langFolder, langFileName);
     }
 
-    /* TODO: Make variants pget -> prefix get and rget -> raw get */
-    public static String get(String key) {
+    public static String pget(String key) {
         return get(key, Map.of(), true);
     }
 
-    public static String get(String key, boolean usePrefix) {
-        return get(key, Map.of(), usePrefix);
-    }
-
-    public static String get(String key, Map<String, String> placeholders) {
+    public static String pget(String key, Map<String, String> placeholders) {
         return get(key, placeholders, true);
     }
 
-    public static String get(String key, Map<String, String> placeholders, boolean usePrefix) {
+    public static String get(String key) {
+        return get(key, Map.of(), false);
+    }
+
+    public static String get(String key, Map<String, String> placeholders) {
+        return get(key, placeholders, false);
+    }
+
+    private static String get(String key, Map<String, String> placeholders, boolean usePrefix) {
         if (!initFlag) {
             return "&c[Lang not initialized]";
         }
@@ -123,28 +126,6 @@ public final class Lang {
         }
 
         return ChatColor.translateAlternateColorCodes('&', raw);
-    }
-
-    public static List<String> getList(String key) {
-        if (!initFlag) {
-            return List.of("&c[Lang not initialized]");
-        }
-
-        List<String> result = dictionary.getStringList(key);
-
-        if (result.isEmpty() && defaultConfig.contains(key)) {
-            result = defaultConfig.getStringList(key);
-            dictionary.set(key, result);
-            try {
-                dictionary.save(getLangFileName());
-            } catch (IOException e) {
-                Bukkit.getLogger().warning("&c[Lang] Failed to append missing list key: " + key);
-            }
-        }
-
-        return result.stream()
-            .map(line -> ChatColor.translateAlternateColorCodes('&', line))
-            .toList();
     }
 }
 

@@ -34,7 +34,7 @@ public class CommandManager {
         this.admin = new AdminCommands(evmHandler);
     }
 
-    /* TODO: Rewrite command structure, so a command is its own class with literal, permission.
+    /* TODO:G0: Rewrite command structure, so a command is its own class with literal, permission.
      * argument, function to be executed, description for help command, children commands (with
      * recursion to generate desired command tree structure) and aliases
      * (to register the same command under the aliase as its literal with the same setting)
@@ -199,7 +199,7 @@ public class CommandManager {
         };
     }
 
-    /* TODO: this is highly temporary, before the command handling refactoring */
+    /* TODO:G0: this is highly temporary, before the command handling refactoring */
     public static Map<String, String> getCommandDict() {
         return Map.ofEntries(
             Map.entry("",                           "join"),

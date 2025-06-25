@@ -34,18 +34,18 @@ public class AdminCommands {
         CommandSender sender = ctx.getSource().getSender();
 
         if (!gameHandler.worldExists(eventName)) {
-            sender.sendMessage(Lang.get("cmd.add.no_world", Map.of("event", eventName)));
+            sender.sendMessage(Lang.pget("cmd.add.no_world", Map.of("event", eventName)));
             return 0;
         }
 
         if (gameHandler.eventExists(eventName)) {
-            sender.sendMessage(Lang.get("cmd.create.dupe_event", Map.of("event", eventName)));
+            sender.sendMessage(Lang.pget("cmd.create.dupe_event", Map.of("event", eventName)));
             return 0;
 
         }
 
         gameHandler.addEvent(eventName);
-        sender.sendMessage(Lang.get("cmd.add.success", Map.of("event", eventName)));
+        sender.sendMessage(Lang.pget("cmd.add.success", Map.of("event", eventName)));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -55,21 +55,21 @@ public class AdminCommands {
         CommandSender sender = ctx.getSource().getSender();
 
         if (gameHandler.eventExists(eventName)) {
-            sender.sendMessage(Lang.get("cmd.create.dupe_event", Map.of("event", eventName)));
+            sender.sendMessage(Lang.pget("cmd.create.dupe_event", Map.of("event", eventName)));
             return 0;
         }
 
         if (gameHandler.worldExists(eventName)) {
-            sender.sendMessage(Lang.get("cmd.create.dupe_world", Map.of("event", eventName)));
+            sender.sendMessage(Lang.pget("cmd.create.dupe_world", Map.of("event", eventName)));
             return 0;
         }
 
         if (gameHandler.createEvent(eventName) != Constants.SUCCESS) {
-            sender.sendMessage(Lang.get("cmd.create.fail", Map.of("event", eventName)));
+            sender.sendMessage(Lang.pget("cmd.create.fail", Map.of("event", eventName)));
             return 0;
         }
 
-        sender.sendMessage(Lang.get("cmd.create.success", Map.of("event", eventName)));
+        sender.sendMessage(Lang.pget("cmd.create.success", Map.of("event", eventName)));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -78,7 +78,7 @@ public class AdminCommands {
         CommandSender sender = ctx.getSource().getSender();
 
         if (!(ctx.getSource().getExecutor() instanceof Player player)) {
-            sender.sendMessage(Lang.get("error.players_only"));
+            sender.sendMessage(Lang.pget("error.players_only"));
             return 0;
         }
 
@@ -87,14 +87,14 @@ public class AdminCommands {
         Game event = gameHandler.getEvent(world.getName());
         if (event == null) {
             player.sendMessage(
-                Lang.get("cmd.set_spawn.not_event", Map.of("world", world.getName()))
+                Lang.pget("cmd.set_spawn.not_event", Map.of("world", world.getName()))
             );
             return 0;
         }
 
         gameHandler.setEventSpawn(event, player.getLocation());
 
-        player.sendMessage(Lang.get("cmd.set_spawn.success", Map.of("event", event.getName())));
+        player.sendMessage(Lang.pget("cmd.set_spawn.success", Map.of("event", event.getName())));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -105,22 +105,22 @@ public class AdminCommands {
 
         Game currEvent = gameHandler.getCurrentEvent();
         if ((currEvent != null) && currEvent.getName().equalsIgnoreCase(eventName)) {
-            sender.sendMessage(Lang.get("cmd.start.dupe", Map.of("event", currEvent.getName())));
+            sender.sendMessage(Lang.pget("cmd.start.dupe", Map.of("event", currEvent.getName())));
             return 0;
         }
 
         if (gameHandler.setCurrentEvent(eventName) != Constants.SUCCESS) {
-            sender.sendMessage(Lang.get("error.event_invalid", Map.of("event", eventName)));
+            sender.sendMessage(Lang.pget("error.event_invalid", Map.of("event", eventName)));
             return 0;
         }
 
         Game newEvent = gameHandler.getEvent(eventName);
         if (newEvent.loadWorld() != Constants.SUCCESS) {
-            sender.sendMessage(Lang.get("error.start.fail", Map.of("event", eventName)));
+            sender.sendMessage(Lang.pget("error.start.fail", Map.of("event", eventName)));
             return 0;
         }
 
-        sender.sendMessage(Lang.get("cmd.start.success", Map.of("event", eventName)));
+        sender.sendMessage(Lang.pget("cmd.start.success", Map.of("event", eventName)));
 
         Utils.getInstance().refreshHolograms();
 
@@ -134,19 +134,19 @@ public class AdminCommands {
 
         Game event = gameHandler.getCurrentEvent();
         if (event == null) {
-            sender.sendMessage(Lang.get("cmd.current.no_event"));
+            sender.sendMessage(Lang.pget("cmd.current.no_event"));
             return 0;
         }
 
         gameHandler.resetCurrentEvent();
-        sender.sendMessage(Lang.get("cmd.end", Map.of("event", event.getName())));
+        sender.sendMessage(Lang.pget("cmd.end", Map.of("event", event.getName())));
 
         if (gameHandler.saveAndUnloadEventWorld(event) != Constants.SUCCESS) {
-            sender.sendMessage(Lang.get("cmd.unload.fail", Map.of("event", event.getName())));
+            sender.sendMessage(Lang.pget("cmd.unload.fail", Map.of("event", event.getName())));
             return 0;
         }
 
-        sender.sendMessage(Lang.get("cmd.unload.success", Map.of("event", event.getName())));
+        sender.sendMessage(Lang.pget("cmd.unload.success", Map.of("event", event.getName())));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -157,25 +157,25 @@ public class AdminCommands {
         Entity executor = ctx.getSource().getExecutor();
 
         if (!(executor instanceof Player player)) {
-            sender.sendMessage(Lang.get("error.players_only"));
+            sender.sendMessage(Lang.pget("error.players_only"));
             return 0;
         }
 
         Game event = gameHandler.getEvent(ctx.getArgument("event", String.class));
         if (event == null) {
-            player.sendMessage(Lang.get("cmd.tp.not_found", Map.of("event", eventName)));
+            player.sendMessage(Lang.pget("cmd.tp.not_found", Map.of("event", eventName)));
             return 0;
         }
 
         Utils.getInstance().refreshHolograms();
         World eventWorld = event.getWorld();
         if (eventWorld == null) {
-            player.sendMessage(Lang.get("error.event_load_abort", Map.of("event", eventName)));
+            player.sendMessage(Lang.pget("error.event_load_abort", Map.of("event", eventName)));
             return 0;
         }
 
         player.teleport(eventWorld.getSpawnLocation());
-        player.sendMessage(Lang.get("cmd.tp.success", Map.of("event", eventName)));
+        player.sendMessage(Lang.pget("cmd.tp.success", Map.of("event", eventName)));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -186,16 +186,16 @@ public class AdminCommands {
 
         Game event = gameHandler.getEvent(eventName);
         if (event == null) {
-            sender.sendMessage(Lang.get("error.event_invalid", Map.of("event", eventName)));
+            sender.sendMessage(Lang.pget("error.event_invalid", Map.of("event", eventName)));
             return 0;
         }
 
         if (gameHandler.saveAndUnloadEventWorld(event) != Constants.SUCCESS) {
-            sender.sendMessage(Lang.get("cmd.unload.fail", Map.of("event", eventName)));
+            sender.sendMessage(Lang.pget("cmd.unload.fail", Map.of("event", eventName)));
             return 0;
         }
 
-        sender.sendMessage(Lang.get("cmd.unload.success", Map.of("event", eventName)));
+        sender.sendMessage(Lang.pget("cmd.unload.success", Map.of("event", eventName)));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -208,16 +208,16 @@ public class AdminCommands {
 
         Game event = gameHandler.getEvent(eventName);
         if (event == gameHandler.getCurrentEvent()) {
-            sender.sendMessage(Lang.get("cmd.remove.event_running", Map.of("event", eventName)));
+            sender.sendMessage(Lang.pget("cmd.remove.event_running", Map.of("event", eventName)));
             return 0;
         }
 
         if ((event == null) || (gameHandler.removeEvent(event) != Constants.SUCCESS)) {
-            sender.sendMessage(Lang.get("cmd.remove.fail", Map.of("event", eventName)));
+            sender.sendMessage(Lang.pget("cmd.remove.fail", Map.of("event", eventName)));
             return 0;
         }
 
-        sender.sendMessage(Lang.get("cmd.remove.success", Map.of("event", eventName)));
+        sender.sendMessage(Lang.pget("cmd.remove.success", Map.of("event", eventName)));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -231,16 +231,16 @@ public class AdminCommands {
 
         Game event = gameHandler.getEvent(eventName);
         if (event == gameHandler.getCurrentEvent()) {
-            sender.sendMessage(Lang.get("cmd.delete.event_running", Map.of("event", eventName)));
+            sender.sendMessage(Lang.pget("cmd.delete.event_running", Map.of("event", eventName)));
             return 0;
         }
 
         if ((event == null) || (gameHandler.deleteEvent(event) != Constants.SUCCESS)) {
-            sender.sendMessage(Lang.get("cmd.delete.fail", Map.of("event", eventName)));
+            sender.sendMessage(Lang.pget("cmd.delete.fail", Map.of("event", eventName)));
             return 0;
         }
 
-        sender.sendMessage(Lang.get("cmd.delete.success", Map.of("event", eventName)));
+        sender.sendMessage(Lang.pget("cmd.delete.success", Map.of("event", eventName)));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -250,7 +250,7 @@ public class AdminCommands {
 
         gameHandler.saveEventConfigs();
 
-        sender.sendMessage(Component.text(Lang.get("cmd.save_events")));
+        sender.sendMessage(Component.text(Lang.pget("cmd.save_events")));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -260,7 +260,7 @@ public class AdminCommands {
 
         JavaPlugin.getPlugin(EventManager.class).pluginReload();
 
-        sender.sendMessage(Component.text(Lang.get("cmd.reload")));
+        sender.sendMessage(Component.text(Lang.pget("cmd.reload")));
 
         return Command.SINGLE_SUCCESS;
     }
