@@ -9,6 +9,7 @@ import com.terminuscraft.eventmanager.communication.Lang;
 import com.terminuscraft.eventmanager.gamehandler.GameHandler;
 import com.terminuscraft.eventmanager.gamehandler.PlayerJoinListener;
 import com.terminuscraft.eventmanager.miscellaneous.Utils;
+import com.terminuscraft.eventmanager.worldprotection.PlayerInteractListener;
 
 
 /**
@@ -40,7 +41,11 @@ public class EventManager extends JavaPlugin {
         /* Register EventListeners */
         getServer().getPluginManager().registerEvents(
             new PlayerJoinListener(this.gameHandler), this
-        );    
+        );
+
+        getServer().getPluginManager().registerEvents(
+            new PlayerInteractListener(this.gameHandler), this
+        );
 
         getLogger().info(Lang.get("console.start"));
     }

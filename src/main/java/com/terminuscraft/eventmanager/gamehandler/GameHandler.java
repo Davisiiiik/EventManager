@@ -26,7 +26,7 @@ public class GameHandler {
     private final File eventFile;
     private final SlimePropertyMap defaultProperties;
 
-    private final List<Game> events = new ArrayList<>();
+    private List<Game> events = new ArrayList<>();
     private Game currentEvent;
 
     public GameHandler(EventManager plugin) {

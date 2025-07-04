@@ -14,6 +14,7 @@ error:
   event_invalid: "&cEvent &f{event} &cdoesn't exists, or its world is invalid."
   event_load_try: "&cCannot reach world from event &f{event}&c. Trying to load it ..."
   event_load_abort: "&cAttempt to load the world from event &f{event} &cunsuccessful. Aborting ..."
+  no_permission: "&cYou don't have a permission for that!"
 cmd:
   start:
     success: "&aSuccessfully started the &f{event}&a Event, don't forget to notify the players!"

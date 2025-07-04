@@ -52,6 +52,8 @@ permissions:
       event.admin.reload: true
       event.admin.bypass: true
       event.admin.verbose: true
+      event.admin.build.*: true
+      event.admin.interact.*: true
 
   event.player.help:
     description: Show a list of available Event Manager commands.
@@ -123,4 +125,12 @@ permissions:
 
   event.admin.verbose:
     description: Show additional information on event list command.
+    default: false
+
+  event.admin.build.*:
+    description: Can build in every event world.
+    default: false
+
+  event.admin.interact.*:
+    description: Can interact with blocks in every event world.
     default: false

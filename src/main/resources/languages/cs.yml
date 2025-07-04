@@ -14,6 +14,7 @@ error:
   event_invalid: "&cEvent &f{event} &cneexistuje, nebo nemá vytvořený svět."
   event_load_try: "&cSvět eventu &f{event} &cnení načtený. Pokusím se ho najít ..."
   event_load_abort: "&cPokus načíst svět eventu &f{event} &cbyl neúspěšný. Ruším akci ..."
+  no_permission: "&cNa toto nemáš oprávnění!"
 cmd:
   start:
     success: "&aÚspěšně jsi spustil event &f{event}&a, nezapomeň upozornit hráče!"
