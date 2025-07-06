@@ -25,6 +25,7 @@ permissions:
       event.player.*: true
       event.admin.*: true
 
+  ### Default player permissions ###
   event.player.*:
     description: Grants all permissions for player usage
     default: true
@@ -55,7 +56,7 @@ permissions:
     description: Show a list of all existing Events.
     default: false
 
-
+  ### Administrator permissions ###
   event.admin.*:
     description: Grants all permissions for admin Event management
     default: op
@@ -74,7 +75,6 @@ permissions:
       event.admin.bypass: true
       event.admin.verbose: true
       event.admin.build.*: true
-
 
   event.admin.tp:
     description: Teleport to any Event location.
@@ -128,7 +128,7 @@ permissions:
     description: Show additional information on event list command.
     default: false
 
-
+  ### Administrator world-protection related permissions ###
   event.admin.build.*:
     description: Grants break, place and interact permissions
     default: false
@@ -136,11 +136,6 @@ permissions:
       event.admin.break.*: true
       event.admin.place.*: true
       event.admin.interact.*: true
-
-
-  event.admin.build.*:
-    description: Can build in every event world.
-    default: false
 
   event.admin.break.*:
     description: Can break blocks in every event world.
