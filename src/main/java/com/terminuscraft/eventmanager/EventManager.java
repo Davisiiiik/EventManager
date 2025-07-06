@@ -19,6 +19,7 @@ import com.terminuscraft.eventmanager.worldprotection.PlayerInteractListener;
  */
 public class EventManager extends JavaPlugin {
     private GameHandler gameHandler;
+    private PlayerInteractListener worldProtect;
 
     @Override
     public void onEnable() {
@@ -43,9 +44,8 @@ public class EventManager extends JavaPlugin {
             new PlayerJoinListener(this.gameHandler), this
         );
 
-        getServer().getPluginManager().registerEvents(
-            new PlayerInteractListener(this.gameHandler), this
-        );
+        this.worldProtect = new PlayerInteractListener(this, this.gameHandler);
+        getServer().getPluginManager().registerEvents(worldProtect, this);
 
         getLogger().info(Lang.get("console.start"));
     }
@@ -59,5 +59,6 @@ public class EventManager extends JavaPlugin {
         this.reloadConfig();
         Lang.reloadLanguage();
         this.gameHandler.reloadEvents();
+        this.worldProtect.reloadInteractables();
     }
 }
