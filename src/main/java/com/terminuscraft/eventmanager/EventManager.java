@@ -9,6 +9,7 @@ import com.terminuscraft.eventmanager.communication.Lang;
 import com.terminuscraft.eventmanager.gamehandler.GameHandler;
 import com.terminuscraft.eventmanager.gamehandler.PlayerJoinListener;
 import com.terminuscraft.eventmanager.miscellaneous.Utils;
+import com.terminuscraft.eventmanager.worldprotection.PlayerInteractListener;
 
 
 /**
@@ -18,6 +19,7 @@ import com.terminuscraft.eventmanager.miscellaneous.Utils;
  */
 public class EventManager extends JavaPlugin {
     private GameHandler gameHandler;
+    private PlayerInteractListener worldProtect;
 
     @Override
     public void onEnable() {
@@ -40,7 +42,10 @@ public class EventManager extends JavaPlugin {
         /* Register EventListeners */
         getServer().getPluginManager().registerEvents(
             new PlayerJoinListener(this.gameHandler), this
-        );    
+        );
+
+        this.worldProtect = new PlayerInteractListener(this, this.gameHandler);
+        getServer().getPluginManager().registerEvents(worldProtect, this);
 
         getLogger().info(Lang.get("console.start"));
     }
@@ -54,5 +59,6 @@ public class EventManager extends JavaPlugin {
         this.reloadConfig();
         Lang.reloadLanguage();
         this.gameHandler.reloadEvents();
+        this.worldProtect.reloadInteractables();
     }
 }

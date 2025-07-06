@@ -35,24 +35,6 @@ permissions:
       event.player.leave: true
       event.player.list: true
 
-  event.admin.*:
-    description: Grants all permissions for admin Event management
-    default: op
-    children:
-      event.admin.tp: true
-      event.admin.start: true
-      event.admin.stop: true
-      event.admin.add: true
-      event.admin.create: true
-      event.admin.setspawn: true
-      event.admin.remove: true
-      event.admin.delete: true
-      event.admin.unload: true
-      event.admin.saveconfigs: true
-      event.admin.reload: true
-      event.admin.bypass: true
-      event.admin.verbose: true
-
   event.player.help:
     description: Show a list of available Event Manager commands.
     default: false
@@ -72,6 +54,27 @@ permissions:
   event.player.list:
     description: Show a list of all existing Events.
     default: false
+
+
+  event.admin.*:
+    description: Grants all permissions for admin Event management
+    default: op
+    children:
+      event.admin.tp: true
+      event.admin.start: true
+      event.admin.stop: true
+      event.admin.add: true
+      event.admin.create: true
+      event.admin.setspawn: true
+      event.admin.remove: true
+      event.admin.delete: true
+      event.admin.unload: true
+      event.admin.saveconfigs: true
+      event.admin.reload: true
+      event.admin.bypass: true
+      event.admin.verbose: true
+      event.admin.build.*: true
+
 
   event.admin.tp:
     description: Teleport to any Event location.
@@ -123,4 +126,30 @@ permissions:
 
   event.admin.verbose:
     description: Show additional information on event list command.
+    default: false
+
+
+  event.admin.build.*:
+    description: Grants break, place and interact permissions
+    default: false
+    children:
+      event.admin.break.*: true
+      event.admin.place.*: true
+      event.admin.interact.*: true
+
+
+  event.admin.build.*:
+    description: Can build in every event world.
+    default: false
+
+  event.admin.break.*:
+    description: Can break blocks in every event world.
+    default: false
+
+  event.admin.place.*:
+    description: Can place blocks in every event world.
+    default: false
+
+  event.admin.interact.*:
+    description: Can interact with blocks in every event world.
     default: false
