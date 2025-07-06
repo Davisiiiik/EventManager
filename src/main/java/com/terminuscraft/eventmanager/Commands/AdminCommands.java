@@ -124,6 +124,7 @@ public class AdminCommands {
 
         Utils.getInstance().refreshHolograms();
 
+        /* TODO: Add local server notification */
         /* TODO: Add notification across bungeecord, add to config file option to enable this */
 
         return Command.SINGLE_SUCCESS;
